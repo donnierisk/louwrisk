@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <game-map />
+    <game-map /><dialogue-option text:="text" :options="options" />
   </div>
 </template>
 
@@ -9,12 +9,13 @@
 // import LouwRisk from "@/components/Map.vue";
 
 import { Component, Vue } from 'vue-property-decorator'
-
+import DialogueOption from '@/components/DialogueOption.vue'
 import GameMap from './GameMap.vue'
 
 @Component({
   components: {
-    GameMap
+    GameMap,
+    DialogueOption
   }
 })
 export default class Home extends Vue {}

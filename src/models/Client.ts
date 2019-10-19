@@ -1,13 +1,13 @@
 import Buffs from './Buffs'
-import Dialog from './Dialog'
+import Action from './Action'
 
 export default class Client {
-  private dialogOptions: Dialog[]
+  private action: Action[]
   private buffs: Buffs[] = []
   private includedDialog: string[] = []
   private excludedDialog: string[] = []
-  constructor(dialog: Dialog[], buffs: Buffs[]) {
-    this.dialogOptions = dialog
+  constructor(action: Action[], buffs: Buffs[]) {
+    this.action = action
     this.buffs = buffs
   }
 }
