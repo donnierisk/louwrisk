@@ -37,8 +37,11 @@ export default class Map extends Vue {
   private generateGrid() {
     for (let gridRow = 0; gridRow < this.gridSize[0]; gridRow++) {
       for (let gridItem = 0; gridItem < this.gridSize[1]; gridItem++) {
-        this.gridRenderArray.push(gridItem)
+        this.gridRenderArray.push(this.theGrid[gridRow][gridItem])
         if (gridItem === this.playerPos[0] && gridRow === this.playerPos[1]) {
+          // THIS NEEDS TO BE MADE MORE DYNAMIC. PROP OF PLAYER POS SHOULD BE PASSED
+          // DYNAMICALLY INSTEAD OF EACH GRID ITEM CHECKING,
+          // THEN WE CAN REUSE THAT LOGIC TO PLACE MULTIPLE ITEMS
           this.playerPosInArr = this.gridRenderArray.length - 1
         }
       }
@@ -60,5 +63,6 @@ export default class Map extends Vue {
   background: lightcyan;
   display: grid;
   grid-template-columns: auto auto auto auto auto auto auto auto;
+  background: greenyellow;
 }
 </style>

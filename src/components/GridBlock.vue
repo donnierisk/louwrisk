@@ -1,5 +1,6 @@
 <template>
   <div id="gridItem" :class="gridClass()">
+    <img v-if="isRock() === true" src="../assets/rock.png" />
     <p v-if="playerPos === posInArr">8</p>
   </div>
 </template>
@@ -14,6 +15,9 @@ export default class GridBlock extends Vue {
   @Prop() private playerPos!: number
   @Prop() private posInArr!: number
 
+  public isRock() {
+    return this.type === MapSymbol.ROCK
+  }
   public gridClass() {
     switch (this.type) {
       case MapSymbol.GROUND:
@@ -24,32 +28,51 @@ export default class GridBlock extends Vue {
         return 'water'
       default:
         const randomTerr = Math.floor(Math.random() * 10)
-        if (randomTerr > 8) return 'ground'
-        if (randomTerr > 6) return 'water'
-        else return 'grass'
+        if (randomTerr > 8) {
+          return 'ground'
+        }
+        if (randomTerr > 6) {
+          return 'water'
+        } else {
+          return 'grass'
+        }
     }
   }
 }
 </script>
 
 <style scoped>
+#gridItem {
+  position: relative;
+}
+
+img {
+  position: absolute;
+  width: 80%;
+  height: auto;
+  bottom: 0;
+  left: 0;
+}
 p {
   margin: 0;
 }
-.empty {
-  background: white;
-}
-
 .rock {
-  background: #676767;
+  background: greenyellow;
 }
 
 .water {
   background: lightskyblue;
+  border-radius: 50%;
+  width: 80%;
+  height: 80%;
 }
 
 .ground {
   background: #a5742a;
+
+  border-radius: 50%;
+  width: 80%;
+  height: 90%;
 }
 
 .grass {
