@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <game-map />
-    <dialogue-option text:="text" :options="options" />
+    <!-- <dialogue-option text:="text" :options="options" /> -->
   </div>
 </template>
 

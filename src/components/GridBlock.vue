@@ -1,5 +1,7 @@
 <template>
-  <div id="gridItem" :class="gridClass()"></div>
+  <div id="gridItem" :class="gridClass()">
+    <p v-if="playerPos === posInArr">8</p>
+  </div>
 </template>
 
 <script lang='ts'>
@@ -9,6 +11,8 @@ import { MapSymbol } from '../models/MapSymbol'
 @Component
 export default class GridBlock extends Vue {
   @Prop() private type!: MapSymbol
+  @Prop() private playerPos!: number
+  @Prop() private posInArr!: number
 
   public gridClass() {
     switch (this.type) {
@@ -20,13 +24,18 @@ export default class GridBlock extends Vue {
         return 'water'
       default:
         const randomTerr = Math.floor(Math.random() * 10)
-        return randomTerr > 5 ? 'ground' : 'grass'
+        if (randomTerr > 8) return 'ground'
+        if (randomTerr > 6) return 'water'
+        else return 'grass'
     }
   }
 }
 </script>
 
 <style scoped>
+p {
+  margin: 0;
+}
 .empty {
   background: white;
 }

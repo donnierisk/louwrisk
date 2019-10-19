@@ -7,7 +7,7 @@ export default abstract class AbstractLiving {
 
   constructor(action: Action[], name: string) {
     this.name = name
-    this.action = Action
+    this.action = action
   }
 
   //#region Getters
