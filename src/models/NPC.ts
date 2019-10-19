@@ -1,3 +1,3 @@
-import AbstractLiving from "./AbstractLiving"
+import AbstractLiving from './AbstractLiving'
 
-export default class Animal extends AbstractLiving { }
+export default class NPC extends AbstractLiving { }
