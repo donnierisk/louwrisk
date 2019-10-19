@@ -1,13 +1,13 @@
-import Dialog from './Dialog'
+import Action from './Action'
 
 export default abstract class AbstractLiving {
   private name: string
   private description: string = ''
-  private dialogOptions: Dialog[]
+  private action: Action[]
 
-  constructor(dialog: Dialog[], name: string) {
+  constructor(action: Action[], name: string) {
     this.name = name
-    this.dialogOptions = dialog
+    this.action = Action
   }
 
   //#region Getters
@@ -19,8 +19,8 @@ export default abstract class AbstractLiving {
     return this.description
   }
 
-  public getDialogOptions() {
-    return this.dialogOptions
+  public getAction() {
+    return this.action
   }
   //#endregion
 
@@ -33,8 +33,8 @@ export default abstract class AbstractLiving {
     this.description = description
   }
 
-  public setDialogOptions(dialogOptions: Dialog[]) {
-    this.dialogOptions = dialogOptions
+  public setAction(action: Action[]) {
+    this.action = action
   }
   //#endregion
 }
