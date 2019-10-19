@@ -15,7 +15,7 @@ import { GridBlock } from "@/components/GridBlock.vue"
   }
 })
 export default class Map extends Vue {
-  gridSize: number[] = [8, 4]
-  theGrid: number[][] = [[1, 2, 3], [1, 2, 3]]
+  public gridSize: number[] = [8, 4]
+  public theGrid: number[][] = [[1, 2, 3], [1, 2, 3]]
 }
 </script>
