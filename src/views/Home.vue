@@ -1,18 +1,22 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png" />
-    <louw-risk msg="Welcome to Your Vue.js App" />
+    <game-map />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import LouwRisk from "@/components/LouwRisk.vue";
+// import LouwRisk from "@/components/Map.vue";
 
-export default {
-  name: "home",
+import { Component, Vue } from "vue-property-decorator";
+
+import GameMap from "./GameMap.vue";
+
+@Component({
   components: {
-    LouwRisk
+    GameMap
   }
-};
+})
+export default class Home extends Vue {}
 </script>
