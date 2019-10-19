@@ -1,12 +1,13 @@
 <template>
   <div>
     <h2>Game Map:</h2>
+    <!-- <div id="grid"><grid-block v-for</div> -->
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import { GridBlock } from "@/components/GridBlock.vue";
+import { Component, Vue } from "vue-property-decorator"
+import { GridBlock } from "@/components/GridBlock.vue"
 
 @Component({
   components: {
@@ -14,6 +15,7 @@ import { GridBlock } from "@/components/GridBlock.vue";
   }
 })
 export default class Map extends Vue {
-  gridSize: number[] = [8, 4];
+  gridSize: number[] = [8, 4]
+  theGrid: number[][] = [[1, 2, 3], [1, 2, 3]]
 }
 </script>
