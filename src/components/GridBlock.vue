@@ -19,7 +19,8 @@ export default class GridBlock extends Vue {
       case MapSymbol.WATER:
         return 'water'
       default:
-        return 'ground'
+        const randomTerr = Math.floor(Math.random() * 10)
+        return randomTerr > 5 ? 'ground' : 'grass'
     }
   }
 }

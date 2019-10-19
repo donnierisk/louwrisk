@@ -1,5 +1,5 @@
-export default interface Dialog {  
-  id: int
+export default interface Dialog {
+  id: number
   text: string
-  childIds: int[]
+  childIds: number[]
 }
