@@ -1,12 +1,19 @@
 <template>
   <div>
-    <p>This is the map</p>
+    <h2>Game Map:</h2>
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import { GridBlock } from "@/components/GridBlock.vue";
 
-@Component
-export default class Map extends Vue {}
+@Component({
+  components: {
+    GridBlock
+  }
+})
+export default class Map extends Vue {
+  gridSize: number[] = [8, 4];
+}
 </script>
