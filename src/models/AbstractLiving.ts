@@ -2,7 +2,7 @@ export default abstract class AbstractLiving {
   private hp: Hitpoints
   private attack: number
   private name: string
-  private description: string = ""
+  private description: string = ''
   private isHostile: boolean = false
   private movement: string[] = []
   constructor(hp: Hitpoints, attack: number, name: string) {

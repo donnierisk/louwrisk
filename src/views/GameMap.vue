@@ -9,6 +9,7 @@
 import { Component, Vue } from 'vue-property-decorator'
 import { GridBlock } from '@/components/GridBlock.vue'
 import Grid from '@/lib/grid'
+import { MapSymbol } from '@/models/MapSymbol'
 
 @Component({
   components: {
@@ -17,6 +18,6 @@ import Grid from '@/lib/grid'
 })
 export default class Map extends Vue {
   public gridSize: number[] = [8, 4]
-  public theGrid: number[][] = [[1, 2, 3], [1, 2, 3]]
+  public theGrid: MapSymbol[][] = Grid
 }
 </script>

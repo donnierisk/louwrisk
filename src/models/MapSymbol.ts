@@ -3,5 +3,5 @@ export enum MapSymbol {
   ROCK = 'r',
   WATER = 'w',
   GROUND = 'g',
-
+  EMPTY = 'e'
 }

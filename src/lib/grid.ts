@@ -1,10 +1,14 @@
-import { MapSymbol } from '@/models/MapSymbol'
+import { MapSymbol as MS } from '@/models/MapSymbol'
 
-const grid = {
-  one: [MapSymbol.GROUND, 2, 3],
-  two: [1, 2, 3],
-  three: [1, 2, 3],
-  four: [1, 2, 3]
-}
+const grid = [
+  [],
+  [MS.EMPTY, MS.ROCK, MS.ROCK, MS.EMPTY, MS.EMPTY, MS.ROCK, MS.ROCK, MS.EMPTY],
+  [MS.EMPTY, MS.ROCK, MS.ROCK, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.ROCK, MS.EMPTY],
+  [MS.EMPTY, MS.ROCK, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.ROCK, MS.ROCK, MS.EMPTY],
+  [],
+  [MS.EMPTY, MS.ROCK, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.ROCK, MS.ROCK, MS.EMPTY],
+  [MS.EMPTY, MS.ROCK, MS.ROCK, MS.EMPTY, MS.ROCK, MS.ROCK, MS.ROCK, MS.EMPTY],
+  []
+]
 
 export default grid
