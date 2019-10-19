@@ -1,7 +1,3 @@
-export interface Animal {
-  hp: number
-  attack: number
-  name: string
-  description: string
-  isFeral: boolean
-}
+import AbstractLiving from './AbstractLiving'
+
+export default class Animal extends AbstractLiving { }
