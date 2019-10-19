@@ -5,9 +5,10 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator"
-import { GridBlock } from "@/components/GridBlock.vue"
+<script lang='ts'>
+import { Component, Vue } from 'vue-property-decorator'
+import { GridBlock } from '@/components/GridBlock.vue'
+import Grid from '@/lib/grid'
 
 @Component({
   components: {
