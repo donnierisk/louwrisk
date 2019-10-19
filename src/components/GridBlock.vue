@@ -2,12 +2,12 @@
   <div class="hello"></div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script lang='ts'>
+import { Component, Prop, Vue } from 'vue-property-decorator'
 
 @Component
 export class GridBlock extends Vue {
-  @Prop() private type!: string;
+  @Prop() private type!: string
 }
 </script>
 
