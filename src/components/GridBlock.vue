@@ -1,30 +1,48 @@
 <template>
-  <div class="hello"></div>
+  <div id="gridItem" :class="gridClass()"></div>
 </template>
 
 <script lang='ts'>
 import { Component, Prop, Vue } from 'vue-property-decorator'
+import { MapSymbol } from '../models/MapSymbol'
 
 @Component
-export class GridBlock extends Vue {
-  @Prop() private type!: string
+export default class GridBlock extends Vue {
+  @Prop() private type!: MapSymbol
+
+  public gridClass() {
+    switch (this.type) {
+      case MapSymbol.GROUND:
+        return 'ground'
+      case MapSymbol.ROCK:
+        return 'rock'
+      case MapSymbol.WATER:
+        return 'water'
+      default:
+        return 'ground'
+    }
+  }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+.empty {
+  background: white;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+
+.rock {
+  background: #676767;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+
+.water {
+  background: lightskyblue;
 }
-a {
-  color: #42b983;
+
+.ground {
+  background: #a5742a;
+}
+
+.grass {
+  background: greenyellow;
 }
 </style>
