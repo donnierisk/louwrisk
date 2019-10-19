@@ -1,8 +1,8 @@
 <template>
-	<div class="home">
-		<img alt="Vue logo" src="../assets/logo.png" />
-		<LouwRisk msg="Welcome to Your Vue.js App" />
-	</div>
+  <div class="home">
+    <img alt="Vue logo" src="../assets/logo.png" />
+    <louw-risk msg="Welcome to Your Vue.js App" />
+  </div>
 </template>
 
 <script>
@@ -10,9 +10,9 @@
 import LouwRisk from "@/components/LouwRisk.vue";
 
 export default {
-	name: "home",
-	components: {
-		LouwRisk
-	}
+  name: "home",
+  components: {
+    LouwRisk
+  }
 };
 </script>
