@@ -17,6 +17,7 @@ import { Component, Vue } from 'vue-property-decorator'
 import GridBlock from '@/components/GridBlock.vue'
 import Grid from '@/lib/grid'
 import { MapSymbol } from '@/models/MapSymbol'
+import { MoveSymbol } from '@/models/MoveSymbol'
 
 @Component({
   components: {
@@ -26,12 +27,40 @@ import { MapSymbol } from '@/models/MapSymbol'
 export default class Map extends Vue {
   public gridSize: number[] = [8, 8]
   public theGrid: MapSymbol[][] = Grid
-  public playerPos: number[] = [4, 3]
+  public playerPos: number[] = [3, 7]
   public playerPosInArr = 0
   public gridRenderArray: MapSymbol[] = []
 
   private created() {
     this.generateGrid()
+  }
+
+  private movePlayer(direction: MoveSymbol, value: number = 1) {
+    let playerX = this.playerPos[0]
+    let playerY = this.playerPos[1]
+
+    switch (direction) {
+      case MoveSymbol.NORTH:
+        playerY -= value
+        break
+      case MoveSymbol.SOUTH:
+        playerY += value
+        break
+      case MoveSymbol.WEST:
+        playerX -= value
+        break
+      default:
+        playerX += value
+        break
+    }
+
+    playerX = playerX >= this.gridSize[0] ? this.gridSize[0] - 1 : playerX
+    playerY = playerY >= this.gridSize[1] ? this.gridSize[1] - 1 : playerY
+    playerX = playerX < 0 ? 0 : playerX
+    playerY = playerY < 0 ? 0 : playerY
+
+    this.playerPos[0] = playerX
+    this.playerPos[1] = playerY
   }
 
   private generateGrid() {

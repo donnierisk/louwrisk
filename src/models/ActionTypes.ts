@@ -1,4 +1,5 @@
 export enum ActionTypes {
   DIALOGUE = 'dialogue',
-  ATTACK = 'attack'
+  ATTACK = 'attack',
+  MOVE = 'move'
 }

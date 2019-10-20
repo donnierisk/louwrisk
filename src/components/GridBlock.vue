@@ -27,15 +27,15 @@ export default class GridBlock extends Vue {
       case MapSymbol.WATER:
         return 'water'
       default:
-        const randomTerr = Math.floor(Math.random() * 10)
-        if (randomTerr > 8) {
-          return 'ground'
-        }
-        if (randomTerr > 6) {
-          return 'water'
-        } else {
-          return 'grass'
-        }
+        // const randomTerr = Math.floor(Math.random() * 10)
+        // if (randomTerr > 8) {
+        //   return 'ground'
+        // }
+        // if (randomTerr > 6) {
+        //   return 'water'
+        // } else {
+        return 'grass'
+      // }
     }
   }
 }
@@ -62,9 +62,9 @@ p {
 
 .water {
   background: lightskyblue;
-  border-radius: 50%;
+  /* border-radius: 50%;
   width: 80%;
-  height: 80%;
+  height: 80%; */
 }
 
 .ground {
