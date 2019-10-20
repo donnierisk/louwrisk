@@ -9,19 +9,22 @@
         :key="i"
       />
     </div>
+    <dialogue-box text="Choose a direction" :options="options" @chosen="movePlayer"></dialogue-box>
   </div>
 </template>
 
 <script lang='ts'>
 import { Component, Vue } from 'vue-property-decorator'
 import GridBlock from '@/components/GridBlock.vue'
+import DialogueBox from '@/components/DialogueBox.vue'
 import Grid from '@/lib/grid'
 import { MapSymbol } from '@/models/MapSymbol'
 import { MoveSymbol } from '@/models/MoveSymbol'
 
 @Component({
   components: {
-    GridBlock
+    GridBlock,
+    DialogueBox
   }
 })
 export default class Map extends Vue {
@@ -30,6 +33,12 @@ export default class Map extends Vue {
   public playerPos: number[] = [3, 7]
   public playerPosInArr = 0
   public gridRenderArray: MapSymbol[] = []
+  private options = [
+    MoveSymbol.NORTH,
+    MoveSymbol.SOUTH,
+    MoveSymbol.WEST,
+    MoveSymbol.EAST
+  ]
 
   private created() {
     this.generateGrid()
@@ -59,11 +68,13 @@ export default class Map extends Vue {
     playerX = playerX < 0 ? 0 : playerX
     playerY = playerY < 0 ? 0 : playerY
 
-    this.playerPos[0] = playerX
-    this.playerPos[1] = playerY
+    this.$set(this.playerPos, 0, playerX)
+    this.$set(this.playerPos, 1, playerY)
+    this.generateGrid()
   }
 
   private generateGrid() {
+    this.gridRenderArray = []
     for (let gridRow = 0; gridRow < this.gridSize[0]; gridRow++) {
       for (let gridItem = 0; gridItem < this.gridSize[1]; gridItem++) {
         this.gridRenderArray.push(this.theGrid[gridRow][gridItem])

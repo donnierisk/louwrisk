@@ -10,13 +10,11 @@
 // import LouwRisk from "@/components/Map.vue";
 
 import { Component, Vue } from 'vue-property-decorator'
-import DialogueOption from '@/components/DialogueOption.vue'
 import GameMap from './GameMap.vue'
 
 @Component({
   components: {
-    GameMap,
-    DialogueOption
+    GameMap
   }
 })
 export default class Home extends Vue {}
