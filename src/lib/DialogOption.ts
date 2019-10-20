@@ -1,4 +1,4 @@
-export default interface Dialog {  
+export default interface DialogOption {
   id: number
   text: string
   childIds: number[]
