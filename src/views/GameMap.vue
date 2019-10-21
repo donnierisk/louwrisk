@@ -21,6 +21,7 @@ import Grid from '@/lib/grid'
 import { MapSymbol } from '@/models/MapSymbol'
 import { MoveSymbol } from '@/models/MoveSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
+import { GridPosition } from '@/models/GridPosition'
 
 @Component({
   components: {
@@ -33,7 +34,7 @@ export default class Map extends Vue {
   public theGrid: MapSymbol[][] = Grid
   public gridRenderArray: GridBlockI[] = []
 
-  public playerPos: number[] = [3, 7]
+  public playerPos: GridPosition = { x: 3, y: 7 }
   public playerPosInArr = 0
 
   private observeRange: number[] = [1, 1]
@@ -50,8 +51,8 @@ export default class Map extends Vue {
   }
 
   private movePlayer(direction: MoveSymbol, value: number = 1) {
-    let playerX = this.playerPos[0]
-    let playerY = this.playerPos[1]
+    let playerX = this.playerPos.x
+    let playerY = this.playerPos.y
 
     switch (direction) {
       case MoveSymbol.NORTH:
@@ -73,8 +74,8 @@ export default class Map extends Vue {
     playerX = playerX < 0 ? 0 : playerX
     playerY = playerY < 0 ? 0 : playerY
 
-    this.$set(this.playerPos, 0, playerX)
-    this.$set(this.playerPos, 1, playerY)
+    this.playerPos.x = playerX
+    this.playerPos.y = playerY
     this.generateGrid()
   }
 
@@ -82,17 +83,44 @@ export default class Map extends Vue {
     this.gridRenderArray = []
     for (let gridRow = 0; gridRow < this.gridSize[0]; gridRow++) {
       for (let gridItem = 0; gridItem < this.gridSize[1]; gridItem++) {
-        let gridObj: GridBlockI = {
+        const gridObj: GridBlockI = {
           symbol: this.theGrid[gridRow][gridItem]
         }
 
-        if (gridItem === this.playerPos[0] && gridRow === this.playerPos[1]) {
+        // Check if current gridItem's pos in 2d array matches the playerPos
+        if (gridItem === this.playerPos.x && gridRow === this.playerPos.y) {
           this.playerPosInArr = this.gridRenderArray.length
           gridObj.containsPlayer = true
         }
+
+        if (this.isInObserveRange(gridItem, gridRow)) {
+          gridObj.inObserveRange = true
+        }
+
         this.gridRenderArray.push(gridObj)
       }
     }
+  }
+
+  private isInObserveRange(gridX: number, gridY: number): boolean {
+    const possiblePositionsArr: GridPosition[] = [
+      { x: this.playerPos.x, y: this.playerPos.y },
+      { x: this.playerPos.x - 1, y: this.playerPos.y },
+      { x: this.playerPos.x - 1, y: this.playerPos.y - 1 },
+      { x: this.playerPos.x, y: this.playerPos.y - 1 },
+      { x: this.playerPos.x + 1, y: this.playerPos.y - 1 },
+      { x: this.playerPos.x + 1, y: this.playerPos.y },
+      { x: this.playerPos.x + 1, y: this.playerPos.y + 1 },
+      { x: this.playerPos.x, y: this.playerPos.y + 1 },
+      { x: this.playerPos.x - 1, y: this.playerPos.y + 1 }
+    ]
+
+    for (const possiblePos of possiblePositionsArr) {
+      if (gridX === possiblePos.x && gridY === possiblePos.y) {
+        return true
+      }
+    }
+    return false
   }
 }
 </script>

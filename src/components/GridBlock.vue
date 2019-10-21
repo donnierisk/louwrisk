@@ -1,7 +1,7 @@
 <template>
   <div id="gridItem" :class="gridClass()">
     <img v-if="isRock() === true" src="../assets/rock.png" />
-    <p v-if="gridMeta.containsPlayer === true">8</p>
+    <div v-if="gridMeta.containsPlayer === true" class="player">8</div>
   </div>
 </template>
 
@@ -21,13 +21,17 @@ export default class GridBlock extends Vue {
     return this.gridMeta.symbol === MapSymbol.ROCK
   }
   public gridClass() {
+    let classList = ''
+    if (this.gridMeta.inObserveRange === true) {
+      classList += 'observed '
+    }
     switch (this.gridMeta.symbol) {
       case MapSymbol.GROUND:
-        return 'ground'
+        return classList + 'ground'
       case MapSymbol.ROCK:
-        return 'rock'
+        return classList + 'rock'
       case MapSymbol.WATER:
-        return 'water'
+        return classList + 'water'
       default:
         // const randomTerr = Math.floor(Math.random() * 10)
         // if (randomTerr > 8) {
@@ -36,7 +40,7 @@ export default class GridBlock extends Vue {
         // if (randomTerr > 6) {
         //   return 'water'
         // } else {
-        return 'grass'
+        return classList + 'grass'
       // }
     }
   }
@@ -64,9 +68,6 @@ p {
 
 .water {
   background: lightskyblue;
-  /* border-radius: 50%;
-  width: 80%;
-  height: 80%; */
 }
 
 .ground {
@@ -79,5 +80,23 @@ p {
 
 .grass {
   background: greenyellow;
+}
+
+.observed:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+}
+
+.player {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  color: red;
+  z-index: 1;
 }
 </style>
