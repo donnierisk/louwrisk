@@ -50,20 +50,13 @@ export default class GridBlock extends Vue {
 <style scoped>
 #gridItem {
   position: relative;
+  filter: brightness(50%);
+  z-index: 5;
 }
 
-#gridItem:after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  top: 0;
-  left: 0;
-}
-
-#gridItem.observed:after {
-  content: none;
+#gridItem.observed {
+  opacity: 1;
+  filter: none;
 }
 
 img {
