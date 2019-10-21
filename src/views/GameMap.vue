@@ -85,10 +85,7 @@ export default class Map extends Vue {
       playerY = 0
     }
     if (isOutOfBounds === false) {
-      if (
-        this.theGrid[playerY][playerX] === MapSymbol.ROCK ||
-        this.theGrid[playerY][playerX] === MapSymbol.WATER
-      ) {
+      if (this.theGrid[playerY][playerX] === MapSymbol.ROCK) {
         console.log('Invalid move!')
         playerX = this.playerPos.x
         playerY = this.playerPos.y

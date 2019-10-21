@@ -82,8 +82,8 @@ p {
 
 .water {
   background: lightskyblue;
+  overflow: hidden;
 }
-
 .ground {
   background: #a5742a;
 
@@ -106,5 +106,20 @@ p {
   background: red;
   padding: 5px;
   border-radius: 30%;
+}
+
+.water .player {
+  top: 75%;
+}
+
+.water .player:after {
+  content: '';
+  width: 100%;
+  left: 0;
+  height: 15px;
+  background: lightskyblue;
+  z-index: 11;
+  position: absolute;
+  bottom: 0;
 }
 </style>
