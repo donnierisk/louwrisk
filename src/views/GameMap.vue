@@ -37,7 +37,7 @@ export default class Map extends Vue {
   public playerPos: GridPosition = { x: 3, y: 7 }
   public playerPosInArr = 0
 
-  private observeRange: number[] = [1, 1]
+  private observedItems: MapSymbol[] = []
 
   private options = [
     MoveSymbol.NORTH,
@@ -81,6 +81,8 @@ export default class Map extends Vue {
 
   private generateGrid() {
     this.gridRenderArray = []
+    this.observedItems = []
+
     for (let gridRow = 0; gridRow < this.gridSize[0]; gridRow++) {
       for (let gridItem = 0; gridItem < this.gridSize[1]; gridItem++) {
         const gridObj: GridBlockI = {
@@ -95,6 +97,7 @@ export default class Map extends Vue {
 
         if (this.isInObserveRange(gridItem, gridRow)) {
           gridObj.inObserveRange = true
+          this.observedItems.push(gridObj.symbol)
         }
 
         this.gridRenderArray.push(gridObj)
