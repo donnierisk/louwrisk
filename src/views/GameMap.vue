@@ -156,11 +156,11 @@ export default class Map extends Vue {
 }
 
 #grid {
-  height: 90vh;
-  width: 90vw;
-  background: lightcyan;
+  height: 80vh;
+  width: 70vw;
   display: grid;
   grid-template-columns: auto auto auto auto auto auto auto auto;
   background: greenyellow;
+  border-radius: 20px;
 }
 </style>

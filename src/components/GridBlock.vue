@@ -98,7 +98,7 @@ p {
 
 .player {
   position: absolute;
-  top: 50%;
+  top: 40%;
   left: 50%;
   color: white;
   font-weight: bold;
@@ -109,7 +109,7 @@ p {
 }
 
 .water .player {
-  top: 75%;
+  top: 60%;
 }
 
 .water .player:after {

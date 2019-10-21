@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="dialogue">
     <p>{{ text}}</p>
     <button v-for="(option, i) in options" @click="$emit('chosen', option)" :key="i">{{option}}</button>
   </div>
@@ -17,9 +17,12 @@ export default class DialogueBox extends Vue {
 </script>
 
 <style scoped>
-#container {
+#dialogue {
   border: 2px solid lightgrey;
   padding: 10px;
   border-radius: 20px;
+  margin-top: 10px;
+
+  background: white;
 }
 </style>
