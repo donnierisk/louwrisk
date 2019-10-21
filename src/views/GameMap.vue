@@ -69,10 +69,33 @@ export default class Map extends Vue {
         break
     }
 
-    playerX = playerX >= this.gridSize[0] ? this.gridSize[0] - 1 : playerX
-    playerY = playerY >= this.gridSize[1] ? this.gridSize[1] - 1 : playerY
-    playerX = playerX < 0 ? 0 : playerX
-    playerY = playerY < 0 ? 0 : playerY
+    let isOutOfBounds: boolean = false
+    if (playerX >= this.gridSize[0]) {
+      isOutOfBounds = true
+      playerX = this.gridSize[0] - 1
+    } else if (playerX < 0) {
+      isOutOfBounds = true
+      playerX = 0
+    }
+    if (playerY >= this.gridSize[1]) {
+      isOutOfBounds = true
+      playerY = this.gridSize[1] - 1
+    } else if (playerY < 0) {
+      isOutOfBounds = true
+      playerY = 0
+    }
+    if (isOutOfBounds === false) {
+      if (
+        this.theGrid[playerY][playerX] === MapSymbol.ROCK ||
+        this.theGrid[playerY][playerX] === MapSymbol.WATER
+      ) {
+        console.log('Invalid move!')
+        playerX = this.playerPos.x
+        playerY = this.playerPos.y
+      }
+    } else {
+      console.log('Out of bounds!')
+    }
 
     this.playerPos.x = playerX
     this.playerPos.y = playerY
