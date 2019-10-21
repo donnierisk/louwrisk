@@ -1,25 +1,27 @@
 <template>
   <div id="gridItem" :class="gridClass()">
     <img v-if="isRock() === true" src="../assets/rock.png" />
-    <p v-if="playerPos === posInArr">8</p>
+    <p v-if="gridMeta.containsPlayer === true">8</p>
   </div>
 </template>
 
 <script lang='ts'>
 import { Component, Prop, Vue } from 'vue-property-decorator'
 import { MapSymbol } from '../models/MapSymbol'
+import { GridBlockI } from '../models/GridBlockI'
 
 @Component
 export default class GridBlock extends Vue {
-  @Prop() private type!: MapSymbol
+  @Prop() private gridMeta!: GridBlockI
+
   @Prop() private playerPos!: number
   @Prop() private posInArr!: number
 
   public isRock() {
-    return this.type === MapSymbol.ROCK
+    return this.gridMeta.symbol === MapSymbol.ROCK
   }
   public gridClass() {
-    switch (this.type) {
+    switch (this.gridMeta.symbol) {
       case MapSymbol.GROUND:
         return 'ground'
       case MapSymbol.ROCK:

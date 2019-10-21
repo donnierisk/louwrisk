@@ -3,7 +3,7 @@
     <div id="grid">
       <grid-block
         v-for="(gridItem, i) of gridRenderArray"
-        :type="gridItem"
+        :gridMeta="gridItem"
         :playerPos="playerPosInArr"
         :posInArr="i"
         :key="i"
@@ -20,6 +20,7 @@ import DialogueBox from '@/components/DialogueBox.vue'
 import Grid from '@/lib/grid'
 import { MapSymbol } from '@/models/MapSymbol'
 import { MoveSymbol } from '@/models/MoveSymbol'
+import { GridBlockI } from '@/models/GridBlockI'
 
 @Component({
   components: {
@@ -30,9 +31,13 @@ import { MoveSymbol } from '@/models/MoveSymbol'
 export default class Map extends Vue {
   public gridSize: number[] = [8, 8]
   public theGrid: MapSymbol[][] = Grid
+  public gridRenderArray: GridBlockI[] = []
+
   public playerPos: number[] = [3, 7]
   public playerPosInArr = 0
-  public gridRenderArray: MapSymbol[] = []
+
+  private observeRange: number[] = [1, 1]
+
   private options = [
     MoveSymbol.NORTH,
     MoveSymbol.SOUTH,
@@ -77,13 +82,15 @@ export default class Map extends Vue {
     this.gridRenderArray = []
     for (let gridRow = 0; gridRow < this.gridSize[0]; gridRow++) {
       for (let gridItem = 0; gridItem < this.gridSize[1]; gridItem++) {
-        this.gridRenderArray.push(this.theGrid[gridRow][gridItem])
-        if (gridItem === this.playerPos[0] && gridRow === this.playerPos[1]) {
-          // THIS NEEDS TO BE MADE MORE DYNAMIC. PROP OF PLAYER POS SHOULD BE PASSED
-          // DYNAMICALLY INSTEAD OF EACH GRID ITEM CHECKING,
-          // THEN WE CAN REUSE THAT LOGIC TO PLACE MULTIPLE ITEMS
-          this.playerPosInArr = this.gridRenderArray.length - 1
+        let gridObj: GridBlockI = {
+          symbol: this.theGrid[gridRow][gridItem]
         }
+
+        if (gridItem === this.playerPos[0] && gridRow === this.playerPos[1]) {
+          this.playerPosInArr = this.gridRenderArray.length
+          gridObj.containsPlayer = true
+        }
+        this.gridRenderArray.push(gridObj)
       }
     }
   }
