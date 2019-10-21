@@ -52,6 +52,20 @@ export default class GridBlock extends Vue {
   position: relative;
 }
 
+#gridItem:after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  top: 0;
+  left: 0;
+}
+
+#gridItem.observed:after {
+  content: none;
+}
+
 img {
   position: absolute;
   width: 80%;
@@ -80,16 +94,6 @@ p {
 
 .grass {
   background: greenyellow;
-}
-
-.observed:after {
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  top: 0;
-  left: 0;
 }
 
 .player {
