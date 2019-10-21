@@ -100,7 +100,11 @@ p {
   position: absolute;
   top: 50%;
   left: 50%;
-  color: red;
+  color: white;
+  font-weight: bold;
   z-index: 1;
+  background: red;
+  padding: 5px;
+  border-radius: 30%;
 }
 </style>
