@@ -7,9 +7,11 @@
         :playerPos="playerPosInArr"
         :posInArr="i"
         :key="i"
+        @enter-vision="addToObserver"
+        @leave-vision="removerFromObserver"
       />
     </div>
-    <dialogue-box text="Choose a direction" :options="options" @chosen="movePlayer"></dialogue-box>
+    <dialogue-box text="Choose a direction" :options="options" @on-action="movePlayer"></dialogue-box>
   </div>
 </template>
 
@@ -22,6 +24,7 @@ import { MapSymbol } from '@/models/MapSymbol'
 import { MoveSymbol } from '@/models/MoveSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
+import { Observer } from '@/utils/Observer'
 
 @Component({
   components: {
@@ -38,6 +41,7 @@ export default class Map extends Vue {
   public playerPosInArr = 0
 
   private observedItems: MapSymbol[] = []
+  private observer: Observer = new Observer()
 
   private options = [
     MoveSymbol.NORTH,
@@ -84,14 +88,15 @@ export default class Map extends Vue {
       isOutOfBounds = true
       playerY = 0
     }
+
     if (isOutOfBounds === false) {
       if (this.theGrid[playerY][playerX] === MapSymbol.ROCK) {
-        console.log('Invalid move!')
+        // console.log('Invalid move!')
         playerX = this.playerPos.x
         playerY = this.playerPos.y
       }
     } else {
-      console.log('Out of bounds!')
+      // console.log('Out of bounds!')
     }
 
     this.playerPos.x = playerX
@@ -102,11 +107,11 @@ export default class Map extends Vue {
   private generateGrid() {
     this.gridRenderArray = []
     this.observedItems = []
-
     for (let gridRow = 0; gridRow < this.gridSize[0]; gridRow++) {
       for (let gridItem = 0; gridItem < this.gridSize[1]; gridItem++) {
         const gridObj: GridBlockI = {
-          symbol: this.theGrid[gridRow][gridItem]
+          symbol: this.theGrid[gridRow][gridItem],
+          id: Number(gridItem + '' + gridRow)
         }
 
         // Check if current gridItem's pos in 2d array matches the playerPos
@@ -123,6 +128,13 @@ export default class Map extends Vue {
         this.gridRenderArray.push(gridObj)
       }
     }
+  }
+
+  private addToObserver(grid: GridBlockI) {
+    this.observer.addToObserver(grid)
+  }
+  private removerFromObserver(grid: GridBlockI) {
+    this.observer.removeFromObserver(grid)
   }
 
   private isInObserveRange(gridX: number, gridY: number): boolean {

@@ -1,28 +1,55 @@
 <template>
   <div id="dialogue">
-    <p>{{ text}}</p>
-    <button v-for="(option, i) in options" @click="$emit('chosen', option)" :key="i">{{option}}</button>
+    <div class="text-area">
+      <p v-for="(text, i) in textArray" :key="i">{{text}}</p>
+    </div>
+    <button v-for="(option, i) in options" @click="$emit('on-action', option)" :key="i">{{option}}</button>
   </div>
-</template>
+</template> 
 
 <script lang='ts'>
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import DialogueOption from '@/models/DialogOption'
 
 @Component
 export default class DialogueBox extends Vue {
+  private textArray: string[] = []
+
   @Prop() private text!: string
   @Prop() private options!: DialogueOption[]
+
+  @Watch('text')
+  public onTextAdded(newVal: string) {
+    this.textArray.push(newVal)
+  }
 }
 </script>
 
 <style scoped>
 #dialogue {
-  border: 2px solid lightgrey;
+  border: 1px solid lightgrey;
   padding: 10px;
-  border-radius: 20px;
+  border-radius: 3px;
   margin-top: 10px;
-
+  width: 50vw;
   background: white;
+}
+
+button {
+  border: 1px solid #aad9ff;
+  border-radius: 3px;
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 5px;
+}
+button::-moz-focus-inner {
+  border: 0;
+}
+
+.text-area {
+  height: 300px;
+  overflow-y: auto;
+  background-color: azure;
 }
 </style>
