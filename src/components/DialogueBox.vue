@@ -1,7 +1,7 @@
 <template>
   <div id="dialogue">
     <div class="text-area">
-      <p v-for="(text, i) in textArray" :key="i">{{text}}</p>
+      <p v-for="(txt, i) in text" :key="i">{{txt}}</p>
     </div>
     <button v-for="(option, i) in options" @click="$emit('on-action', option)" :key="i">{{option}}</button>
   </div>
@@ -15,13 +15,8 @@ import DialogueOption from '@/models/DialogOption'
 export default class DialogueBox extends Vue {
   private textArray: string[] = []
 
-  @Prop() private text!: string
+  @Prop() private text!: string[]
   @Prop() private options!: DialogueOption[]
-
-  @Watch('text')
-  public onTextAdded(newVal: string) {
-    this.textArray.push(newVal)
-  }
 }
 </script>
 

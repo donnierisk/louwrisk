@@ -11,7 +11,7 @@
         @leave-vision="removerFromObserver"
       />
     </div>
-    <dialogue-box text="Choose a direction" :options="options" @on-action="movePlayer"></dialogue-box>
+    <dialogue-box :text="text" :options="options" @on-action="movePlayer"></dialogue-box>
   </div>
 </template>
 
@@ -52,6 +52,10 @@ export default class Map extends Vue {
 
   private created() {
     this.generateGrid()
+  }
+
+  private get text() {
+    return this.observer.getText()
   }
 
   private movePlayer(direction: MoveSymbol, value: number = 1) {
