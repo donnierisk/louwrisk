@@ -47,9 +47,9 @@ export default class GridBlock extends Vue {
   @Watch('gridMeta.inObserveRange')
   public onObserveChange(newVal: string) {
     if (newVal) {
-      this.emmit('enter-vision', this.gridMeta.symbol)
+      this.emmit('enter-vision')
     } else {
-      this.emmit('leave-vision', this.gridMeta.symbol)
+      this.emmit('leave-vision')
     }
   }
 
