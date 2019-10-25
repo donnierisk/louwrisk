@@ -13,7 +13,6 @@ import GridBlock from '@/components/GridBlock.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
 import Grid from '@/lib/grid'
 import { MapSymbol } from '@/models/MapSymbol'
-import { MoveSymbol } from '@/models/MoveSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
 import { Observer } from '@/utils/Observer'
@@ -36,43 +35,44 @@ export default class Map extends Vue {
   private observer: Observer = new Observer()
 
   private options = [
-    MoveSymbol.NORTH,
-    MoveSymbol.SOUTH,
-    MoveSymbol.WEST,
-    MoveSymbol.EAST
+    // MoveSymbol.NORTH,
+    // MoveSymbol.SOUTH,
+    // MoveSymbol.WEST,
+    // MoveSymbol.EAST
   ]
 
   private created() {
     this.generateGrid()
+
+    document.addEventListener('keydown', (e) => this.movePlayer(e, 1));
   }
 
   private get text() {
     return this.observer.getText()
   }
 
-  private movePlayer(direction: MoveSymbol, value: number = 1) {
+  private movePlayer(e: KeyboardEvent, amount: number = 1) {
     let playerX = this.playerPos.x
     let playerY = this.playerPos.y
 
-    switch (direction) {
-      case MoveSymbol.NORTH:
-        playerY -= value
+    switch (e.code) {
+      case 'KeyW' || 'ArrowUp':
+        playerY -= amount
         break
-      case MoveSymbol.SOUTH:
-        playerY += value
+      case 'KeyS' || 'ArrowDown':
+        playerY += amount
         break
-      case MoveSymbol.WEST:
-        playerX -= value
+      case 'KeyA' || 'ArrowLeft':
+        playerX -= amount
         break
-      default:
-        playerX += value
+      case 'KeyD' || 'ArrowRight':
+        playerX += amount
         break
     }
 
     if (this.isOutOfBounds(playerX, playerY)) {
       console.log('Out of bounds!')
-    }
-    else if (this.theGrid[playerY][playerX] === MapSymbol.ROCK) {
+    } else if (this.theGrid[playerY][playerX] === MapSymbol.ROCK) {
       console.log('Invalid move!')
     } else {
       this.playerPos.x = playerX
