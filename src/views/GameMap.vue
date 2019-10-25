@@ -1,13 +1,7 @@
 <template>
   <div id="container">
     <div id="grid">
-      <grid-block
-        v-for="(gridItem, i) of gridRenderArray"
-        :gridMeta="gridItem"
-        :playerPos="playerPosInArr"
-        :posInArr="i"
-        :key="i"
-      />
+      <grid-block v-for="(gridItem, i) of gridRenderArray" :gridMeta="gridItem" :playerPos="playerPosInArr" :posInArr="i" :key="i" />
     </div>
     <dialogue-box text="Choose a direction" :options="options" @chosen="movePlayer"></dialogue-box>
   </div>
@@ -69,33 +63,31 @@ export default class Map extends Vue {
         break
     }
 
-    let isOutOfBounds: boolean = false
-    if (playerX >= this.gridSize[0]) {
-      isOutOfBounds = true
-      playerX = this.gridSize[0] - 1
-    } else if (playerX < 0) {
-      isOutOfBounds = true
-      playerX = 0
-    }
-    if (playerY >= this.gridSize[1]) {
-      isOutOfBounds = true
-      playerY = this.gridSize[1] - 1
-    } else if (playerY < 0) {
-      isOutOfBounds = true
-      playerY = 0
-    }
-    if (isOutOfBounds === false) {
-      if (this.theGrid[playerY][playerX] === MapSymbol.ROCK) {
-        console.log('Invalid move!')
-        playerX = this.playerPos.x
-        playerY = this.playerPos.y
-      }
-    } else {
+    // let isOutOfBounds: boolean = false
+    // if (playerX >= this.gridSize[0]) {
+    //   isOutOfBounds = true
+    //   playerX = this.gridSize[0] - 1
+    // } else if (playerX < 0) {
+    //   isOutOfBounds = true
+    //   playerX = 0
+    // }
+    // if (playerY >= this.gridSize[1]) {
+    //   isOutOfBounds = true
+    //   playerY = this.gridSize[1] - 1
+    // } else if (playerY < 0) {
+    //   isOutOfBounds = true
+    //   playerY = 0
+    // }
+    if (this.isOutOfBounds(playerX, playerY)) {
       console.log('Out of bounds!')
     }
+    else if (this.theGrid[playerY][playerX] === MapSymbol.ROCK) {
+      console.log('Invalid move!')
+    } else {
+      this.playerPos.x = playerX
+      this.playerPos.y = playerY
+    }
 
-    this.playerPos.x = playerX
-    this.playerPos.y = playerY
     this.generateGrid()
   }
 
@@ -125,17 +117,44 @@ export default class Map extends Vue {
     }
   }
 
+  private isOutOfBounds(objectX: number, objectY: number) {
+    if (objectX >= this.gridSize[0]) {
+      return true
+    }
+    if (objectX < 0) {
+      return true
+    }
+    if (objectY >= this.gridSize[1]) {
+      return true
+    }
+    if (objectY < 0) {
+      return true
+    }
+    return false;
+  }
+
   private isInObserveRange(gridX: number, gridY: number): boolean {
+
+    const range = 1;
+
+    // const visionArray = [];
+    // startX = this.playerPos.x
+    // for (let i = 0; i < range; i++) {
+    //   for (let k = 0; k < range; k++) {
+    //     visionArray.push({ x: i, y: k })
+    //   }
+    // }
+
     const possiblePositionsArr: GridPosition[] = [
       { x: this.playerPos.x, y: this.playerPos.y },
-      { x: this.playerPos.x - 1, y: this.playerPos.y },
-      { x: this.playerPos.x - 1, y: this.playerPos.y - 1 },
-      { x: this.playerPos.x, y: this.playerPos.y - 1 },
-      { x: this.playerPos.x + 1, y: this.playerPos.y - 1 },
-      { x: this.playerPos.x + 1, y: this.playerPos.y },
-      { x: this.playerPos.x + 1, y: this.playerPos.y + 1 },
-      { x: this.playerPos.x, y: this.playerPos.y + 1 },
-      { x: this.playerPos.x - 1, y: this.playerPos.y + 1 }
+      { x: this.playerPos.x - range, y: this.playerPos.y },
+      { x: this.playerPos.x - range, y: this.playerPos.y - range },
+      { x: this.playerPos.x, y: this.playerPos.y - range },
+      { x: this.playerPos.x + range, y: this.playerPos.y - range },
+      { x: this.playerPos.x + range, y: this.playerPos.y },
+      { x: this.playerPos.x + range, y: this.playerPos.y + range },
+      { x: this.playerPos.x, y: this.playerPos.y + range },
+      { x: this.playerPos.x - range, y: this.playerPos.y + range }
     ]
 
     for (const possiblePos of possiblePositionsArr) {
