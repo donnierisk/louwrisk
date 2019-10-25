@@ -1,9 +1,9 @@
 <template>
   <div id="container">
     <div id="grid">
-      <grid-block v-for="(gridItem, i) of gridRenderArray" :gridMeta="gridItem" :playerPos="playerPosInArr" :posInArr="i" :key="i" />
+      <grid-block v-for="(gridItem, i) of gridRenderArray" :gridMeta="gridItem" :playerPos="playerPosInArr" :posInArr="i" :key="i" @enter-vision="addToObserver" @leave-vision="removerFromObserver" />
     </div>
-    <dialogue-box text="Choose a direction" :options="options" @chosen="movePlayer"></dialogue-box>
+    <dialogue-box :text="text" :options="options" @on-action="movePlayer"></dialogue-box>
   </div>
 </template>
 
@@ -16,6 +16,7 @@ import { MapSymbol } from '@/models/MapSymbol'
 import { MoveSymbol } from '@/models/MoveSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
+import { Observer } from '@/utils/Observer'
 
 @Component({
   components: {
@@ -32,6 +33,7 @@ export default class Map extends Vue {
   public playerPosInArr = 0
 
   private observedItems: MapSymbol[] = []
+  private observer: Observer = new Observer()
 
   private options = [
     MoveSymbol.NORTH,
@@ -42,6 +44,10 @@ export default class Map extends Vue {
 
   private created() {
     this.generateGrid()
+  }
+
+  private get text() {
+    return this.observer.getText()
   }
 
   private movePlayer(direction: MoveSymbol, value: number = 1) {
@@ -79,11 +85,11 @@ export default class Map extends Vue {
   private generateGrid() {
     this.gridRenderArray = []
     this.observedItems = []
-
     for (let gridRow = 0; gridRow < this.gridSize[0]; gridRow++) {
       for (let gridItem = 0; gridItem < this.gridSize[1]; gridItem++) {
         const gridObj: GridBlockI = {
-          symbol: this.theGrid[gridRow][gridItem]
+          symbol: this.theGrid[gridRow][gridItem],
+          id: Number(gridItem + '' + gridRow)
         }
 
         // Check if current gridItem's pos in 2d array matches the playerPos
@@ -116,6 +122,13 @@ export default class Map extends Vue {
       return true
     }
     return false;
+  }
+
+  private addToObserver(grid: GridBlockI) {
+    this.observer.addToObserver(grid)
+  }
+  private removerFromObserver(grid: GridBlockI) {
+    this.observer.removeFromObserver(grid)
   }
 
   private isInObserveRange(gridX: number, gridY: number): boolean {

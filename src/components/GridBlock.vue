@@ -6,14 +6,13 @@
 </template>
 
 <script lang='ts'>
-import { Component, Prop, Vue } from 'vue-property-decorator'
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { MapSymbol } from '../models/MapSymbol'
 import { GridBlockI } from '../models/GridBlockI'
 
 @Component
 export default class GridBlock extends Vue {
   @Prop() private gridMeta!: GridBlockI
-
   @Prop() private playerPos!: number
   @Prop() private posInArr!: number
 
@@ -43,6 +42,19 @@ export default class GridBlock extends Vue {
         return classList + 'grass'
       // }
     }
+  }
+
+  @Watch('gridMeta.inObserveRange')
+  public onObserveChange(newVal: string) {
+    if (newVal) {
+      this.emmit('enter-vision')
+    } else {
+      this.emmit('leave-vision')
+    }
+  }
+
+  private emmit(functionName: string) {
+    this.$emit(functionName, this.gridMeta)
   }
 }
 </script>
