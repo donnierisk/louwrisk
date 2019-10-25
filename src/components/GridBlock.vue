@@ -111,6 +111,7 @@ p {
   background: red;
   padding: 5px;
   border-radius: 30%;
+  display: none;
 }
 
 .water .player {
