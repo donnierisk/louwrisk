@@ -1,7 +1,15 @@
 <template>
   <div id="container">
-    <div id="grid">
-      <grid-block v-for="(gridItem, i) of gridRenderArray" :gridMeta="gridItem" :playerPos="playerPosInArr" :posInArr="i" :key="i" @enter-vision="addToObserver" @leave-vision="removerFromObserver" />
+    <div id="grid" ref="grid">
+      <grid-block
+        v-for="(gridItem, i) of gridRenderArray"
+        :gridMeta="gridItem"
+        :playerPos="playerPosInArr"
+        :posInArr="i"
+        :key="i"
+        @enter-vision="addToObserver"
+        @leave-vision="removerFromObserver"
+      />
     </div>
     <dialogue-box :text="text" :options="options" @on-action="movePlayer"></dialogue-box>
   </div>
@@ -24,8 +32,10 @@ import { Observer } from '@/utils/Observer'
   }
 })
 export default class Map extends Vue {
-  public gridSize: number[] = [8, 8]
+  public gridSize: GridPosition = { x: 8, y: 8 }
   public theGrid: MapSymbol[][] = Grid
+  public blockWidth = 0;
+  public blockHeight = 0;
   public gridRenderArray: GridBlockI[] = []
 
   public playerPos: GridPosition = { x: 3, y: 5 }
@@ -34,6 +44,8 @@ export default class Map extends Vue {
   private observedItems: MapSymbol[] = []
   private observer: Observer = new Observer()
 
+  private throttled = false;
+  private timer = 0;
   private options = [
     // MoveSymbol.NORTH,
     // MoveSymbol.SOUTH,
@@ -44,7 +56,14 @@ export default class Map extends Vue {
   private created() {
     this.generateGrid()
 
-    document.addEventListener('keydown', (e) => this.movePlayer(e, 1));
+    document.addEventListener('keydown', (e) => this.movePlayer(e));
+  }
+
+  private mounted() {
+    // @ts-ignore
+    this.blockWidth = this.$refs.grid.firstChild.clientWidth;
+    // @ts-ignore
+    this.blockHeight = this.$refs.grid.firstChild.clientHeight;
   }
 
   private get text() {
@@ -52,41 +71,47 @@ export default class Map extends Vue {
   }
 
   private movePlayer(e: KeyboardEvent, amount: number = 1) {
-    let playerX = this.playerPos.x
-    let playerY = this.playerPos.y
 
-    switch (e.code) {
-      case 'KeyW' || 'ArrowUp':
-        playerY -= amount
-        break
-      case 'KeyS' || 'ArrowDown':
-        playerY += amount
-        break
-      case 'KeyA' || 'ArrowLeft':
-        playerX -= amount
-        break
-      case 'KeyD' || 'ArrowRight':
-        playerX += amount
-        break
+    if (this.throttled === false) {
+      this.throttled = true;
+      setTimeout(() => this.throttled = false, 1000)
+
+      let playerX = this.playerPos.x
+      let playerY = this.playerPos.y
+
+      switch (e.code) {
+        case 'KeyW' || 'ArrowUp':
+          playerY -= amount
+          break
+        case 'KeyS' || 'ArrowDown':
+          playerY += amount
+          break
+        case 'KeyA' || 'ArrowLeft':
+          playerX -= amount
+          break
+        case 'KeyD' || 'ArrowRight':
+          playerX += amount
+          break
+      }
+
+      if (this.isOutOfBounds(playerX, playerY)) {
+        console.log('Out of bounds!')
+      } else if (this.theGrid[playerY][playerX] === MapSymbol.ROCK) {
+        console.log('Invalid move!')
+      } else {
+        this.playerPos.x = playerX
+        this.playerPos.y = playerY
+      }
+
+      this.generateGrid()
     }
-
-    if (this.isOutOfBounds(playerX, playerY)) {
-      console.log('Out of bounds!')
-    } else if (this.theGrid[playerY][playerX] === MapSymbol.ROCK) {
-      console.log('Invalid move!')
-    } else {
-      this.playerPos.x = playerX
-      this.playerPos.y = playerY
-    }
-
-    this.generateGrid()
   }
 
   private generateGrid() {
     this.gridRenderArray = []
     this.observedItems = []
-    for (let gridRow = 0; gridRow < this.gridSize[0]; gridRow++) {
-      for (let gridItem = 0; gridItem < this.gridSize[1]; gridItem++) {
+    for (let gridRow = 0; gridRow < this.gridSize.x; gridRow++) {
+      for (let gridItem = 0; gridItem < this.gridSize.y; gridItem++) {
         const gridObj: GridBlockI = {
           symbol: this.theGrid[gridRow][gridItem],
           id: Number(gridItem + '' + gridRow)
@@ -109,10 +134,10 @@ export default class Map extends Vue {
   }
 
   private isOutOfBounds(objectX: number, objectY: number) {
-    if (objectX >= this.gridSize[0] || objectX < 0) {
+    if (objectX >= this.gridSize.x || objectX < 0) {
       return true
     }
-    if (objectY >= this.gridSize[1] || objectY < 0) {
+    if (objectY >= this.gridSize.y || objectY < 0) {
       return true
     }
     return false;
@@ -127,7 +152,7 @@ export default class Map extends Vue {
 
   private isInObserveRange(gridX: number, gridY: number): boolean {
 
-    const range = 2;
+    const range = 1;
 
     const minX = this.playerPos.x - range;
     const minY = this.playerPos.y - range;
