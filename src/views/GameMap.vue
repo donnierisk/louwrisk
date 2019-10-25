@@ -40,6 +40,7 @@ export default class Map extends Vue {
 
   public playerPos: GridPosition = { x: 3, y: 5 }
   public playerPosInArr = 0
+  public playerPreviousDirection: string = '';
 
   private observedItems: MapSymbol[] = []
   private observer: Observer = new Observer()
@@ -71,8 +72,8 @@ export default class Map extends Vue {
   }
 
   private movePlayer(e: KeyboardEvent, amount: number = 1) {
-
-    if (this.throttled === false) {
+    if (this.throttled === false || this.playerPreviousDirection !== e.code) {
+      this.playerPreviousDirection = e.code;
       this.throttled = true;
       setTimeout(() => this.throttled = false, 1000)
 
