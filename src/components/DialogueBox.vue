@@ -43,7 +43,7 @@ button::-moz-focus-inner {
 }
 
 .text-area {
-  height: 300px;
+  height: 30px;
   overflow-y: auto;
   background-color: azure;
 }

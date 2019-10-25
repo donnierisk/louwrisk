@@ -29,7 +29,7 @@ export default class Map extends Vue {
   public theGrid: MapSymbol[][] = Grid
   public gridRenderArray: GridBlockI[] = []
 
-  public playerPos: GridPosition = { x: 3, y: 7 }
+  public playerPos: GridPosition = { x: 3, y: 5 }
   public playerPosInArr = 0
 
   private observedItems: MapSymbol[] = []
@@ -127,34 +127,20 @@ export default class Map extends Vue {
 
   private isInObserveRange(gridX: number, gridY: number): boolean {
 
-    const range = 1;
+    const range = 2;
 
-    // const visionArray = [];
-    // startX = this.playerPos.x
-    // for (let i = 0; i < range; i++) {
-    //   for (let k = 0; k < range; k++) {
-    //     visionArray.push({ x: i, y: k })
-    //   }
-    // }
+    const minX = this.playerPos.x - range;
+    const minY = this.playerPos.y - range;
 
-    const possiblePositionsArr: GridPosition[] = [
-      { x: this.playerPos.x, y: this.playerPos.y },
-      { x: this.playerPos.x - range, y: this.playerPos.y },
-      { x: this.playerPos.x - range, y: this.playerPos.y - range },
-      { x: this.playerPos.x, y: this.playerPos.y - range },
-      { x: this.playerPos.x + range, y: this.playerPos.y - range },
-      { x: this.playerPos.x + range, y: this.playerPos.y },
-      { x: this.playerPos.x + range, y: this.playerPos.y + range },
-      { x: this.playerPos.x, y: this.playerPos.y + range },
-      { x: this.playerPos.x - range, y: this.playerPos.y + range }
-    ]
+    const maxX = this.playerPos.x + range;
+    const maxY = this.playerPos.y + range;
 
-    for (const possiblePos of possiblePositionsArr) {
-      if (gridX === possiblePos.x && gridY === possiblePos.y) {
-        return true
-      }
+    if ((gridX >= minX && gridY >= minY) &&
+      (gridX >= minX && gridY <= maxY) &&
+      (gridX <= maxX && gridY >= minY)) {
+      return true
     }
-    return false
+    return false;
   }
 }
 </script>
