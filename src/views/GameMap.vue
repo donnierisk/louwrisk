@@ -46,7 +46,8 @@ export default class Map extends Vue {
   private observer: Observer = new Observer()
 
   private throttled = false;
-  private timer = 0;
+  private moveTimeout: any;
+
   private options = [
     // MoveSymbol.NORTH,
     // MoveSymbol.SOUTH,
@@ -75,7 +76,8 @@ export default class Map extends Vue {
     if (this.throttled === false || this.playerPreviousDirection !== e.code) {
       this.playerPreviousDirection = e.code;
       this.throttled = true;
-      setTimeout(() => this.throttled = false, 1000)
+      clearTimeout(this.moveTimeout)
+      this.moveTimeout = setTimeout(() => this.throttled = false, 1000)
 
       let playerX = this.playerPos.x
       let playerY = this.playerPos.y
