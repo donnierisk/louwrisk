@@ -109,16 +109,10 @@ export default class Map extends Vue {
   }
 
   private isOutOfBounds(objectX: number, objectY: number) {
-    if (objectX >= this.gridSize[0]) {
+    if (objectX >= this.gridSize[0] || objectX < 0) {
       return true
     }
-    if (objectX < 0) {
-      return true
-    }
-    if (objectY >= this.gridSize[1]) {
-      return true
-    }
-    if (objectY < 0) {
+    if (objectY >= this.gridSize[1] || objectY < 0) {
       return true
     }
     return false;
