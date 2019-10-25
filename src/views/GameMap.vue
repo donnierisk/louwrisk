@@ -63,21 +63,6 @@ export default class Map extends Vue {
         break
     }
 
-    // let isOutOfBounds: boolean = false
-    // if (playerX >= this.gridSize[0]) {
-    //   isOutOfBounds = true
-    //   playerX = this.gridSize[0] - 1
-    // } else if (playerX < 0) {
-    //   isOutOfBounds = true
-    //   playerX = 0
-    // }
-    // if (playerY >= this.gridSize[1]) {
-    //   isOutOfBounds = true
-    //   playerY = this.gridSize[1] - 1
-    // } else if (playerY < 0) {
-    //   isOutOfBounds = true
-    //   playerY = 0
-    // }
     if (this.isOutOfBounds(playerX, playerY)) {
       console.log('Out of bounds!')
     }
