@@ -43,7 +43,7 @@ export default class Map extends Vue {
   public gridRenderArray: GridBlockI[] = []
 
   public playerPos: GridPosition = { x: 3, y: 5 }
-  public playerCurrentPosition: any = { x: 0, y: 0 }
+  public playerCurrentRenderedPosition: any = { x: 0, y: 0 }
   public playerPosInArr = 0
 
   private observedItems: MapSymbol[] = []
@@ -55,7 +55,7 @@ export default class Map extends Vue {
   private created() {
     this.generateGrid()
 
-    document.addEventListener('keydown', e => this.movePlayer(e))
+    document.addEventListener('keydown', (e) => this.movePlayer(e))
   }
 
   private get text() {
@@ -98,11 +98,11 @@ export default class Map extends Vue {
     }
   }
 
-  private updatePlayerPosition(position: GridPosition) {
+  private updatePlayerPosition(newPosition: GridPosition) {
     this.throttled = true
     this.animater.animaterUnit(
-      position,
-      this.playerCurrentPosition,
+      newPosition,
+      this.playerCurrentRenderedPosition,
       this.$refs.player as HTMLElement,
       () => {
         this.throttled = false

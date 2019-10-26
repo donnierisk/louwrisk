@@ -54,29 +54,28 @@ export default class GridBlock extends Vue {
   @Watch('gridMeta.inObserveRange')
   public onObserveChange(newVal: string) {
     if (newVal) {
-      this.emmitObserver('enter-vision')
+      this.emitObserver('enter-vision')
     } else {
-      this.emmitObserver('leave-vision')
+      this.emitObserver('leave-vision')
     }
   }
 
   @Watch('gridMeta.containsPlayer')
   public onPositionChange(newVal: boolean) {
     if (newVal) {
-      this.emmitPosition()
+      this.emitPosition()
     }
   }
 
-  private emmitPosition() {
+  private emitPosition() {
     const elem = this.$refs.block as HTMLElement
     const player = this.$refs.player as HTMLElement
-    console.log(player.offsetWidth)
     this.position.x = elem.offsetLeft + elem.offsetWidth / 2
     this.position.y = elem.offsetTop + elem.offsetHeight / 2
     this.$emit('player-pos', this.position)
   }
 
-  private emmitObserver(functionName: string) {
+  private emitObserver(functionName: string) {
     this.$emit(functionName, this.gridMeta)
   }
 }
