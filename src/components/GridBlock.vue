@@ -1,5 +1,5 @@
 <template>
-  <div id="gridItem" :class="gridClass()">
+  <div ref="block" id="gridItem" :class="gridClass()">
     <img v-if="isRock() === true" src="../assets/rock.png" />
     <div v-if="gridMeta.containsPlayer === true" class="player">8</div>
   </div>
@@ -9,6 +9,7 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { MapSymbol } from '../models/MapSymbol'
 import { GridBlockI } from '../models/GridBlockI'
+import { GridPosition } from '../models/GridPosition'
 
 @Component
 export default class GridBlock extends Vue {
@@ -16,9 +17,15 @@ export default class GridBlock extends Vue {
   @Prop() private playerPos!: number
   @Prop() private posInArr!: number
 
+  private position: GridPosition = {
+    x: 0,
+    y: 0
+  }
+
   public isRock() {
     return this.gridMeta.symbol === MapSymbol.ROCK
   }
+
   public gridClass() {
     let classList = ''
     if (this.gridMeta.inObserveRange === true) {
@@ -47,13 +54,30 @@ export default class GridBlock extends Vue {
   @Watch('gridMeta.inObserveRange')
   public onObserveChange(newVal: string) {
     if (newVal) {
-      this.emmit('enter-vision')
+      this.emmitObserver('enter-vision')
     } else {
-      this.emmit('leave-vision')
+      this.emmitObserver('leave-vision')
     }
   }
 
-  private emmit(functionName: string) {
+  @Watch('gridMeta.containsPlayer')
+  public onPositionChange(newVal: boolean) {
+    if (newVal) {
+      this.emmitPosition()
+    }
+  }
+
+  private mounted() {
+    const elem = this.$refs.block as HTMLElement
+    this.position.x = elem.offsetLeft + elem.offsetWidth / 2
+    this.position.y = elem.offsetTop + elem.offsetHeight / 2
+  }
+
+  private emmitPosition() {
+    this.$emit('player-pos', this.position)
+  }
+
+  private emmitObserver(functionName: string) {
     this.$emit(functionName, this.gridMeta)
   }
 }
@@ -103,7 +127,7 @@ p {
 
 .player {
   position: absolute;
-  top: 40%;
+  top: 50%;
   left: 50%;
   color: white;
   font-weight: bold;

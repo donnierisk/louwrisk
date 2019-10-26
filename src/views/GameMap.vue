@@ -10,6 +10,7 @@
         :key="i"
         @enter-vision="addToObserver"
         @leave-vision="removerFromObserver"
+        @player-pos="updatePlayerPosition"
       />
     </div>
     <dialogue-box :text="text" :options="options" @on-action="movePlayer"></dialogue-box>
@@ -26,6 +27,14 @@ import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
 import { Observer } from '@/utils/Observer'
 import { increaseBy, decreaseBy } from '../utils/arithmetic'
+import * as TWEEN from '@tweenjs/tween.js'
+// Setup the animation loop.
+function animate(time: number) {
+  requestAnimationFrame(animate)
+  TWEEN.update(time)
+}
+requestAnimationFrame(animate)
+
 @Component({
   components: {
     GridBlock,
@@ -35,50 +44,23 @@ import { increaseBy, decreaseBy } from '../utils/arithmetic'
 export default class Map extends Vue {
   public gridSize: GridPosition = { x: 8, y: 8 }
   public theGrid: MapSymbol[][] = Grid
-  public blockWidth = 0.00;
-  public blockHeight = 0.00;
+  public blockWidth = 0.0
+  public blockHeight = 0.0
   public gridRenderArray: GridBlockI[] = []
 
   public playerPos: GridPosition = { x: 3, y: 5 }
-  public playerRenderPos: any = { x: 100, y: 0 }
+  public playerCurrentPosition: any = { x: 0, y: 0 }
   public playerPosInArr = 0
 
   private observedItems: MapSymbol[] = []
   private observer: Observer = new Observer()
 
-  private throttled = false;
-  private moveTimeout: any;
-  private moveInterval: any;
-  private options = [
-    // MoveSymbol.NORTH,
-    // MoveSymbol.SOUTH,
-    // MoveSymbol.WEST,
-    // MoveSymbol.EAST
-  ]
+  private throttled = false
 
   private created() {
     this.generateGrid()
 
-    document.addEventListener('keydown', (e) => this.movePlayer(e));
-  }
-
-  private mounted() {
-
-    // @ts-ignore
-    const block = this.$refs.grid.lastChild.getBoundingClientRect();
-
-    if (block.width) {
-      // `width` is available for IE9+
-      this.blockWidth = block.width;
-      this.blockHeight = block.height;
-
-      this.playerRenderPos.x = this.blockWidth * this.playerPos.x + (this.blockWidth / 2);
-      this.playerRenderPos.y = this.blockHeight * this.playerPos.y + (this.blockHeight * 0.3);
-      // @ts-ignore
-      this.$refs.player.style.left = this.playerRenderPos.x + 'px';
-      // @ts-ignore
-      this.$refs.player.style.top = this.playerRenderPos.y + 'px';
-    }
+    document.addEventListener('keydown', e => this.movePlayer(e))
   }
 
   private get text() {
@@ -86,77 +68,45 @@ export default class Map extends Vue {
   }
 
   private movePlayer(e: KeyboardEvent, amount: number = 1) {
-
     // Need to only do stuff if the key is a directional one
     if (this.throttled === false) {
-
       let playerX = this.playerPos.x
       let playerY = this.playerPos.y
-      let moveFunc: any;
-      let playerDirection = '';
 
       switch (e.code) {
         case 'KeyW':
           playerY -= amount
-          moveFunc = () => {
-            this.playerRenderPos.y = decreaseBy(this.playerRenderPos.y, this.blockHeight / 5)
-            // @ts-ignore
-            this.$refs.player.style.top = this.playerRenderPos.y + 'px';
-          }
           break
         case 'KeyS':
           playerY += amount
-          moveFunc = () => {
-            this.playerRenderPos.y = increaseBy(this.playerRenderPos.y, this.blockHeight / 5)
-            // @ts-ignore
-            this.$refs.player.style.top = this.playerRenderPos.y + 'px';
-          }
           break
         case 'KeyA':
           playerX -= amount
-          moveFunc = () => {
-            this.playerRenderPos.x = decreaseBy(this.playerRenderPos.x, this.blockWidth / 5)
-            // @ts-ignore
-            this.$refs.player.style.left = this.playerRenderPos.x + 'px';
-          }
+
           break
         case 'KeyD':
           playerX += amount
-          moveFunc = () => {
-            this.playerRenderPos.x = increaseBy(this.playerRenderPos.x, this.blockWidth / 5)
-            // @ts-ignore
-            this.$refs.player.style.left = this.playerRenderPos.x + 'px';
-          }
+
           break
       }
 
       if (this.isOutOfBounds(playerX, playerY)) {
-        console.log('Out of bounds!')
+        // console.log('Out of bounds!')
       } else if (this.theGrid[playerY][playerX] === MapSymbol.ROCK) {
-        console.log('Invalid move!')
+        // console.log('Invalid move!')
       } else {
-
         // Successful move into grid
         this.playerPos.x = playerX
         this.playerPos.y = playerY
-
-        this.throttled = true;
-
-        // moves at a rate of 50 ms for a total of 500 ms (time it takes for throttle to finish)
-        this.moveInterval = setInterval(() => {
-          moveFunc();
-        }, 100);
-
-        clearTimeout(this.moveTimeout)
-        this.moveTimeout = setTimeout(() => {
-          this.throttled = false
-          clearInterval(this.moveInterval)
-          this.generateGrid()
-        }, 500)
-
+        this.generateGrid()
       }
-
     }
+  }
+
+  private updatePlayerPosition(position: GridPosition) {
+    this.throttled = true
+    this.animaterUnit(position, this.playerCurrentPosition, this.$refs
+      .player as HTMLElement)
   }
 
   private generateGrid() {
@@ -192,7 +142,25 @@ export default class Map extends Vue {
     if (objectY >= this.gridSize.y || objectY < 0) {
       return true
     }
-    return false;
+    return false
+  }
+
+  private animaterUnit(
+    unitCoords: GridPosition,
+    currentCoords: GridPosition,
+    box: HTMLElement
+  ) {
+    const tween = new TWEEN.Tween(currentCoords)
+      .to({ x: unitCoords.x, y: unitCoords.y }, 1000)
+      .easing(TWEEN.Easing.Quadratic.Out)
+      .onUpdate(() => {
+        box.style.setProperty('left', currentCoords.x + 'px')
+        box.style.setProperty('top', currentCoords.y + 'px')
+      })
+      .start()
+      .onComplete(() => {
+        this.throttled = false
+      })
   }
 
   private addToObserver(grid: GridBlockI) {
@@ -203,21 +171,23 @@ export default class Map extends Vue {
   }
 
   private isInObserveRange(gridX: number, gridY: number): boolean {
+    const range = 1
 
-    const range = 1;
+    const minX = this.playerPos.x - range
+    const minY = this.playerPos.y - range
 
-    const minX = this.playerPos.x - range;
-    const minY = this.playerPos.y - range;
+    const maxX = this.playerPos.x + range
+    const maxY = this.playerPos.y + range
 
-    const maxX = this.playerPos.x + range;
-    const maxY = this.playerPos.y + range;
-
-    if ((gridX >= minX && gridY >= minY) &&
+    if (
+      gridX >= minX &&
+      gridY >= minY &&
       (gridX >= minX && gridY <= maxY) &&
-      (gridX <= maxX && gridY >= minY)) {
+      (gridX <= maxX && gridY >= minY)
+    ) {
       return true
     }
-    return false;
+    return false
   }
 }
 </script>
