@@ -13,7 +13,7 @@
         @player-pos="updatePlayerPosition"
       />
     </div>
-    <dialogue-box :text="text" :options="options" @on-action="movePlayer"></dialogue-box>
+    <dialogue-box :text="text" @on-action="movePlayer"></dialogue-box>
   </div>
 </template>
 
@@ -26,14 +26,8 @@ import { MapSymbol } from '@/models/MapSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
 import { Observer } from '@/utils/Observer'
+import { Animate } from '@/utils/Animate'
 import { increaseBy, decreaseBy } from '../utils/arithmetic'
-import * as TWEEN from '@tweenjs/tween.js'
-// Setup the animation loop.
-function animate(time: number) {
-  requestAnimationFrame(animate)
-  TWEEN.update(time)
-}
-requestAnimationFrame(animate)
 
 @Component({
   components: {
@@ -54,6 +48,7 @@ export default class Map extends Vue {
 
   private observedItems: MapSymbol[] = []
   private observer: Observer = new Observer()
+  private animater: Animate = new Animate()
 
   private throttled = false
 
@@ -105,8 +100,14 @@ export default class Map extends Vue {
 
   private updatePlayerPosition(position: GridPosition) {
     this.throttled = true
-    this.animaterUnit(position, this.playerCurrentPosition, this.$refs
-      .player as HTMLElement)
+    this.animater.animaterUnit(
+      position,
+      this.playerCurrentPosition,
+      this.$refs.player as HTMLElement,
+      () => {
+        this.throttled = false
+      }
+    )
   }
 
   private generateGrid() {
@@ -143,24 +144,6 @@ export default class Map extends Vue {
       return true
     }
     return false
-  }
-
-  private animaterUnit(
-    unitCoords: GridPosition,
-    currentCoords: GridPosition,
-    box: HTMLElement
-  ) {
-    const tween = new TWEEN.Tween(currentCoords)
-      .to({ x: unitCoords.x, y: unitCoords.y }, 1000)
-      .easing(TWEEN.Easing.Quadratic.Out)
-      .onUpdate(() => {
-        box.style.setProperty('left', currentCoords.x + 'px')
-        box.style.setProperty('top', currentCoords.y + 'px')
-      })
-      .start()
-      .onComplete(() => {
-        this.throttled = false
-      })
   }
 
   private addToObserver(grid: GridBlockI) {
@@ -204,7 +187,8 @@ export default class Map extends Vue {
   height: 80vh;
   width: 70vw;
   display: grid;
-  grid-template-columns: auto auto auto auto auto auto auto auto;
+  grid-template-columns: repeat(7, 1fr) minmax(0, 1fr);
+  grid-template-rows: repeat(7, 1fr) minmax(0, 1fr);
   background: black;
   border-radius: 20px;
 }

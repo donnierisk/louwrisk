@@ -1,7 +1,7 @@
 <template>
   <div ref="block" id="gridItem" :class="gridClass()">
     <img v-if="isRock() === true" src="../assets/rock.png" />
-    <div v-if="gridMeta.containsPlayer === true" class="player">8</div>
+    <div ref="player" v-show="gridMeta.containsPlayer === true" class="player">8</div>
   </div>
 </template>
 
@@ -67,13 +67,12 @@ export default class GridBlock extends Vue {
     }
   }
 
-  private mounted() {
+  private emmitPosition() {
     const elem = this.$refs.block as HTMLElement
+    const player = this.$refs.player as HTMLElement
+    console.log(player.offsetWidth)
     this.position.x = elem.offsetLeft + elem.offsetWidth / 2
     this.position.y = elem.offsetTop + elem.offsetHeight / 2
-  }
-
-  private emmitPosition() {
     this.$emit('player-pos', this.position)
   }
 
@@ -86,6 +85,9 @@ export default class GridBlock extends Vue {
 <style scoped>
 #gridItem {
   position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   filter: brightness(50%);
   z-index: 5;
 }
@@ -93,6 +95,7 @@ export default class GridBlock extends Vue {
 #gridItem.observed {
   opacity: 1;
   filter: none;
+  transition: filter 470ms ease-out;
 }
 
 img {
@@ -126,16 +129,15 @@ p {
 }
 
 .player {
-  position: absolute;
-  top: 50%;
-  left: 50%;
   color: white;
   font-weight: bold;
+  width: 10px;
+  height: 20px;
   z-index: 1;
   background: red;
   padding: 5px;
   border-radius: 30%;
-  display: none;
+  opacity: 0;
 }
 
 .water .player {
