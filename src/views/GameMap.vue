@@ -113,7 +113,7 @@ export default class Map extends Vue {
     }
   }
 
-  private updatePlayerPosition(newPosition: GridPosition) {
+  private updatePlayerPosition(newPosition: GridPosition, isInitial?: boolean) {
     this.throttled = true
     this.animater.animaterUnit(
       newPosition,
@@ -123,8 +123,9 @@ export default class Map extends Vue {
         this.$refs.player.style.zIndex = newPosition.z
       },
       () => {
-        this.$refs.player.style.zIndex = this.playerPos.y + 1
-      }
+        this.$refs.player.style.zIndex = 10000
+      },
+      isInitial
     )
   }
 

@@ -6,10 +6,9 @@ export class Animate {
     unitCoords: GridPosition,
     box: HTMLElement,
     callback: () => void,
-    startCallBack: () => void = () => { },
+    startCallBack?: () => void,
+    isInitial?: boolean,
   ) {
-    TweenLite.to(
-      box, 0.5,
-      { left: unitCoords.x, top: unitCoords.y, ease: Linear.easeNone, onComplete: () => callback(), onStart: () => startCallBack() })
+    TweenLite.to(box, isInitial === true ? 0 : 0.5, { left: unitCoords.x, top: unitCoords.y, ease: Linear.easeNone, onComplete: () => callback(), onStart: () => startCallBack() })
   }
 }

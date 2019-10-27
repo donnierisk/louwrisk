@@ -24,6 +24,12 @@ export default class GridBlock extends Vue {
     z: this.zIndex
   }
 
+  mounted() {
+    if (this.gridMeta.containsPlayer === true) {
+      this.emitPosition(true)
+    }
+  }
+
   public isRock() {
     return this.gridMeta.symbol === MapSymbol.ROCK
   }
@@ -69,13 +75,14 @@ export default class GridBlock extends Vue {
     }
   }
 
-  private emitPosition() {
+  private emitPosition(isInitial?: boolean) {
     const elem = this.$refs.block as HTMLElement
     const player = this.$refs.player as HTMLElement
     this.position.x = elem.offsetLeft + elem.offsetWidth / 2
     this.position.y = elem.offsetTop + elem.offsetHeight / 2
     this.position.z = this.zIndex
     this.$emit('player-pos', this.position)
+    this.$emit('player-pos', this.position, isInitial)
   }
 
   private emitObserver(functionName: string) {
