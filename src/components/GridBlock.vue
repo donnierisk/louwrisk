@@ -23,17 +23,17 @@ export default class GridBlock extends Vue {
     z: this.gridMeta.zIndex
   }
 
-  public mounted() {
+  private mounted() {
     if (this.gridMeta.containsPlayer === true) {
       this.emitPosition(true)
     }
   }
 
-  public isRock() {
+  private isRock() {
     return this.gridMeta.symbol === MapSymbol.ROCK
   }
 
-  public gridClass() {
+  private gridClass() {
     let classList = ''
     if (this.gridMeta.inObserveRange === true) {
       classList += 'observed '
@@ -59,7 +59,7 @@ export default class GridBlock extends Vue {
   }
 
   @Watch('gridMeta.inObserveRange')
-  public onObserveChange(newVal: string) {
+  private onObserveChange(newVal: string) {
     if (newVal) {
       this.emitObserver('enter-vision')
     } else {
@@ -68,7 +68,7 @@ export default class GridBlock extends Vue {
   }
 
   @Watch('gridMeta.containsPlayer')
-  public onPositionChange(newVal: boolean) {
+  private onPositionChange(newVal: boolean) {
     if (newVal) {
       this.emitPosition()
     }

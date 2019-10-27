@@ -25,21 +25,22 @@
         <div id="new-player" ref="player">7</div>
       </div>
     </div>
-    <dialogue-box :text="text" @on-action="movePlayer"></dialogue-box>
+    <dialogue-box :text="text" @on-action="onAction" :options="actions"></dialogue-box>
   </div>
 </template>
 
 <script lang='ts'>
-import { Component, Vue, Prop } from 'vue-property-decorator'
+import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import GridBlock from '@/components/GridBlock.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
-import Grid from '@/lib/grid'
+import Grid from '@/lib/Grid'
 import { MapSymbol } from '@/models/MapSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
 import { Observer } from '@/utils/Observer'
 import { Animate } from '@/utils/Animate'
 import { increaseBy, decreaseBy } from '../utils/arithmetic'
+import DialogOption from '@/models/DialogOption'
 
 @Component({
   components: {
@@ -56,21 +57,18 @@ export default class Map extends Vue {
     }
   }
 
-  private get text() {
-    return this.observer.getText()
-  }
+  private theGrid: MapSymbol[][] = Grid
+  private blockWidth = 0.0
+  private blockHeight = 0.0
+  private gridRenderArray: GridBlockI[] = []
 
-  public theGrid: MapSymbol[][] = Grid
-  public blockWidth = 0.0
-  public blockHeight = 0.0
-  public gridRenderArray: GridBlockI[] = []
-
-  public playerPos: GridPosition = { x: 3, y: 5, z: 1 }
-  public playerCurrentRenderedPosition: any = { x: 0, y: 0 }
-  public playerPosInArr = 0
+  private playerPos: GridPosition = { x: 3, y: 5, z: 1 }
+  private playerCurrentRenderedPosition: any = { x: 0, y: 0 }
+  private playerPosInArr = 0
   @Prop() private blockSize!: GridPosition
 
   private observedItems: MapSymbol[] = []
+
   private observer: Observer = new Observer()
   private animater: Animate = new Animate()
 
@@ -82,6 +80,25 @@ export default class Map extends Vue {
     document.addEventListener('keydown', (e: KeyboardEvent) =>
       this.movePlayer(e)
     )
+  }
+
+  private get text() {
+    return this.observer.getText()
+  }
+
+  private get actions(): DialogOption[] {
+    if (this.observer.hasObservedEntities() === true) {
+      const ids = this.observer
+        .getObservedEntities()
+        .map((entity: GridBlockI) => entity.id)
+      return [{ id: 1, text: 'observe', childIds: ids }]
+    } else {
+      return [{ id: 0, text: 'nothing to do', childIds: [] }]
+    }
+  }
+
+  private onAction(option: DialogOption) {
+    console.log('TRIGGER ACTION:', JSON.stringify(option))
   }
 
   private movePlayer(e: KeyboardEvent, amount: number = 1) {
