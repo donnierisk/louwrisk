@@ -5,7 +5,7 @@
       id="grid"
       ref="grid"
       :style="`grid-template-columns: repeat(${gridSize.x - 1}, 1fr) minmax(0, 1fr);
-    grid-template-rows: repeat(${gridSize.x - 1}, 1fr) minmax(0, 1fr)`"
+    grid-template-rows: repeat(${gridSize.y - 1}, 1fr) minmax(0, 1fr)`"
     >
       <div id="new-player" ref="player">7</div>
       <grid-block
@@ -196,8 +196,8 @@ export default class Map extends Vue {
 
 #grid {
   position: relative;
-  /* height: 80vh;
-  width: 70vw; */
+  height: 80vh;
+  width: 70vw;
   display: grid;
   background: black;
   border-radius: 20px;
