@@ -55,7 +55,9 @@ export default class Map extends Vue {
   private created() {
     this.generateGrid()
 
-    document.addEventListener('keydown', (e) => this.movePlayer(e))
+    document.addEventListener('keydown', (e: KeyboardEvent) =>
+      this.movePlayer(e)
+    )
   }
 
   private get text() {
@@ -102,7 +104,6 @@ export default class Map extends Vue {
     this.throttled = true
     this.animater.animaterUnit(
       newPosition,
-      this.playerCurrentRenderedPosition,
       this.$refs.player as HTMLElement,
       () => {
         this.throttled = false
