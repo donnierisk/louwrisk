@@ -7,7 +7,6 @@
       :style="`grid-template-columns: repeat(${gridSize.x - 1}, 1fr) minmax(0, 1fr);
     grid-template-rows: repeat(${gridSize.y - 1}, 1fr) minmax(0, 1fr)`"
     >
-      <div id="new-player" ref="player">7</div>
       <grid-block
         v-for="(gridItem, i) of gridRenderArray"
         :gridMeta="gridItem"
@@ -18,6 +17,7 @@
         @leave-vision="removerFromObserver"
         @player-pos="updatePlayerPosition"
       />
+      <div id="new-player" ref="player">7</div>
     </div>
     <dialogue-box :text="text" @on-action="movePlayer"></dialogue-box>
   </div>
@@ -111,14 +111,15 @@ export default class Map extends Vue {
     }
   }
 
-  private updatePlayerPosition(newPosition: GridPosition) {
+  private updatePlayerPosition(newPosition: GridPosition, isInitial?: boolean) {
     this.throttled = true
     this.animater.animaterUnit(
       newPosition,
       this.$refs.player as HTMLElement,
       () => {
         this.throttled = false
-      }
+      },
+      isInitial
     )
   }
 
