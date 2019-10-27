@@ -1,5 +1,5 @@
 import { GridPosition } from '@/models/GridPosition'
-import { TweenLite } from 'gsap'
+import { TweenLite, Linear } from 'gsap'
 
 export class Animate {
   public animaterUnit(
@@ -7,7 +7,9 @@ export class Animate {
     box: HTMLElement,
     callback: () => void
   ) {
-    TweenLite.to(box, 1, { left: unitCoords.x, top: unitCoords.y, onComplete: () => callback() })
+    TweenLite.to(
+      box, 0.5,
+      { left: unitCoords.x, top: unitCoords.y, ease: Linear.easeNone, onComplete: () => callback() })
 
   }
 }

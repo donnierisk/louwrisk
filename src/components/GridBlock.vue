@@ -1,7 +1,7 @@
 <template>
   <div ref="block" id="gridItem" :class="gridClass()">
     <img v-if="isRock() === true" src="../assets/rock.png" />
-    <div ref="player" v-show="gridMeta.containsPlayer === true" class="player">8</div>
+    <div ref="player" v-if="gridMeta.containsPlayer === true" class="player">8</div>
   </div>
 </template>
 

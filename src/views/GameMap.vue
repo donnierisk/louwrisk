@@ -1,6 +1,12 @@
 <template>
   <div id="container">
-    <div id="grid" ref="grid">
+    <!-- grid-template-columns: repeat(7, 1fr) minmax(0, 1fr); -->
+    <div
+      id="grid"
+      ref="grid"
+      :style="`grid-template-columns: repeat(${gridSize.x - 1}, 1fr) minmax(0, 1fr);
+    grid-template-rows: repeat(${gridSize.x - 1}, 1fr) minmax(0, 1fr)`"
+    >
       <div id="new-player" ref="player">7</div>
       <grid-block
         v-for="(gridItem, i) of gridRenderArray"
@@ -36,7 +42,6 @@ import { increaseBy, decreaseBy } from '../utils/arithmetic'
   }
 })
 export default class Map extends Vue {
-  public gridSize: GridPosition = { x: 8, y: 8 }
   public theGrid: MapSymbol[][] = Grid
   public blockWidth = 0.0
   public blockHeight = 0.0
@@ -52,6 +57,12 @@ export default class Map extends Vue {
 
   private throttled = false
 
+  private get gridSize(): GridPosition {
+    return {
+      x: this.theGrid[0].length,
+      y: this.theGrid.length
+    }
+  }
   private created() {
     this.generateGrid()
 
@@ -114,8 +125,8 @@ export default class Map extends Vue {
   private generateGrid() {
     this.gridRenderArray = []
     this.observedItems = []
-    for (let gridRow = 0; gridRow < this.gridSize.x; gridRow++) {
-      for (let gridItem = 0; gridItem < this.gridSize.y; gridItem++) {
+    for (let gridRow = 0; gridRow < this.gridSize.y; gridRow++) {
+      for (let gridItem = 0; gridItem < this.gridSize.x; gridItem++) {
         const gridObj: GridBlockI = {
           symbol: this.theGrid[gridRow][gridItem],
           id: Number(gridItem + '' + gridRow)
@@ -185,11 +196,9 @@ export default class Map extends Vue {
 
 #grid {
   position: relative;
-  height: 80vh;
-  width: 70vw;
+  /* height: 80vh;
+  width: 70vw; */
   display: grid;
-  grid-template-columns: repeat(7, 1fr) minmax(0, 1fr);
-  grid-template-rows: repeat(7, 1fr) minmax(0, 1fr);
   background: black;
   border-radius: 20px;
 }
