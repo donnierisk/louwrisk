@@ -1,33 +1,39 @@
 <template>
   <div id="container">
     <!-- grid-template-columns: repeat(7, 1fr) minmax(0, 1fr); -->
-    <div
-      id="grid"
-      ref="grid"
-      :style="`grid-template-columns: repeat(${gridSize.x - 1}, 1fr) minmax(0, 1fr);
-    grid-template-rows: repeat(${gridSize.y - 1}, 1fr) minmax(0, 1fr)`"
-    >
-      <grid-block
-        v-for="(gridItem, i) of gridRenderArray"
-        :gridMeta="gridItem"
-        :playerPos="playerPosInArr"
-        :posInArr="i"
-        :key="i"
-        @enter-vision="addToObserver"
-        @leave-vision="removerFromObserver"
-        @player-pos="updatePlayerPosition"
-      />
-      <div id="new-player" ref="player">7</div>
+    <div class="stage">
+      <div
+        id="grid"
+        ref="grid"
+        :style="`
+          grid-template-columns: repeat(${gridSize.x - 1}, ${blockSize.x}px) minmax(0, ${blockSize.x}px);
+          grid-template-rows: repeat(${gridSize.y - 1}, ${blockSize.y}px) minmax(0, ${blockSize.y}px);
+          width:${blockSize.x*gridSize.x}px;height:${blockSize.y*gridSize.y}px;
+        `"
+      >
+        <grid-block
+          v-for="(gridItem, i) of gridRenderArray"
+          :gridMeta="gridItem"
+          :playerPos="playerPosInArr"
+          :size="blockSize"
+          :posInArr="i"
+          :key="i"
+          @enter-vision="addToObserver"
+          @leave-vision="removerFromObserver"
+          @player-pos="updatePlayerPosition"
+        />
+        <div id="new-player" ref="player">7</div>
+      </div>
     </div>
-    <dialogue-box :text="text" @on-action="movePlayer" :options="actions"></dialogue-box>
+    <dialogue-box :text="text" @on-action="onAction" :options="actions"></dialogue-box>
   </div>
 </template>
 
 <script lang='ts'>
-import { Component, Vue, Watch } from 'vue-property-decorator'
+import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import GridBlock from '@/components/GridBlock.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
-import Grid from '@/lib/grid'
+import Grid from '@/lib/Grid'
 import { MapSymbol } from '@/models/MapSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
@@ -43,14 +49,16 @@ import DialogOption from '@/models/DialogOption'
   }
 })
 export default class Map extends Vue {
-  public theGrid: MapSymbol[][] = Grid
-  public blockWidth = 0.0
-  public blockHeight = 0.0
-  public gridRenderArray: GridBlockI[] = []
+  @Prop() private blockSize: GridPosition = { x: 130, y: 90, z: 0 }
 
-  public playerPos: GridPosition = { x: 3, y: 5, z: 1 }
-  public playerCurrentRenderedPosition: any = { x: 0, y: 0 }
-  public playerPosInArr = 0
+  private theGrid: MapSymbol[][] = Grid
+  private blockWidth = 0.0
+  private blockHeight = 0.0
+  private gridRenderArray: GridBlockI[] = []
+
+  private playerPos: GridPosition = { x: 3, y: 5, z: 1 }
+  private playerCurrentRenderedPosition: any = { x: 0, y: 0 }
+  private playerPosInArr = 0
 
   private observedItems: MapSymbol[] = []
 
@@ -80,10 +88,15 @@ export default class Map extends Vue {
 
   private get actions(): DialogOption[] {
     if (this.observer.hasObservedEntities() === true) {
-      return [{ id: 1, text: 'observe', childIds: [] }]
+      const ids = this.observer.getObservedEntities().map(entity => entity.id)
+      return [{ id: 1, text: 'observe', childIds: ids }]
     } else {
       return [{ id: 0, text: 'nothing to do', childIds: [] }]
     }
+  }
+
+  private onAction(option: DialogOption) {
+    console.log('TRIGGER ACTION:', JSON.stringify(option))
   }
 
   private movePlayer(e: KeyboardEvent, amount: number = 1) {
@@ -218,11 +231,17 @@ export default class Map extends Vue {
 
 #grid {
   position: relative;
-  height: 80vh;
-  width: 70vw;
   display: grid;
-  background: black;
   border-radius: 20px;
+}
+
+.stage {
+  background: black;
+  width: 100vw;
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  overflow: auto;
 }
 
 #new-player {

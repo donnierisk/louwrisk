@@ -1,5 +1,5 @@
 <template>
-  <div ref="block" id="gridItem" :class="gridClass()" :style="`z-index: ${gridMeta.zIndex}`">
+  <div ref="block" id="gridItem" :class="gridClass()" :style="`z-index: ${gridMeta.zIndex};`">
     <img v-if="isRock() === true" src="../assets/rock.png" />
     <div ref="player" v-if="gridMeta.containsPlayer === true" class="player">8</div>
   </div>
@@ -23,17 +23,17 @@ export default class GridBlock extends Vue {
     z: this.gridMeta.zIndex
   }
 
-  mounted() {
+  private mounted() {
     if (this.gridMeta.containsPlayer === true) {
       this.emitPosition(true)
     }
   }
 
-  public isRock() {
+  private isRock() {
     return this.gridMeta.symbol === MapSymbol.ROCK
   }
 
-  public gridClass() {
+  private gridClass() {
     let classList = ''
     if (this.gridMeta.inObserveRange === true) {
       classList += 'observed '
@@ -59,7 +59,7 @@ export default class GridBlock extends Vue {
   }
 
   @Watch('gridMeta.inObserveRange')
-  public onObserveChange(newVal: string) {
+  private onObserveChange(newVal: string) {
     if (newVal) {
       this.emitObserver('enter-vision')
     } else {
@@ -68,7 +68,7 @@ export default class GridBlock extends Vue {
   }
 
   @Watch('gridMeta.containsPlayer')
-  public onPositionChange(newVal: boolean) {
+  private onPositionChange(newVal: boolean) {
     if (newVal) {
       this.emitPosition()
     }
@@ -108,7 +108,7 @@ export default class GridBlock extends Vue {
 
 img {
   position: absolute;
-  width: 80%;
+  width: 100%;
   height: auto;
   bottom: 0;
   left: 0;
