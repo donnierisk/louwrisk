@@ -13,7 +13,6 @@
         :playerPos="playerPosInArr"
         :posInArr="i"
         :key="i"
-        :z-index="i"
         @enter-vision="addToObserver"
         @leave-vision="removerFromObserver"
         @player-pos="updatePlayerPosition"
@@ -115,15 +114,20 @@ export default class Map extends Vue {
 
   private updatePlayerPosition(newPosition: GridPosition, isInitial?: boolean) {
     this.throttled = true
+    let block = this.$refs.player as HTMLElement
     this.animater.animaterUnit(
       newPosition,
-      this.$refs.player as HTMLElement,
+      block,
       () => {
         this.throttled = false
-        this.$refs.player.style.zIndex = newPosition.z
+        block.style.zIndex = newPosition.z.toString()
       },
       () => {
-        this.$refs.player.style.zIndex = 10000
+        const curIndex = Number.parseInt(
+          block.style.zIndex ? block.style.zIndex : ''
+        )
+        if (curIndex < this.playerPos.y)
+          block.style.zIndex = this.playerPos.y.toString()
       },
       isInitial
     )
@@ -136,7 +140,8 @@ export default class Map extends Vue {
       for (let gridItem = 0; gridItem < this.gridSize.x; gridItem++) {
         const gridObj: GridBlockI = {
           symbol: this.theGrid[gridRow][gridItem],
-          id: Number(gridItem + '' + gridRow)
+          id: Number(gridItem + '' + gridRow),
+          zIndex: gridRow
         }
 
         // Check if current gridItem's pos in 2d array matches the playerPos
