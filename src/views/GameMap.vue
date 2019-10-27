@@ -15,7 +15,6 @@
           v-for="(gridItem, i) of gridRenderArray"
           :gridMeta="gridItem"
           :playerPos="playerPosInArr"
-          :size="blockSize"
           :posInArr="i"
           :key="i"
           @enter-vision="addToObserver"
@@ -139,20 +138,22 @@ export default class Map extends Vue {
 
   private updatePlayerPosition(newPosition: GridPosition, isInitial?: boolean) {
     this.throttled = true
-    const block = this.$refs.player as HTMLElement
+    const playerEl = this.$refs.player as HTMLElement
     const startCallback = () => {
       this.throttled = false
-      block.style.zIndex = newPosition.z.toString()
+      playerEl.style.zIndex = newPosition.z.toString()
     }
     const endCallback = () => {
-      const curIndex = parseInt(block.style.zIndex ? block.style.zIndex : '', 8)
+      const curIndex = Number(
+        playerEl.style.zIndex ? playerEl.style.zIndex : ''
+      )
       if (curIndex < this.playerPos.y) {
-        block.style.zIndex = this.playerPos.y.toString()
+        playerEl.style.zIndex = this.playerPos.y.toString()
       }
     }
     this.animater.animaterUnit(
       newPosition,
-      block,
+      playerEl,
       startCallback,
       endCallback,
       isInitial
