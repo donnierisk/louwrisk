@@ -1,30 +1,36 @@
 <template>
   <div id="container">
     <!-- grid-template-columns: repeat(7, 1fr) minmax(0, 1fr); -->
-    <div
-      id="grid"
-      ref="grid"
-      :style="`grid-template-columns: repeat(${gridSize.x - 1}, 1fr) minmax(0, 1fr);
-    grid-template-rows: repeat(${gridSize.y - 1}, 1fr) minmax(0, 1fr)`"
-    >
-      <grid-block
-        v-for="(gridItem, i) of gridRenderArray"
-        :gridMeta="gridItem"
-        :playerPos="playerPosInArr"
-        :posInArr="i"
-        :key="i"
-        @enter-vision="addToObserver"
-        @leave-vision="removerFromObserver"
-        @player-pos="updatePlayerPosition"
-      />
-      <div id="new-player" ref="player">7</div>
+    <div class="stage">
+      <div
+        id="grid"
+        ref="grid"
+        :style="`
+          grid-template-columns: repeat(${gridSize.x - 1}, ${blockSize.x}px) minmax(0, ${blockSize.x}px);
+          grid-template-rows: repeat(${gridSize.y - 1}, ${blockSize.y}px) minmax(0, ${blockSize.y}px);
+          width:${blockSize.x*gridSize.x}px;height:${blockSize.y*gridSize.y}px;
+        `"
+      >
+        <grid-block
+          v-for="(gridItem, i) of gridRenderArray"
+          :gridMeta="gridItem"
+          :playerPos="playerPosInArr"
+          :size="blockSize"
+          :posInArr="i"
+          :key="i"
+          @enter-vision="addToObserver"
+          @leave-vision="removerFromObserver"
+          @player-pos="updatePlayerPosition"
+        />
+        <div id="new-player" ref="player">7</div>
+      </div>
     </div>
     <dialogue-box :text="text" @on-action="movePlayer"></dialogue-box>
   </div>
 </template>
 
 <script lang='ts'>
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Prop } from 'vue-property-decorator'
 import GridBlock from '@/components/GridBlock.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
 import Grid from '@/lib/grid'
@@ -42,6 +48,8 @@ import { increaseBy, decreaseBy } from '../utils/arithmetic'
   }
 })
 export default class Map extends Vue {
+  @Prop() private blockSize: GridPosition = { x: 130, y: 90, z: 0 }
+
   public theGrid: MapSymbol[][] = Grid
   public blockWidth = 0.0
   public blockHeight = 0.0
@@ -208,11 +216,17 @@ export default class Map extends Vue {
 
 #grid {
   position: relative;
-  height: 80vh;
-  width: 70vw;
   display: grid;
-  background: black;
   border-radius: 20px;
+}
+
+.stage {
+  background: black;
+  width: 100vw;
+  height: 70vh;
+  display: flex;
+  justify-content: center;
+  overflow: auto;
 }
 
 #new-player {

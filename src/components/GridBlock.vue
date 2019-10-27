@@ -1,5 +1,5 @@
 <template>
-  <div ref="block" id="gridItem" :class="gridClass()" :style="`z-index: ${gridMeta.zIndex}`">
+  <div ref="block" id="gridItem" :class="gridClass()" :style="`z-index: ${gridMeta.zIndex};`">
     <img v-if="isRock() === true" src="../assets/rock.png" />
     <div ref="player" v-if="gridMeta.containsPlayer === true" class="player">8</div>
   </div>
@@ -108,7 +108,7 @@ export default class GridBlock extends Vue {
 
 img {
   position: absolute;
-  width: 80%;
+  width: 100%;
   height: auto;
   bottom: 0;
   left: 0;
