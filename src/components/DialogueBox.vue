@@ -3,7 +3,11 @@
     <div class="text-area">
       <p v-for="(txt, i) in text" :key="i">{{txt}}</p>
     </div>
-    <button v-for="(option, i) in options" @click="$emit('on-action', option)" :key="i">{{option}}</button>
+    <button
+      v-for="(option, i) in options"
+      @click="$emit('on-action', option)"
+      :key="i"
+    >{{option.text}}</button>
   </div>
 </template> 
 

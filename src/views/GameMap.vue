@@ -19,12 +19,12 @@
       />
       <div id="new-player" ref="player">7</div>
     </div>
-    <dialogue-box :text="text" @on-action="movePlayer"></dialogue-box>
+    <dialogue-box :text="text" @on-action="movePlayer" :options="actions"></dialogue-box>
   </div>
 </template>
 
 <script lang='ts'>
-import { Component, Vue } from 'vue-property-decorator'
+import { Component, Vue, Watch } from 'vue-property-decorator'
 import GridBlock from '@/components/GridBlock.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
 import Grid from '@/lib/grid'
@@ -34,6 +34,7 @@ import { GridPosition } from '@/models/GridPosition'
 import { Observer } from '@/utils/Observer'
 import { Animate } from '@/utils/Animate'
 import { increaseBy, decreaseBy } from '../utils/arithmetic'
+import DialogOption from '@/models/DialogOption'
 
 @Component({
   components: {
@@ -52,6 +53,7 @@ export default class Map extends Vue {
   public playerPosInArr = 0
 
   private observedItems: MapSymbol[] = []
+
   private observer: Observer = new Observer()
   private animater: Animate = new Animate()
 
@@ -74,6 +76,14 @@ export default class Map extends Vue {
 
   private get text() {
     return this.observer.getText()
+  }
+
+  private get actions(): DialogOption[] {
+    if (this.observer.hasObservedEntities() === true) {
+      return [{ id: 1, text: 'observe', childIds: [] }]
+    } else {
+      return [{ id: 0, text: 'nothing to do', childIds: [] }]
+    }
   }
 
   private movePlayer(e: KeyboardEvent, amount: number = 1) {
