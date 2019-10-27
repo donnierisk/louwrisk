@@ -9,6 +9,14 @@ export class Animate {
     startCallBack?: () => void,
     isInitial?: boolean,
   ) {
-    TweenLite.to(box, isInitial === true ? 0 : 0.5, { left: unitCoords.x, top: unitCoords.y, ease: Linear.easeNone, onComplete: () => callback(), onStart: () => startCallBack() })
+    const options = {
+      left: unitCoords.x,
+      top: unitCoords.y,
+      ease: Linear.easeNone,
+      onComplete: callback,
+      onStart: startCallBack
+    }
+
+    TweenLite.to(box, isInitial === true ? 0 : 0.5, options)
   }
 }

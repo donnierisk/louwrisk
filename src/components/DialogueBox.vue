@@ -25,9 +25,11 @@ export default class DialogueBox extends Vue {
   border: 1px solid lightgrey;
   padding: 10px;
   border-radius: 3px;
-  margin-top: 10px;
-  width: 50vw;
+  width: 100vw;
+  height: 30vh;
   background: white;
+  box-sizing: border-box;
+  overflow: auto;
 }
 
 button {
@@ -43,7 +45,7 @@ button::-moz-focus-inner {
 }
 
 .text-area {
-  height: 30px;
+  height: 50%;
   overflow-y: auto;
   background-color: azure;
 }

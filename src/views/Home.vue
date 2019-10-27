@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <game-map />
+    <game-map :block-size="{ x: 130, y: 90, z: 0 }" />
     <!-- <dialogue-option text:="text" :options="options" /> -->
   </div>
 </template>

@@ -23,7 +23,7 @@ export default class GridBlock extends Vue {
     z: this.gridMeta.zIndex
   }
 
-  mounted() {
+  public mounted() {
     if (this.gridMeta.containsPlayer === true) {
       this.emitPosition(true)
     }

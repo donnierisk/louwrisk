@@ -48,7 +48,17 @@ import { increaseBy, decreaseBy } from '../utils/arithmetic'
   }
 })
 export default class Map extends Vue {
-  @Prop() private blockSize: GridPosition = { x: 130, y: 90, z: 0 }
+  private get gridSize(): GridPosition {
+    return {
+      x: this.theGrid[0].length,
+      y: this.theGrid.length,
+      z: 1
+    }
+  }
+
+  private get text() {
+    return this.observer.getText()
+  }
 
   public theGrid: MapSymbol[][] = Grid
   public blockWidth = 0.0
@@ -58,6 +68,7 @@ export default class Map extends Vue {
   public playerPos: GridPosition = { x: 3, y: 5, z: 1 }
   public playerCurrentRenderedPosition: any = { x: 0, y: 0 }
   public playerPosInArr = 0
+  @Prop() private blockSize!: GridPosition
 
   private observedItems: MapSymbol[] = []
   private observer: Observer = new Observer()
@@ -65,23 +76,12 @@ export default class Map extends Vue {
 
   private throttled = false
 
-  private get gridSize(): GridPosition {
-    return {
-      x: this.theGrid[0].length,
-      y: this.theGrid.length,
-      z: 1
-    }
-  }
   private created() {
     this.generateGrid()
 
     document.addEventListener('keydown', (e: KeyboardEvent) =>
       this.movePlayer(e)
     )
-  }
-
-  private get text() {
-    return this.observer.getText()
   }
 
   private movePlayer(e: KeyboardEvent, amount: number = 1) {
@@ -122,21 +122,22 @@ export default class Map extends Vue {
 
   private updatePlayerPosition(newPosition: GridPosition, isInitial?: boolean) {
     this.throttled = true
-    let block = this.$refs.player as HTMLElement
+    const block = this.$refs.player as HTMLElement
+    const startCallback = () => {
+      this.throttled = false
+      block.style.zIndex = newPosition.z.toString()
+    }
+    const endCallback = () => {
+      const curIndex = parseInt(block.style.zIndex ? block.style.zIndex : '', 8)
+      if (curIndex < this.playerPos.y) {
+        block.style.zIndex = this.playerPos.y.toString()
+      }
+    }
     this.animater.animaterUnit(
       newPosition,
       block,
-      () => {
-        this.throttled = false
-        block.style.zIndex = newPosition.z.toString()
-      },
-      () => {
-        const curIndex = Number.parseInt(
-          block.style.zIndex ? block.style.zIndex : ''
-        )
-        if (curIndex < this.playerPos.y)
-          block.style.zIndex = this.playerPos.y.toString()
-      },
+      startCallback,
+      endCallback,
       isInitial
     )
   }
