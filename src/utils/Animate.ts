@@ -5,11 +5,11 @@ export class Animate {
   public animaterUnit(
     unitCoords: GridPosition,
     box: HTMLElement,
-    callback: () => void
+    callback: () => void,
+    startCallBack: () => void = () => { },
   ) {
     TweenLite.to(
       box, 0.5,
-      { left: unitCoords.x, top: unitCoords.y, ease: Linear.easeNone, onComplete: () => callback() })
-
+      { left: unitCoords.x, top: unitCoords.y, ease: Linear.easeNone, onComplete: () => callback(), onStart: () => startCallBack() })
   }
 }

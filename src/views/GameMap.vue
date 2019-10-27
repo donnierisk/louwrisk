@@ -7,17 +7,18 @@
       :style="`grid-template-columns: repeat(${gridSize.x - 1}, 1fr) minmax(0, 1fr);
     grid-template-rows: repeat(${gridSize.y - 1}, 1fr) minmax(0, 1fr)`"
     >
-      <div id="new-player" ref="player">7</div>
       <grid-block
         v-for="(gridItem, i) of gridRenderArray"
         :gridMeta="gridItem"
         :playerPos="playerPosInArr"
         :posInArr="i"
         :key="i"
+        :z-index="i"
         @enter-vision="addToObserver"
         @leave-vision="removerFromObserver"
         @player-pos="updatePlayerPosition"
       />
+      <div id="new-player" ref="player">7</div>
     </div>
     <dialogue-box :text="text" @on-action="movePlayer"></dialogue-box>
   </div>
@@ -47,7 +48,7 @@ export default class Map extends Vue {
   public blockHeight = 0.0
   public gridRenderArray: GridBlockI[] = []
 
-  public playerPos: GridPosition = { x: 3, y: 5 }
+  public playerPos: GridPosition = { x: 3, y: 5, z: 1 }
   public playerCurrentRenderedPosition: any = { x: 0, y: 0 }
   public playerPosInArr = 0
 
@@ -60,7 +61,8 @@ export default class Map extends Vue {
   private get gridSize(): GridPosition {
     return {
       x: this.theGrid[0].length,
-      y: this.theGrid.length
+      y: this.theGrid.length,
+      z: 1
     }
   }
   private created() {
@@ -118,6 +120,10 @@ export default class Map extends Vue {
       this.$refs.player as HTMLElement,
       () => {
         this.throttled = false
+        this.$refs.player.style.zIndex = newPosition.z
+      },
+      () => {
+        this.$refs.player.style.zIndex = this.playerPos.y + 1
       }
     )
   }

@@ -1,9 +1,9 @@
 <template>
-  <div ref="block" id="gridItem" :class="gridClass()">
-    <img v-if="isRock() === true" src="../assets/rock.png" />
+  <div ref="block" id="gridItem" :class="gridClass()" :style="`z-index: ${zIndex}`">
+    <img v-if="isRock() === true" src="../assets/rock.png" :style="`z-index: ${zIndex+1}`" />
     <div ref="player" v-if="gridMeta.containsPlayer === true" class="player">8</div>
   </div>
-</template>
+</template> 
 
 <script lang='ts'>
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
@@ -16,10 +16,12 @@ export default class GridBlock extends Vue {
   @Prop() private gridMeta!: GridBlockI
   @Prop() private playerPos!: number
   @Prop() private posInArr!: number
+  @Prop() private zIndex: number = 1
 
   private position: GridPosition = {
     x: 0,
-    y: 0
+    y: 0,
+    z: this.zIndex
   }
 
   public isRock() {
@@ -72,6 +74,7 @@ export default class GridBlock extends Vue {
     const player = this.$refs.player as HTMLElement
     this.position.x = elem.offsetLeft + elem.offsetWidth / 2
     this.position.y = elem.offsetTop + elem.offsetHeight / 2
+    this.position.z = this.zIndex
     this.$emit('player-pos', this.position)
   }
 
