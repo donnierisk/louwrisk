@@ -1,6 +1,6 @@
 <template>
   <div id="dialogue">
-    <div class="text-area">
+    <div ref="text" class="text-area">
       <p v-for="(txt, i) in text" :key="i">{{txt}}</p>
     </div>
     <button
@@ -21,6 +21,11 @@ export default class DialogueBox extends Vue {
 
   @Prop() private text!: string[]
   @Prop() private options!: DialogueOption[]
+
+  private updated() {
+    let elem = this.$refs.text as HTMLElement
+    elem.scrollTop = elem.scrollHeight
+  }
 }
 </script>
 
@@ -52,5 +57,7 @@ button::-moz-focus-inner {
   height: 50%;
   overflow-y: auto;
   background-color: azure;
+  text-align: left;
+  padding: 0 20%;
 }
 </style>
