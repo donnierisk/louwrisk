@@ -1,5 +1,11 @@
 <template>
-  <div ref="block" id="gridItem" :class="gridClass()" :style="`z-index: ${gridMeta.zIndex};`">
+  <div
+    ref="block"
+    @click="observe"
+    id="gridItem"
+    :class="gridClass()"
+    :style="`z-index: ${gridMeta.zIndex};`"
+  >
     <img v-if="isRock() === true" src="../assets/rock.png" />
     <div ref="player" v-if="gridMeta.containsPlayer === true" class="player">8</div>
   </div>
@@ -58,15 +64,6 @@ export default class GridBlock extends Vue {
     }
   }
 
-  @Watch('gridMeta.inObserveRange')
-  private onObserveChange(newVal: string) {
-    if (newVal) {
-      this.emitObserver('enter-vision')
-    } else {
-      this.emitObserver('leave-vision')
-    }
-  }
-
   @Watch('gridMeta.containsPlayer')
   private onPositionChange(newVal: boolean) {
     if (newVal) {
@@ -84,8 +81,8 @@ export default class GridBlock extends Vue {
     this.$emit('player-pos', this.position, isInitial)
   }
 
-  private emitObserver(functionName: string) {
-    this.$emit(functionName, this.gridMeta)
+  private observe(e: Event) {
+    if (this.gridMeta.inObserveRange) this.$emit('observed', this.gridMeta)
   }
 }
 </script>
@@ -98,6 +95,10 @@ export default class GridBlock extends Vue {
   align-items: center;
   filter: brightness(50%);
   z-index: 5;
+}
+
+#gridItem.observed:hover {
+  box-shadow: 0 0 5px 1px purple inset;
 }
 
 #gridItem.observed {
