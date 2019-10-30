@@ -4,6 +4,8 @@ export interface GridBlockI {
   symbol: MapSymbol,
   id: number,
   zIndex: number,
-  containsPlayer?: boolean,
+  containsEntity?: {
+    entityType: string
+  },
   inObserveRange?: boolean,
 }

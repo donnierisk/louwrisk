@@ -48,13 +48,7 @@ import DialogOption from '@/models/DialogOption'
   }
 })
 export default class Map extends Vue {
-  private get gridSize(): GridPosition {
-    return {
-      x: this.theGrid[0].length,
-      y: this.theGrid.length,
-      z: 1
-    }
-  }
+  @Prop() private blockSize!: GridPosition
 
   private theGrid: MapSymbol[][] = Grid
   private blockWidth = 0.0
@@ -64,7 +58,9 @@ export default class Map extends Vue {
   private playerPos: GridPosition = { x: 3, y: 5, z: 1 }
   private playerCurrentRenderedPosition: any = { x: 0, y: 0 }
   private playerPosInArr = 0
-  @Prop() private blockSize!: GridPosition
+
+  private cratePos: GridPosition = { x: 2, y: 4, z: 1 }
+  private cratePosInArr = 0
 
   private observedItems: MapSymbol[] = []
 
@@ -81,6 +77,14 @@ export default class Map extends Vue {
     )
   }
 
+  private get gridSize(): GridPosition {
+    return {
+      x: this.theGrid[0].length,
+      y: this.theGrid.length,
+      z: 1
+    }
+  }
+
   private get text() {
     return this.observer.getText()
   }
@@ -89,8 +93,14 @@ export default class Map extends Vue {
     if (this.observer.hasObservedEntities() === true) {
       const ids = this.observer
         .getObservedEntities()
-        .map((entity: GridBlockI) => entity.id)
-      return [{ id: 1, text: 'observe', childIds: ids }]
+        .map((entity: GridBlockI) => {
+          return {
+            id: entity.id,
+            text: 'observe ' + entity.symbol,
+            childIds: []
+          }
+        })
+      return ids
     } else {
       return [{ id: 0, text: 'nothing to do', childIds: [] }]
     }
@@ -174,7 +184,12 @@ export default class Map extends Vue {
         // Check if current gridItem's pos in 2d array matches the playerPos
         if (gridItem === this.playerPos.x && gridRow === this.playerPos.y) {
           this.playerPosInArr = this.gridRenderArray.length
-          gridObj.containsPlayer = true
+          gridObj.containsEntity = { entityType: 'player' }
+        }
+
+        if (gridItem === this.cratePos.x && gridRow === this.cratePos.y) {
+          this.cratePosInArr = this.gridRenderArray.length
+          gridObj.containsEntity = { entityType: 'crate' }
         }
 
         if (this.isInObserveRange(gridItem, gridRow)) {
@@ -205,7 +220,7 @@ export default class Map extends Vue {
   }
 
   private isInObserveRange(gridX: number, gridY: number): boolean {
-    const range = 1
+    const range = 2
 
     const minX = this.playerPos.x - range
     const minY = this.playerPos.y - range

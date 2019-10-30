@@ -1,7 +1,12 @@
 <template>
   <div ref="block" id="gridItem" :class="gridClass()" :style="`z-index: ${gridMeta.zIndex};`">
-    <img v-if="isRock() === true" src="../assets/rock.png" />
-    <div ref="player" v-if="gridMeta.containsPlayer === true" class="player">8</div>
+    <img v-if="isRock() === true" src="../assets/rock1.png" />
+    <img v-if="hasEntity('crate') === true" src="../assets/crate0.png" id="crate" />
+    <div
+      ref="player"
+      v-if="gridMeta.containsEntity !== undefined && gridMeta.containsEntity.entityType === 'player'"
+      class="player"
+    >8</div>
   </div>
 </template> 
 
@@ -24,13 +29,23 @@ export default class GridBlock extends Vue {
   }
 
   private mounted() {
-    if (this.gridMeta.containsPlayer === true) {
+    if (
+      this.gridMeta.containsEntity !== undefined &&
+      this.gridMeta.containsEntity.entityType === 'player'
+    ) {
       this.emitPosition(true)
     }
   }
 
   private isRock() {
     return this.gridMeta.symbol === MapSymbol.ROCK
+  }
+
+  private hasEntity(entityType: string) {
+    return (
+      this.gridMeta.containsEntity !== undefined &&
+      this.gridMeta.containsEntity.entityType === entityType
+    )
   }
 
   private gridClass() {
@@ -67,7 +82,7 @@ export default class GridBlock extends Vue {
     }
   }
 
-  @Watch('gridMeta.containsPlayer')
+  @Watch('gridMeta.containsEntity')
   private onPositionChange(newVal: boolean) {
     if (newVal) {
       this.emitPosition()
@@ -161,5 +176,10 @@ p {
   z-index: 11;
   position: absolute;
   bottom: 0;
+}
+
+#crate {
+  width: 128px;
+  height: 128px;
 }
 </style>
