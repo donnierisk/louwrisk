@@ -16,7 +16,6 @@ export class Animate {
       onComplete: callback,
       onStart: startCallBack
     }
-    console.log(options)
     TweenLite.to(box, isInitial === true ? 0 : 0.5, options)
   }
 }

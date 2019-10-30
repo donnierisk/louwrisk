@@ -17,8 +17,7 @@
           :playerPos="playerPosInArr"
           :posInArr="i"
           :key="i"
-          @enter-vision="addToObserver"
-          @leave-vision="removerFromObserver"
+          @observed="addToObserver"
           @player-pos="updatePlayerPosition"
         />
         <div id="new-player" ref="player">7</div>
@@ -91,23 +90,15 @@ export default class Map extends Vue {
 
   private get actions(): DialogOption[] {
     if (this.observer.hasObservedEntities() === true) {
-      const ids = this.observer
-        .getObservedEntities()
-        .map((entity: GridBlockI) => {
-          return {
-            id: entity.id,
-            text: 'observe ' + entity.symbol,
-            childIds: []
-          }
-        })
-      return ids
+      const id = this.observer.getObservedEntities().id
+      return [{ id: 1, text: 'observe', childIds: [id] }]
     } else {
       return [{ id: 0, text: 'nothing to do', childIds: [] }]
     }
   }
 
   private onAction(option: DialogOption) {
-    console.log('TRIGGER ACTION:', JSON.stringify(option))
+    // console.log('TRIGGER ACTION:', JSON.stringify(option))
   }
 
   private movePlayer(e: KeyboardEvent, amount: number = 1) {
@@ -151,7 +142,7 @@ export default class Map extends Vue {
     const playerEl = this.$refs.player as HTMLElement
     const startCallback = () => {
       this.throttled = false
-      playerEl.style.zIndex = newPosition.z.toString()
+      playerEl.style.zIndex = newPosition.z ? newPosition.z.toString() : ''
     }
     const endCallback = () => {
       const curIndex = Number(
@@ -214,9 +205,6 @@ export default class Map extends Vue {
 
   private addToObserver(grid: GridBlockI) {
     this.observer.addToObserver(grid)
-  }
-  private removerFromObserver(grid: GridBlockI) {
-    this.observer.removeFromObserver(grid)
   }
 
   private isInObserveRange(gridX: number, gridY: number): boolean {
