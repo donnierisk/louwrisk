@@ -123,9 +123,13 @@ export default class Map extends Vue {
 
           break
       }
-
-      if (this.isOutOfBounds(playerX, playerY)) {
+      const entity = this.getEntity(playerX, playerY) as Entity
+      if (entity && entity.blocks) {
+        // console.log('Blocking')
+      } else if (this.isOutOfBounds(playerX, playerY)) {
         // console.log('Out of bounds!')
+      } else if (this.theGrid[playerY][playerX] === TerrainSymbol.ROCK) {
+        // console.log('Invalid move!')
       } else {
         // Successful move into grid
         this.playerCurrentPosition.x = playerX

@@ -7,6 +7,9 @@
     :style="`z-index: ${gridMeta.zIndex};`"
   >
     <div ref="player" v-if="hasPlayer()" class="player">8</div>
+    <div v-if="gridMeta.symbol === 'r'" :class="gridClass()">
+      <img src="../assets/rock1.png" />
+    </div>
   </div>
 </template> 
 
@@ -55,6 +58,8 @@ export default class GridBlock extends Vue {
         return classList + 'ground'
       case TerrainSymbol.WATER:
         return classList + 'water'
+      case TerrainSymbol.ROCK:
+        return classList + 'rock'
       default:
         return classList + 'grass'
     }
