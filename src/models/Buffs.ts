@@ -1,1 +1,1 @@
-export default class Buffs { }
+export default class Buff { }

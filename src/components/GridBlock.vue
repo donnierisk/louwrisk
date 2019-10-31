@@ -7,10 +7,10 @@
     :style="`z-index: ${gridMeta.zIndex};`"
   >
     <img v-if="isRock() === true" src="../assets/rock1.png" />
-    <img v-if="hasEntity('crate') === true" src="../assets/crate0.png" id="crate" />
+    <img v-if="hasEntity('crate') === true" src="../assets/crate1.png" id="crate" />
     <div
       ref="player"
-      v-if="gridMeta.containsEntity !== undefined && gridMeta.containsEntity.entityType === 'player'"
+      v-if="gridMeta.containedEntity !== undefined && gridMeta.containedEntity.type === EntityType.PLAYER"
       class="player"
     >8</div>
   </div>
@@ -18,9 +18,10 @@
 
 <script lang='ts'>
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
-import { MapSymbol } from '../models/MapSymbol'
+import { TerrainSymbol } from '../models/TerrainSymbol'
 import { GridBlockI } from '../models/GridBlockI'
 import { GridPosition } from '../models/GridPosition'
+import { EntityType } from '../models/EntityTypes'
 
 @Component
 export default class GridBlock extends Vue {
@@ -36,21 +37,17 @@ export default class GridBlock extends Vue {
 
   private mounted() {
     if (
-      this.gridMeta.containsEntity !== undefined &&
-      this.gridMeta.containsEntity.entityType === 'player'
+      this.gridMeta.containedEntity !== undefined &&
+      this.gridMeta.containedEntity.type === EntityType.PLAYER
     ) {
       this.emitPosition(true)
     }
   }
 
-  private isRock() {
-    return this.gridMeta.symbol === MapSymbol.ROCK
-  }
-
   private hasEntity(entityType: string) {
     return (
-      this.gridMeta.containsEntity !== undefined &&
-      this.gridMeta.containsEntity.entityType === entityType
+      this.gridMeta.containedEntity !== undefined &&
+      this.gridMeta.containedEntity.type === entityType
     )
   }
 
@@ -60,11 +57,9 @@ export default class GridBlock extends Vue {
       classList += 'observed '
     }
     switch (this.gridMeta.symbol) {
-      case MapSymbol.GROUND:
+      case TerrainSymbol.GROUND:
         return classList + 'ground'
-      case MapSymbol.ROCK:
-        return classList + 'rock'
-      case MapSymbol.WATER:
+      case TerrainSymbol.WATER:
         return classList + 'water'
       default:
         // const randomTerr = Math.floor(Math.random() * 10)
@@ -79,9 +74,9 @@ export default class GridBlock extends Vue {
     }
   }
 
-  @Watch('gridMeta.containsEntity')
+  @Watch('gridMeta.containedEntity')
   private onPositionChange(newVal: any) {
-    if (newVal && newVal.entityType === 'player') {
+    if (newVal && newVal.type === EntityType.PLAYER) {
       this.emitPosition()
     }
   }
@@ -97,7 +92,9 @@ export default class GridBlock extends Vue {
   }
 
   private observe(e: Event) {
-    if (this.gridMeta.inObserveRange) { this.$emit('observed', this.gridMeta) }
+    if (this.gridMeta.inObserveRange) {
+      this.$emit('observed', this.gridMeta)
+    }
   }
 }
 </script>

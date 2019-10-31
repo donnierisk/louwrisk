@@ -32,7 +32,7 @@ import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import GridBlock from '@/components/GridBlock.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
 import Grid from '@/lib/Grid'
-import { MapSymbol } from '@/models/MapSymbol'
+import { TerrainSymbol } from '@/models/TerrainSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
 import { Observer } from '@/utils/Observer'
@@ -49,7 +49,8 @@ import DialogOption from '@/models/DialogOption'
 export default class Map extends Vue {
   @Prop() private blockSize!: GridPosition
 
-  private theGrid: MapSymbol[][] = Grid
+  private theGrid: TerrainSymbol[][] = Grid.terrain
+  private entities: TerrainSymbol[][] = Grid.terrain
   private blockWidth = 0.0
   private blockHeight = 0.0
   private gridRenderArray: GridBlockI[] = []
@@ -61,7 +62,7 @@ export default class Map extends Vue {
   private cratePos: GridPosition = { x: 2, y: 4, z: 1 }
   private cratePosInArr = 0
 
-  private observedItems: MapSymbol[] = []
+  private observedItems: TerrainSymbol[] = []
 
   private observer: Observer = new Observer()
   private animater: Animate = new Animate()
@@ -126,8 +127,6 @@ export default class Map extends Vue {
 
       if (this.isOutOfBounds(playerX, playerY)) {
         // console.log('Out of bounds!')
-      } else if (this.theGrid[playerY][playerX] === MapSymbol.ROCK) {
-        // console.log('Invalid move!')
       } else {
         // Successful move into grid
         this.playerPos.x = playerX
@@ -175,12 +174,12 @@ export default class Map extends Vue {
         // Check if current gridItem's pos in 2d array matches the playerPos
         if (gridItem === this.playerPos.x && gridRow === this.playerPos.y) {
           this.playerPosInArr = this.gridRenderArray.length
-          gridObj.containsEntity = { entityType: 'player' }
+          gridObj.containedEntity = { entityType: 'player' }
         }
 
         if (gridItem === this.cratePos.x && gridRow === this.cratePos.y) {
           this.cratePosInArr = this.gridRenderArray.length
-          gridObj.containsEntity = { entityType: 'crate' }
+          gridObj.containedEntity = { entityType: 'crate' }
         }
 
         if (this.isInObserveRange(gridItem, gridRow)) {

@@ -1,11 +1,10 @@
-import { MapSymbol } from './MapSymbol';
+import { TerrainSymbol } from './TerrainSymbol';
+import { Entity } from './Entity';
 
 export interface GridBlockI {
-  symbol: MapSymbol,
+  symbol: TerrainSymbol,
   id: number,
-  containsEntity?: {
-    entityType: string
-  },
+  containedEntity?: Entity,
   containsPlayer?: boolean,
   inObserveRange?: boolean,
   zIndex?: number

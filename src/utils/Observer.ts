@@ -1,27 +1,19 @@
 import { GridBlockI } from '../models/GridBlockI'
-import { MapSymbol } from '@/models/MapSymbol'
+import { EntityType } from '@/models/EntityTypes'
+import { TerrainSymbol } from '@/models/TerrainSymbol'
 import DialogOption from '@/models/DialogOption'
 
 export class Observer {
-  private observedEntities: GridBlockI = { symbol: MapSymbol.EMPTY, id: 0 }
+  private observedEntities: GridBlockI = { symbol: TerrainSymbol.EMPTY, id: 0 }
   private text: string[] = []
   public addToObserver(grid: GridBlockI) {
-    if (grid.symbol === MapSymbol.ROCK) {
-      this.text.push(`There is rock ${grid.id}`)
-    } else
-      if (grid.symbol === MapSymbol.WATER) {
-        this.text.push(`There is water ${grid.id}`)
-      } else if (grid.containsEntity && grid.containsEntity.entityType === 'crate') {
-        this.text.push(`There is crate ${grid.id}`)
-      } else {
-        this.text.push(`There is nothing`)
-      }
+    if (grid.symbol === TerrainSymbol.WATER) {
+      this.text.push(`There is water ${grid.id}`)
+    } else {
+      this.text.push(`There is nothing`)
+    }
     this.observedEntities = grid
   }
-
-  // public removeFromObserver(grid: GridBlockI) {
-  //   this.observedEntities = this.observedEntities.filter((obj) => obj.id !== grid.id)
-  // }
 
   public getText() {
     return this.text
@@ -32,6 +24,6 @@ export class Observer {
   }
 
   public hasObservedEntities() {
-    return this.observedEntities.symbol !== MapSymbol.EMPTY
+    return this.observedEntities.symbol !== TerrainSymbol.EMPTY
   }
 }
