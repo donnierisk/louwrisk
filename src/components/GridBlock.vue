@@ -6,13 +6,7 @@
     :class="gridClass()"
     :style="`z-index: ${gridMeta.zIndex};`"
   >
-    <img v-if="isRock() === true" src="../assets/rock1.png" />
-    <img v-if="hasEntity('crate') === true" src="../assets/crate1.png" id="crate" />
-    <div
-      ref="player"
-      v-if="gridMeta.containedEntity !== undefined && gridMeta.containedEntity.type === EntityType.PLAYER"
-      class="player"
-    >8</div>
+    <div ref="player" v-if="hasPlayer()" class="player">8</div>
   </div>
 </template> 
 
@@ -21,7 +15,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { TerrainSymbol } from '../models/TerrainSymbol'
 import { GridBlockI } from '../models/GridBlockI'
 import { GridPosition } from '../models/GridPosition'
-import { EntityType } from '../models/EntityTypes'
+import { EntityType } from '../models/EntityType'
 
 @Component
 export default class GridBlock extends Vue {
@@ -44,10 +38,10 @@ export default class GridBlock extends Vue {
     }
   }
 
-  private hasEntity(entityType: string) {
+  private hasPlayer() {
     return (
       this.gridMeta.containedEntity !== undefined &&
-      this.gridMeta.containedEntity.type === entityType
+      this.gridMeta.containedEntity.type === EntityType.PLAYER
     )
   }
 
@@ -62,22 +56,14 @@ export default class GridBlock extends Vue {
       case TerrainSymbol.WATER:
         return classList + 'water'
       default:
-        // const randomTerr = Math.floor(Math.random() * 10)
-        // if (randomTerr > 8) {
-        //   return 'ground'
-        // }
-        // if (randomTerr > 6) {
-        //   return 'water'
-        // } else {
         return classList + 'grass'
-      // }
     }
   }
 
   @Watch('gridMeta.containedEntity')
   private onPositionChange(newVal: any) {
     if (newVal && newVal.type === EntityType.PLAYER) {
-      this.emitPosition()
+      this.emitPosition(false)
     }
   }
 
@@ -87,7 +73,6 @@ export default class GridBlock extends Vue {
     this.position.x = elem.offsetLeft + elem.offsetWidth / 2
     this.position.y = elem.offsetTop + elem.offsetHeight / 2
     this.position.z = this.gridMeta.zIndex
-    this.$emit('player-pos', this.position)
     this.$emit('player-pos', this.position, isInitial)
   }
 

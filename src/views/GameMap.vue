@@ -14,11 +14,10 @@
         <grid-block
           v-for="(gridItem, i) of gridRenderArray"
           :gridMeta="gridItem"
-          :playerCurrentPosition="playerCurrentPositionInArr"
           :posInArr="i"
           :key="i"
           @observed="addToObserver"
-          @player-pos="updateplayerCurrentPositionition"
+          @player-pos="updatePlayerCurrentPositionition"
         />
         <div id="new-player" ref="player">7</div>
       </div>
@@ -39,6 +38,8 @@ import { Observer } from '@/utils/Observer'
 import { Animate } from '@/utils/Animate'
 import { increaseBy, decreaseBy } from '../utils/arithmetic'
 import DialogOption from '@/models/DialogOption'
+import { EntityType } from '../models/EntityType'
+import { Entity } from '@/models/Entity'
 
 @Component({
   components: {
@@ -50,7 +51,7 @@ export default class Map extends Vue {
   @Prop() private blockSize!: GridPosition
 
   private theGrid: TerrainSymbol[][] = Grid.terrain
-  private entities: TerrainSymbol[][] = Grid.terrain
+  private entities: Entity[] = Grid.entities
   private blockWidth = 0.0
   private blockHeight = 0.0
   private gridRenderArray: GridBlockI[] = []
@@ -65,6 +66,7 @@ export default class Map extends Vue {
   private throttled = false
 
   private created() {
+    this.playerCurrentPosition = this.entities[0].position
     this.generateGrid()
 
     document.addEventListener('keydown', (e: KeyboardEvent) =>
@@ -131,7 +133,7 @@ export default class Map extends Vue {
     }
   }
 
-  private updateplayerCurrentPositionition(
+  private updatePlayerCurrentPositionition(
     newPosition: GridPosition,
     isInitial?: boolean
   ) {
@@ -169,8 +171,14 @@ export default class Map extends Vue {
           zIndex: gridRow
         }
 
-        // Check if current gridItem's pos in 2d array matches the playerCurrentPosition
+        const entity = this.getEntity(gridItem, gridRow)
+
+        if (entity) {
+          gridObj.containedEntity = entity
+        }
+
         if (this.isInObserveRange(gridItem, gridRow)) {
+          // Check if current gridItem's pos in 2d array matches the playerCurrentPosition
           gridObj.inObserveRange = true
           this.observedItems.push(gridObj.symbol)
         }
@@ -178,6 +186,12 @@ export default class Map extends Vue {
         this.gridRenderArray.push(gridObj)
       }
     }
+  }
+
+  private getEntity(x: number, y: number) {
+    return this.entities.find((ent: Entity) => {
+      return ent.position.x === x && ent.position.y === y
+    })
   }
 
   private isOutOfBounds(objectX: number, objectY: number) {
