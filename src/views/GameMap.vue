@@ -14,11 +14,11 @@
         <grid-block
           v-for="(gridItem, i) of gridRenderArray"
           :gridMeta="gridItem"
-          :playerPos="playerPosInArr"
+          :playerCurrentPosition="playerCurrentPositionInArr"
           :posInArr="i"
           :key="i"
           @observed="addToObserver"
-          @player-pos="updatePlayerPosition"
+          @player-pos="updateplayerCurrentPositionition"
         />
         <div id="new-player" ref="player">7</div>
       </div>
@@ -55,13 +55,8 @@ export default class Map extends Vue {
   private blockHeight = 0.0
   private gridRenderArray: GridBlockI[] = []
 
-  private playerPos: GridPosition = { x: 3, y: 5, z: 1 }
   private playerCurrentRenderedPosition: any = { x: 0, y: 0 }
-  private playerPosInArr = 0
-
-  private cratePos: GridPosition = { x: 2, y: 4, z: 1 }
-  private cratePosInArr = 0
-
+  private playerCurrentPosition: any = { x: 0, y: 0 }
   private observedItems: TerrainSymbol[] = []
 
   private observer: Observer = new Observer()
@@ -105,8 +100,8 @@ export default class Map extends Vue {
   private movePlayer(e: KeyboardEvent, amount: number = 1) {
     // Need to only do stuff if the key is a directional one
     if (this.throttled === false) {
-      let playerX = this.playerPos.x
-      let playerY = this.playerPos.y
+      let playerX = this.playerCurrentPosition.x
+      let playerY = this.playerCurrentPosition.y
 
       switch (e.code) {
         case 'KeyW':
@@ -129,14 +124,17 @@ export default class Map extends Vue {
         // console.log('Out of bounds!')
       } else {
         // Successful move into grid
-        this.playerPos.x = playerX
-        this.playerPos.y = playerY
+        this.playerCurrentPosition.x = playerX
+        this.playerCurrentPosition.y = playerY
         this.generateGrid()
       }
     }
   }
 
-  private updatePlayerPosition(newPosition: GridPosition, isInitial?: boolean) {
+  private updateplayerCurrentPositionition(
+    newPosition: GridPosition,
+    isInitial?: boolean
+  ) {
     this.throttled = true
     const playerEl = this.$refs.player as HTMLElement
     const startCallback = () => {
@@ -147,8 +145,8 @@ export default class Map extends Vue {
       const curIndex = Number(
         playerEl.style.zIndex ? playerEl.style.zIndex : ''
       )
-      if (curIndex < this.playerPos.y) {
-        playerEl.style.zIndex = this.playerPos.y.toString()
+      if (curIndex < this.playerCurrentPosition.y) {
+        playerEl.style.zIndex = this.playerCurrentPosition.y.toString()
       }
     }
     this.animater.animaterUnit(
@@ -171,17 +169,7 @@ export default class Map extends Vue {
           zIndex: gridRow
         }
 
-        // Check if current gridItem's pos in 2d array matches the playerPos
-        if (gridItem === this.playerPos.x && gridRow === this.playerPos.y) {
-          this.playerPosInArr = this.gridRenderArray.length
-          gridObj.containedEntity = { entityType: 'player' }
-        }
-
-        if (gridItem === this.cratePos.x && gridRow === this.cratePos.y) {
-          this.cratePosInArr = this.gridRenderArray.length
-          gridObj.containedEntity = { entityType: 'crate' }
-        }
-
+        // Check if current gridItem's pos in 2d array matches the playerCurrentPosition
         if (this.isInObserveRange(gridItem, gridRow)) {
           gridObj.inObserveRange = true
           this.observedItems.push(gridObj.symbol)
@@ -209,11 +197,11 @@ export default class Map extends Vue {
   private isInObserveRange(gridX: number, gridY: number): boolean {
     const range = 2
 
-    const minX = this.playerPos.x - range
-    const minY = this.playerPos.y - range
+    const minX = this.playerCurrentPosition.x - range
+    const minY = this.playerCurrentPosition.y - range
 
-    const maxX = this.playerPos.x + range
-    const maxY = this.playerPos.y + range
+    const maxX = this.playerCurrentPosition.x + range
+    const maxY = this.playerCurrentPosition.y + range
 
     if (
       gridX >= minX &&
