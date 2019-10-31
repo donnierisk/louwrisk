@@ -19,7 +19,9 @@
           @observed="addToObserver"
           @player-pos="updatePlayerCurrentPositionition"
         />
-        <div id="new-player" ref="player">7</div>
+        <div id="new-player" ref="player">
+          <div id="player-avatar" :class="{walking: throttled === true}" />
+        </div>
       </div>
     </div>
     <dialogue-box :text="text" @on-action="onAction" :options="actions"></dialogue-box>
@@ -256,11 +258,36 @@ export default class Map extends Vue {
   position: absolute;
   top: 0;
   left: 0;
-  color: white;
-  font-weight: bold;
   z-index: 11;
-  background: purple;
-  padding: 5px;
-  border-radius: 30%;
+}
+
+#new-player #player-avatar {
+  width: 128px;
+  height: 128px;
+  position: absolute;
+  background-size: 100%;
+  bottom: -32px;
+  left: -64px;
+  background-position: 0 0;
+  background-image: url('../assets/character_main_walking.png');
+}
+
+.walking {
+  animation: walking 0.5s steps(1) infinite;
+}
+
+@keyframes walking {
+  0% {
+    background-position: 0 0;
+  }
+  25% {
+    background-position: 0 -128px;
+  }
+  50% {
+    background-position: 0 0;
+  }
+  75% {
+    background-position: 0 -256px;
+  }
 }
 </style>
