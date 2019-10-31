@@ -20,7 +20,9 @@
           @observed="addToObserver"
           @player-pos="updateplayerCurrentPositionition"
         />
-        <div id="new-player" ref="player">7</div>
+        <div id="new-player" ref="player">
+          <img src="../assets/character.png" />
+        </div>
       </div>
     </div>
     <dialogue-box :text="text" @on-action="onAction" :options="actions"></dialogue-box>
@@ -242,11 +244,12 @@ export default class Map extends Vue {
   position: absolute;
   top: 0;
   left: 0;
-  color: white;
-  font-weight: bold;
   z-index: 11;
-  background: purple;
-  padding: 5px;
-  border-radius: 30%;
+}
+
+#new-player img {
+  bottom: 32px;
+  left: 64px;
+  width: 128px;
 }
 </style>
