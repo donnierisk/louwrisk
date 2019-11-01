@@ -32,7 +32,7 @@
 import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import GridBlock from '@/components/GridBlock.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
-import Grid from '@/lib/Grid'
+import Level from '@/lib/Level'
 import { TerrainSymbol } from '@/models/TerrainSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
@@ -52,8 +52,8 @@ import { Entity } from '@/models/Entity'
 export default class Map extends Vue {
   @Prop() private blockSize!: GridPosition
 
-  private theGrid: TerrainSymbol[][] = Grid.terrain
-  private entities: Entity[] = Grid.entities
+  private theGrid: TerrainSymbol[][] = Level.terrain
+  private entities: Entity[] = Level.entities
   private blockWidth = 0.0
   private blockHeight = 0.0
   private gridRenderArray: GridBlockI[] = []

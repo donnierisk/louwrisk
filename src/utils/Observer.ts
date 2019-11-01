@@ -21,6 +21,8 @@ export class Observer {
   public addToObserver(grid: GridBlockI) {
     if (grid.symbol === TerrainSymbol.WATER) {
       this.text.push(`There is water ${grid.id}`)
+    } else if (grid.symbol === TerrainSymbol.ROCK) {
+      this.text.push(`There is rock ${grid.id}`)
     } else {
       this.text.push(`There is nothing`)
     }
