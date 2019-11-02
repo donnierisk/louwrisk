@@ -1,5 +1,6 @@
 <template>
   <div id="container">
+    <keyboard-events @key-event="movePlayer" />
     <!-- grid-template-columns: repeat(7, 1fr) minmax(0, 1fr); -->
     <div class="stage">
       <div
@@ -32,6 +33,7 @@
 import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import GridBlock from '@/components/GridBlock.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
+import KeyboardEvents from '@/components/KeyboardEvents.vue'
 import Level from '@/lib/Level'
 import { TerrainSymbol } from '@/models/TerrainSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
@@ -46,7 +48,8 @@ import { Entity } from '@/models/Entity'
 @Component({
   components: {
     GridBlock,
-    DialogueBox
+    DialogueBox,
+    KeyboardEvents
   }
 })
 export default class Map extends Vue {
@@ -70,10 +73,6 @@ export default class Map extends Vue {
   private created() {
     this.playerCurrentPosition = this.entities[0].position
     this.generateGrid()
-
-    document.addEventListener('keydown', (e: KeyboardEvent) =>
-      this.movePlayer(e)
-    )
   }
 
   private get gridSize(): GridPosition {
@@ -101,13 +100,13 @@ export default class Map extends Vue {
     // console.log('TRIGGER ACTION:', JSON.stringify(option))
   }
 
-  private movePlayer(e: KeyboardEvent, amount: number = 1) {
+  private movePlayer(direction: string, amount: number = 1) {
     // Need to only do stuff if the key is a directional one
     if (this.throttled === false) {
       let playerX = this.playerCurrentPosition.x
       let playerY = this.playerCurrentPosition.y
 
-      switch (e.code) {
+      switch (direction) {
         case 'KeyW':
           playerY -= amount
           break
