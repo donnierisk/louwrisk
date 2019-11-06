@@ -2,42 +2,33 @@ import { GridBlockI } from '../models/GridBlockI'
 import { EntityType } from '@/models/EntityType'
 import { TerrainSymbol } from '@/models/TerrainSymbol'
 import DialogOption from '@/models/DialogOption'
-
+import { Entity } from '@/models/Entity'
+const tempEnt: Entity = {
+  type: EntityType.EMPTY,
+  position: { x: 0, y: 0 }
+}
 export class Observer {
-  private observedEntities: GridBlockI = {
-    symbol: TerrainSymbol.EMPTY,
-    id: 0,
-    containedEntity: {
-      type: EntityType.EMPTY,
-      position: { x: 1, y: 1, z: 1 },
-      span: { x: 1, y: 1, z: 1 },
-      name: '',
-      description: 'Nothing',
-      blocks: false
-    }
-  }
-
-  private text: string[] = []
-  public addToObserver(grid: GridBlockI) {
-    if (grid.symbol === TerrainSymbol.WATER) {
-      this.text.push(`There is water ${grid.id}`)
-    } else if (grid.symbol === TerrainSymbol.ROCK) {
-      this.text.push(`There is rock ${grid.id}`)
+  private observedEntity: Entity = tempEnt
+  private descriptions: string[] = []
+  public addToObserver(entity: Entity) {
+    if (entity) {
+      this.observedEntity = entity
+      this.descriptions.push(entity.description ? entity.description : 'Nothing here')
     } else {
-      this.text.push(`There is nothing`)
+      this.observedEntity = tempEnt
+      this.descriptions.push('Nothing here')
     }
-    this.observedEntities = grid
   }
 
-  public getText() {
-    return this.text
+  public getDescription(): string[] {
+    return this.descriptions;
   }
 
-  public getObservedEntities(): GridBlockI {
-    return this.observedEntities;
+  public getObservedEntity(): Entity {
+    return this.observedEntity;
   }
 
-  public hasObservedEntities(): boolean {
-    return this.observedEntities.symbol !== TerrainSymbol.EMPTY
+  public hasObservedEntity(): boolean {
+    return this.observedEntity.type !== EntityType.EMPTY ? true : false
   }
 }

@@ -33,18 +33,26 @@ const Level: Level = {
       },
       {
         type: EntityType.INTERACTIVE_PROP,
-        position: { x: 2, y: 4, z: 1 },
+        position: { x: 4, y: 5, z: 1 },
         span: { x: 1, y: 1, z: 1 },
-        name: EntityInstance.CRATE,
-        description: 'Its a crate',
+        name: 'crate1',
+        description: 'It are a crate',
         blocks: true
       },
       {
         type: EntityType.INTERACTIVE_PROP,
-        position: { x: 3, y: 3, z: 1 },
+        position: { x: 5, y: 5, z: 1 },
         span: { x: 1, y: 1, z: 1 },
-        name: EntityInstance.ROCK,
-        description: 'Its a crate',
+        name: 'crate1',
+        description: 'It are a crate',
+        blocks: true
+      },
+      {
+        type: EntityType.NPC,
+        position: { x: 5, y: 6, z: 1 },
+        span: { x: 1, y: 1, z: 1 },
+        name: 'bandit',
+        description: 'It is a bandit',
         blocks: true
       }
     ]

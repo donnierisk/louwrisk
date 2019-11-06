@@ -19,19 +19,24 @@
           :key="i"
           @observed="addToObserver"
           @player-pos="updatePlayerCurrentPositionition"
-        />
+        >
+          <template v-if="gridItem.containedEntity && !isPlayer(gridItem.containedEntity)">
+            <entity-comp :entityparse="gridItem.containedEntity.name" />
+          </template>
+        </grid-block>
         <div id="new-player" ref="player">
           <div id="player-avatar" :class="{walking: throttled === true}" />
         </div>
       </div>
     </div>
-    <dialogue-box :text="text" @on-action="onAction" :options="actions"></dialogue-box>
+    <dialogue-box :text="description" @on-action="onAction" :options="actions"></dialogue-box>
   </div>
 </template>
 
 <script lang='ts'>
 import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import GridBlock from '@/components/GridBlock.vue'
+import EntityComp from '@/components/EntityComp.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
 import KeyboardEvents from '@/components/KeyboardEvents.vue'
 import Level from '@/lib/Level'
@@ -49,11 +54,14 @@ import { Entity } from '@/models/Entity'
   components: {
     GridBlock,
     DialogueBox,
-    KeyboardEvents
+    KeyboardEvents,
+    EntityComp
   }
 })
 export default class Map extends Vue {
   @Prop() private blockSize!: GridPosition
+
+  private terrainFilterBlock: TerrainSymbol[] = [TerrainSymbol.ROCK]
 
   private theGrid: TerrainSymbol[][] = Level.terrain
   private entities: Entity[] = Level.entities
@@ -83,16 +91,15 @@ export default class Map extends Vue {
     }
   }
 
-  private get text() {
-    return this.observer.getText()
+  private get description() {
+    return this.observer.getDescription()
   }
 
   private get actions(): DialogOption[] {
-    if (this.observer.hasObservedEntities() === true) {
-      const id = this.observer.getObservedEntities().id
-      return [{ id: 1, text: 'observe', childIds: [id] }]
+    if (this.observer.hasObservedEntity() === true) {
+      return [{ id: 1, text: 'Do something', childIds: [] }]
     } else {
-      return [{ id: 0, text: 'nothing to do', childIds: [] }]
+      return [{ id: 0, text: 'Nothing to do', childIds: [] }]
     }
   }
 
@@ -127,7 +134,7 @@ export default class Map extends Vue {
         // console.log('Blocking')
       } else if (this.isOutOfBounds(playerX, playerY)) {
         // console.log('Out of bounds!')
-      } else if (this.theGrid[playerY][playerX] === TerrainSymbol.ROCK) {
+      } else if (this.isBlockedByTerrian(this.theGrid[playerY][playerX])) {
         // console.log('Invalid move!')
       } else {
         // Successful move into grid
@@ -209,8 +216,29 @@ export default class Map extends Vue {
     return false
   }
 
-  private addToObserver(grid: GridBlockI) {
-    this.observer.addToObserver(grid)
+  private isEntityPosition(enity: Entity): boolean {
+    let returnEntity: boolean = false
+    this.entities.forEach((ent: Entity) => {
+      if (
+        ent.position.x === ent.position.x &&
+        ent.position.y === ent.position.y
+      ) {
+        returnEntity = true
+      }
+    })
+
+    return returnEntity
+  }
+
+  private addToObserver(entity: Entity) {
+    this.observer.addToObserver(entity)
+  }
+
+  private isPlayer(entity: Entity): boolean {
+    return entity.type === EntityType.PLAYER
+  }
+  private isBlockedByTerrian(terrain: TerrainSymbol): boolean {
+    return this.terrainFilterBlock.includes(terrain)
   }
 
   private isInObserveRange(gridX: number, gridY: number): boolean {

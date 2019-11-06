@@ -7,9 +7,10 @@
     :style="`z-index: ${gridMeta.zIndex};`"
   >
     <div ref="player" v-if="hasPlayer()" class="player">8</div>
-    <div v-if="gridMeta.symbol === 'r'" :class="gridClass()">
-      <img src="../assets/rock1.png" />
+    <div v-if="gridMeta.symbol" :class="gridClass()">
+      <img :src="imagePath" />
     </div>
+    <slot></slot>
   </div>
 </template> 
 
@@ -30,6 +31,18 @@ export default class GridBlock extends Vue {
     x: 0,
     y: 0,
     z: this.gridMeta.zIndex
+  }
+
+  private get imagePath() {
+    let returnPath = 'blank'
+    if (
+      this.gridMeta.symbol !== TerrainSymbol.WATER &&
+      this.gridMeta.symbol !== TerrainSymbol.GROUND &&
+      this.gridMeta.symbol !== TerrainSymbol.EMPTY
+    ) {
+      returnPath = this.gridMeta.symbol
+    }
+    return require(`../assets/${returnPath}.png`)
   }
 
   private mounted() {
@@ -83,7 +96,7 @@ export default class GridBlock extends Vue {
 
   private observe(e: Event) {
     if (this.gridMeta.inObserveRange) {
-      this.$emit('observed', this.gridMeta)
+      this.$emit('observed', this.gridMeta.containedEntity)
     }
   }
 }
