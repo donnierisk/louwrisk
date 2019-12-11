@@ -2,7 +2,7 @@
   <div id="container">
     <keyboard-events @key-event="movePlayer" />
     <!-- grid-template-columns: repeat(7, 1fr) minmax(0, 1fr); -->
-    <div class="stage">
+    <div class="stage" ref="stage">
       <div
         id="grid"
         ref="grid"
@@ -168,7 +168,8 @@ export default class Map extends Vue {
       playerEl,
       startCallback,
       endCallback,
-      isInitial
+      isInitial,
+      this.$refs.stage as HTMLElement
     )
   }
 
@@ -237,6 +238,7 @@ export default class Map extends Vue {
   private isPlayer(entity: Entity): boolean {
     return entity.type === EntityType.PLAYER
   }
+
   private isBlockedByTerrian(terrain: TerrainSymbol): boolean {
     return this.terrainFilterBlock.includes(terrain)
   }
@@ -263,11 +265,12 @@ export default class Map extends Vue {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 #container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  /* Hide scrollbar for Chrome, Safari and Opera */
 }
 
 #grid {
@@ -279,17 +282,16 @@ export default class Map extends Vue {
 .stage {
   background: black;
   width: 100vw;
-  height: 70vh;
+  height: 100vh;
   display: flex;
   justify-content: center;
-  overflow: auto;
-}
-
-#new-player {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 11;
+  overflow: scroll;
+  #new-player {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 11;
+  }
 }
 
 #new-player #player-avatar {
