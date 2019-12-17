@@ -1,8 +1,7 @@
 <template>
   <div id="container">
-    <keyboard-events @key-event="movePlayer" />
-    <!-- grid-template-columns: repeat(7, 1fr) minmax(0, 1fr); -->
-    <div class="stage" ref="stage">
+    <keyboard-events @key-event="keyBoardEvent" />
+    <div class="stage" id="stage" ref="stage">
       <div
         id="grid"
         ref="grid"
@@ -39,7 +38,7 @@ import GridBlock from '@/components/GridBlock.vue'
 import EntityComp from '@/components/EntityComp.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
 import KeyboardEvents from '@/components/KeyboardEvents.vue'
-import Level from '@/lib/Level'
+import { LevelHandler } from '@/lib/LevelHandler'
 import { TerrainSymbol } from '@/models/TerrainSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
@@ -62,15 +61,13 @@ export default class Map extends Vue {
   @Prop() private blockSize!: GridPosition
 
   private terrainFilterBlock: TerrainSymbol[] = [TerrainSymbol.ROCK]
+  private Level = new LevelHandler()
 
-  private theGrid: TerrainSymbol[][] = Level.terrain
-  private entities: Entity[] = Level.entities
   private blockWidth = 0.0
   private blockHeight = 0.0
   private gridRenderArray: GridBlockI[] = []
 
   private playerCurrentRenderedPosition: any = { x: 0, y: 0 }
-  private playerCurrentPosition: any = { x: 0, y: 0 }
   private observedItems: TerrainSymbol[] = []
 
   private observer: Observer = new Observer()
@@ -79,7 +76,6 @@ export default class Map extends Vue {
   private throttled = false
 
   private created() {
-    this.playerCurrentPosition = this.entities[0].position
     this.generateGrid()
   }
 
@@ -94,6 +90,19 @@ export default class Map extends Vue {
   private get description() {
     return this.observer.getDescription()
   }
+  private get theGrid() {
+    return this.Level.GetTerrain()
+  }
+  private get entities() {
+    return this.Level.GetAllEntities()
+  }
+  private get player() {
+    return this.Level.GetPlayer()
+  }
+
+  private get playerCurrentPosition() {
+    return this.Level.GetPlayer().position
+  }
 
   private get actions(): DialogOption[] {
     if (this.observer.hasObservedEntity() === true) {
@@ -105,6 +114,18 @@ export default class Map extends Vue {
 
   private onAction(option: DialogOption) {
     // console.log('TRIGGER ACTION:', JSON.stringify(option))
+  }
+
+  private keyBoardEvent(key: string, amount: number = 1) {
+    switch (key) {
+      case 'KeyRr':
+        this.Level.ReloadSave()
+        this.generateGrid()
+        break
+      default:
+        this.movePlayer(key, amount)
+        break
+    }
   }
 
   private movePlayer(direction: string, amount: number = 1) {
@@ -126,7 +147,6 @@ export default class Map extends Vue {
           break
         case 'KeyD':
           playerX += amount
-
           break
       }
       const entity = this.getEntity(playerX, playerY) as Entity
@@ -138,8 +158,7 @@ export default class Map extends Vue {
         // console.log('Invalid move!')
       } else {
         // Successful move into grid
-        this.playerCurrentPosition.x = playerX
-        this.playerCurrentPosition.y = playerY
+        this.Level.UpdatePlayerPosition(playerX, playerY)
         this.generateGrid()
       }
     }

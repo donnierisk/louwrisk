@@ -1,6 +1,7 @@
 import { GridPosition } from '@/models/GridPosition'
+import VueScrollTo from 'vue-scrollto'
 import { TweenLite, Linear } from 'gsap'
-import ScrollToPlugin from 'gsap/ScrollToPlugin';
+
 export class Animate {
   public animaterUnit(
     unitCoords: GridPosition,
@@ -10,17 +11,7 @@ export class Animate {
     isInitial?: boolean,
     window?: HTMLElement
   ) {
-    function findPos(obj: HTMLElement): number {
-      let curtop: number = 0;
-      if (obj.offsetParent) {
-        do {
-          curtop += obj.offsetTop;
-          obj = obj.offsetParent as HTMLElement
-        } while (obj)
-        return curtop
-      }
-      return 0
-    }
+
     const options = {
       left: unitCoords.x,
       top: unitCoords.y,
@@ -29,5 +20,17 @@ export class Animate {
       onStart: startCallBack
     }
     TweenLite.to(box, isInitial === true ? 0 : 0.5, options)
+    const scrolloptions = {
+      container: '#stage',
+      easing: 'ease-in-out',
+      offset: (-1 * (950 / 2)),
+      force: true,
+      cancelable: true,
+      x: true,
+      y: true
+    }
+    if (window) {
+      const cancelScroll = VueScrollTo.scrollTo(box, 500, scrolloptions)
+    }
   }
 }

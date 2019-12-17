@@ -3,8 +3,12 @@ import { EntityType } from '@/models/EntityType'
 import { TerrainSymbol } from '@/models/TerrainSymbol'
 import DialogOption from '@/models/DialogOption'
 import { Entity } from '@/models/Entity'
+import { MortalState } from '@/models/MortalState'
 const tempEnt: Entity = {
   type: EntityType.EMPTY,
+  health: 1,
+  invincible: true,
+  mortalState: MortalState.INANIMATE,
   position: { x: 0, y: 0 }
 }
 export class Observer {
