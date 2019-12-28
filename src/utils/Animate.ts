@@ -8,7 +8,7 @@ export class Animate {
     box: HTMLElement,
     callback: () => void,
     startCallBack?: () => void,
-    isInitial?: boolean,
+    speed: number = 0.5,
     window?: HTMLElement
   ) {
 
@@ -19,7 +19,7 @@ export class Animate {
       onComplete: callback,
       onStart: startCallBack
     }
-    TweenLite.to(box, isInitial === true ? 0 : 0.5, options)
+    TweenLite.to(box, speed, options)
     const scrolloptions = {
       container: '#stage',
       easing: 'ease-in-out',
@@ -30,7 +30,7 @@ export class Animate {
       y: true
     }
     if (window) {
-      const cancelScroll = VueScrollTo.scrollTo(box, 500, scrolloptions)
+      const cancelScroll = VueScrollTo.scrollTo(box, speed * 1000, scrolloptions)
     }
   }
 }

@@ -10,9 +10,9 @@ import { Entity } from '@/models/Entity'
 
 @Component
 export default class EntityComp extends Vue {
-  @Prop() private entityparse: string = 'blank'
+  @Prop() private entityparse?: string
   private get imagePath() {
-    return require(`../assets/${this.entityparse}.png`)
+    return require(`../assets/${this.entityparse ? this.entityparse : 'blank'}.png`)
   }
 }
 </script>

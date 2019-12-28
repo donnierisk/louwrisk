@@ -4,15 +4,22 @@ import { EntityInstance } from '@/models/EntityInstance'
 import { Entity } from '@/models/Entity';
 import { Level } from '@/models/Level'
 import { MortalState } from '@/models/MortalState';
+import { GridPosition } from '@/models/GridPosition';
+
+const EmptyLevel: string = `{
+  "terrain": [],
+  "entities": []
+}`
 
 export class LevelHandler {
-  private MomentoLevel?: Level
-  private CurrentLevel: Level = {
-    terrain: [],
-    entities: []
-  }
+  public reloadingSave = false
+  private MomentoLevel: string
+  private CurrentLevel: Level = JSON.parse(EmptyLevel) as Level
+  private BlockingTerrainLib: TerrainSymbol[] = [TerrainSymbol.ROCK]
+  private range: number = 2
 
   constructor() {
+    this.MomentoLevel = EmptyLevel
     this.LoadLevel({
       terrain: [
         [MS.WATER, MS.WATER, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY],
@@ -81,11 +88,19 @@ export class LevelHandler {
   }
 
   public SaveLevel() {
-    this.MomentoLevel = JSON.parse(JSON.stringify(this.CurrentLevel))
+    this.MomentoLevel = JSON.stringify(this.CurrentLevel)
+  }
+
+  public SetRange(range: number) {
+    this.range = range
   }
 
   public GetTerrain(): TerrainSymbol[][] {
     return this.CurrentLevel.terrain
+  }
+
+  public GetTerrainBlock(col: number, row: number): TerrainSymbol {
+    return this.CurrentLevel.terrain[row][col]
   }
 
   public GetAllNPC(): Entity[] {
@@ -94,6 +109,58 @@ export class LevelHandler {
 
   public GetPlayer(): Entity {
     return this.CurrentLevel.entities.filter((entity: Entity) => entity.type === EntityType.PLAYER)[0]
+  }
+
+  public GetEntity(x: number, y: number) {
+    return this.GetAllEntities().find((ent: Entity) => {
+      return ent.position.x === x && ent.position.y === y
+    })
+  }
+
+  public IsInObserveRange(gridX: number, gridY: number): boolean {
+    const minX = this.GetPlayer().position.x - this.range
+    const minY = this.GetPlayer().position.y - this.range
+
+    const maxX = this.GetPlayer().position.x + this.range
+    const maxY = this.GetPlayer().position.y + this.range
+
+    if (
+      gridX >= minX &&
+      gridY >= minY &&
+      (gridX >= minX && gridY <= maxY) &&
+      (gridX <= maxX && gridY >= minY)
+    ) {
+      return true
+    }
+    return false
+  }
+
+  public IsBlocked(col: number, row: number): boolean {
+    let blockingEntity = false
+    const entity = this.GetEntity(col, row) as Entity
+    if (entity && entity.blocks) {
+      blockingEntity = true
+    }
+
+    return this.BlockingTerrainLib.includes(this.GetTerrainBlock(col, row)) || blockingEntity
+  }
+
+  public IsOutOfBounds(col: number, row: number) {
+    if (col >= this.GridSize.x || col < 0) {
+      return true
+    }
+    if (row >= this.GridSize.y || row < 0) {
+      return true
+    }
+    return false
+  }
+
+  public get GridSize(): GridPosition {
+    return {
+      x: this.GetTerrain()[0].length,
+      y: this.GetTerrain().length,
+      z: 1
+    }
   }
 
   public GetAllEntities(): Entity[] {
@@ -107,7 +174,8 @@ export class LevelHandler {
   }
 
   public ReloadSave() {
-    this.CurrentLevel = JSON.parse(JSON.stringify(this.MomentoLevel))
+    this.reloadingSave = true
+    this.CurrentLevel = JSON.parse(this.MomentoLevel)
   }
 
   public LoadLevel(level: Level) {

@@ -1,14 +1,19 @@
 <template>
   <div id="container">
-    <keyboard-events @key-event="keyBoardEvent" />
+    <keyboard-events 
+    @key-event="generateGrid()" 
+    :throttled="throttled" 
+    :level="Level"/>
     <div class="stage" id="stage" ref="stage">
       <div
         id="grid"
         ref="grid"
         :style="`
-          grid-template-columns: repeat(${gridSize.x - 1}, ${blockSize.x}px) minmax(0, ${blockSize.x}px);
-          grid-template-rows: repeat(${gridSize.y - 1}, ${blockSize.y}px) minmax(0, ${blockSize.y}px);
-          width:${blockSize.x*gridSize.x}px;height:${blockSize.y*gridSize.y}px;
+          grid-template-columns: repeat(${Level.GridSize.x - 1}, ${blockSize.x}px) minmax(0, ${blockSize.x}px);
+          grid-template-rows: repeat(${Level.GridSize.y - 1}, ${blockSize.y}px) minmax(0, ${blockSize.y}px);
+          width:${blockSize.x*Level.GridSize.x}px;height:${blockSize.y*Level.GridSize.y}px;
+          padding:${blockSize.y}px ${blockSize.x}px;
+          ${Scale}
         `"
       >
         <grid-block
@@ -17,7 +22,7 @@
           :posInArr="i"
           :key="i"
           @observed="addToObserver"
-          @player-pos="updatePlayerCurrentPositionition"
+          @player-pos="AnimatePlayerPosition"
         >
           <template v-if="gridItem.containedEntity && !isPlayer(gridItem.containedEntity)">
             <entity-comp :entityparse="gridItem.containedEntity.name" />
@@ -59,15 +64,15 @@ import { Entity } from '@/models/Entity'
 })
 export default class Map extends Vue {
   @Prop() private blockSize!: GridPosition
+  @Prop() private aspectRatio?: string
 
-  private terrainFilterBlock: TerrainSymbol[] = [TerrainSymbol.ROCK]
+  private Scale: string = ''
   private Level = new LevelHandler()
 
   private blockWidth = 0.0
   private blockHeight = 0.0
   private gridRenderArray: GridBlockI[] = []
 
-  private playerCurrentRenderedPosition: any = { x: 0, y: 0 }
   private observedItems: TerrainSymbol[] = []
 
   private observer: Observer = new Observer()
@@ -79,29 +84,47 @@ export default class Map extends Vue {
     this.generateGrid()
   }
 
-  private get gridSize(): GridPosition {
-    return {
-      x: this.theGrid[0].length,
-      y: this.theGrid.length,
-      z: 1
-    }
+  private mounted() {
+    this.changeRatio()
   }
 
   private get description() {
     return this.observer.getDescription()
   }
-  private get theGrid() {
-    return this.Level.GetTerrain()
-  }
-  private get entities() {
-    return this.Level.GetAllEntities()
-  }
-  private get player() {
-    return this.Level.GetPlayer()
-  }
 
   private get playerCurrentPosition() {
     return this.Level.GetPlayer().position
+  }
+
+
+  @Watch('aspectRatio')
+  private onPositionChange(newVal: any) {
+    this.changeRatio()
+  }
+
+  private changeRatio() {
+    if (this.$refs.grid && this.$refs.stage && this.aspectRatio === 'fit') {
+      const width: number  = (this.$refs.grid as HTMLElement).clientWidth as number
+      const height: number = (this.$refs.grid as HTMLElement).clientHeight as number
+      const screenWidth: number  = (this.$refs.stage as HTMLElement).clientWidth as number
+      const screenHeight: number  = (this.$refs.stage as HTMLElement).clientHeight as number
+      const aspect: number = width / height
+      let resizedHeight: number = 0
+      let resizedWidth: number  = 0
+
+      if (screenHeight < screenWidth) {
+        resizedHeight = screenHeight
+        resizedWidth = resizedHeight * aspect
+      } else {
+        resizedWidth = screenWidth
+        resizedHeight = resizedWidth / aspect
+      }
+      this.Scale = `
+        transform: scale(${resizedHeight / height});
+      `
+    } else {
+      this.Scale = ''
+    }
   }
 
   private get actions(): DialogOption[] {
@@ -116,64 +139,20 @@ export default class Map extends Vue {
     // console.log('TRIGGER ACTION:', JSON.stringify(option))
   }
 
-  private keyBoardEvent(key: string, amount: number = 1) {
-    switch (key) {
-      case 'KeyRr':
-        this.Level.ReloadSave()
-        this.generateGrid()
-        break
-      default:
-        this.movePlayer(key, amount)
-        break
-    }
-  }
-
-  private movePlayer(direction: string, amount: number = 1) {
-    // Need to only do stuff if the key is a directional one
-    if (this.throttled === false) {
-      let playerX = this.playerCurrentPosition.x
-      let playerY = this.playerCurrentPosition.y
-
-      switch (direction) {
-        case 'KeyW':
-          playerY -= amount
-          break
-        case 'KeyS':
-          playerY += amount
-          break
-        case 'KeyA':
-          playerX -= amount
-
-          break
-        case 'KeyD':
-          playerX += amount
-          break
-      }
-      const entity = this.getEntity(playerX, playerY) as Entity
-      if (entity && entity.blocks) {
-        // console.log('Blocking')
-      } else if (this.isOutOfBounds(playerX, playerY)) {
-        // console.log('Out of bounds!')
-      } else if (this.isBlockedByTerrian(this.theGrid[playerY][playerX])) {
-        // console.log('Invalid move!')
-      } else {
-        // Successful move into grid
-        this.Level.UpdatePlayerPosition(playerX, playerY)
-        this.generateGrid()
-      }
-    }
-  }
-
-  private updatePlayerCurrentPositionition(
+  private AnimatePlayerPosition(
     newPosition: GridPosition,
     isInitial?: boolean
   ) {
+
     this.throttled = true
     const playerEl = this.$refs.player as HTMLElement
+
     const startCallback = () => {
       this.throttled = false
+      this.Level.reloadingSave = false
       playerEl.style.zIndex = newPosition.z ? newPosition.z.toString() : ''
     }
+
     const endCallback = () => {
       const curIndex = Number(
         playerEl.style.zIndex ? playerEl.style.zIndex : ''
@@ -182,12 +161,15 @@ export default class Map extends Vue {
         playerEl.style.zIndex = this.playerCurrentPosition.y.toString()
       }
     }
+
+    const speed = isInitial || this.Level.reloadingSave ? 0 : 0.5
+
     this.animater.animaterUnit(
       newPosition,
       playerEl,
       startCallback,
       endCallback,
-      isInitial,
+      speed,
       this.$refs.stage as HTMLElement
     )
   }
@@ -195,21 +177,21 @@ export default class Map extends Vue {
   private generateGrid() {
     this.gridRenderArray = []
     this.observedItems = []
-    for (let gridRow = 0; gridRow < this.gridSize.y; gridRow++) {
-      for (let gridItem = 0; gridItem < this.gridSize.x; gridItem++) {
+    for (let gridRow = 0; gridRow < this.Level.GridSize.y; gridRow++) {
+      for (let gridItem = 0; gridItem < this.Level.GridSize.x; gridItem++) {
         const gridObj: GridBlockI = {
-          symbol: this.theGrid[gridRow][gridItem],
+          symbol: this.Level.GetTerrain()[gridRow][gridItem],
           id: Number(gridItem + '' + gridRow),
           zIndex: gridRow
         }
 
-        const entity = this.getEntity(gridItem, gridRow)
+        const entity = this.Level.GetEntity(gridItem, gridRow)
 
         if (entity) {
           gridObj.containedEntity = entity
         }
 
-        if (this.isInObserveRange(gridItem, gridRow)) {
+        if (this.Level.IsInObserveRange(gridItem, gridRow)) {
           // Check if current gridItem's pos in 2d array matches the playerCurrentPosition
           gridObj.inObserveRange = true
           this.observedItems.push(gridObj.symbol)
@@ -220,66 +202,12 @@ export default class Map extends Vue {
     }
   }
 
-  private getEntity(x: number, y: number) {
-    return this.entities.find((ent: Entity) => {
-      return ent.position.x === x && ent.position.y === y
-    })
-  }
-
-  private isOutOfBounds(objectX: number, objectY: number) {
-    if (objectX >= this.gridSize.x || objectX < 0) {
-      return true
-    }
-    if (objectY >= this.gridSize.y || objectY < 0) {
-      return true
-    }
-    return false
-  }
-
-  private isEntityPosition(enity: Entity): boolean {
-    let returnEntity: boolean = false
-    this.entities.forEach((ent: Entity) => {
-      if (
-        ent.position.x === ent.position.x &&
-        ent.position.y === ent.position.y
-      ) {
-        returnEntity = true
-      }
-    })
-
-    return returnEntity
-  }
-
   private addToObserver(entity: Entity) {
     this.observer.addToObserver(entity)
   }
 
   private isPlayer(entity: Entity): boolean {
     return entity.type === EntityType.PLAYER
-  }
-
-  private isBlockedByTerrian(terrain: TerrainSymbol): boolean {
-    return this.terrainFilterBlock.includes(terrain)
-  }
-
-  private isInObserveRange(gridX: number, gridY: number): boolean {
-    const range = 2
-
-    const minX = this.playerCurrentPosition.x - range
-    const minY = this.playerCurrentPosition.y - range
-
-    const maxX = this.playerCurrentPosition.x + range
-    const maxY = this.playerCurrentPosition.y + range
-
-    if (
-      gridX >= minX &&
-      gridY >= minY &&
-      (gridX >= minX && gridY <= maxY) &&
-      (gridX <= maxX && gridY >= minY)
-    ) {
-      return true
-    }
-    return false
   }
 }
 </script>
@@ -304,7 +232,8 @@ export default class Map extends Vue {
   height: 100vh;
   display: flex;
   justify-content: center;
-  overflow: scroll;
+  align-items: center;
+  overflow: hidden;
   #new-player {
     position: absolute;
     top: 0;
