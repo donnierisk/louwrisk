@@ -4,36 +4,38 @@
     @key-event="generateGrid()" 
     :throttled="throttled" 
     :level="Level"/>
-    <div class="stage" id="stage" ref="stage">
-      <div
-        id="grid"
-        ref="grid"
-        :style="`
-          grid-template-columns: repeat(${Level.GridSize.x - 1}, ${blockSize.x}px) minmax(0, ${blockSize.x}px);
-          grid-template-rows: repeat(${Level.GridSize.y - 1}, ${blockSize.y}px) minmax(0, ${blockSize.y}px);
-          width:${blockSize.x*Level.GridSize.x}px;height:${blockSize.y*Level.GridSize.y}px;
-          padding:${blockSize.y}px ${blockSize.x}px;
-          ${Scale}
-        `"
-      >
-        <grid-block
-          v-for="(gridItem, i) of gridRenderArray"
-          :gridMeta="gridItem"
-          :posInArr="i"
-          :key="i"
-          @observed="addToObserver"
-          @player-pos="AnimatePlayerPosition"
+    <div class="stage" id="stage" ref="stage" :class="{'stage-fit': aspectRatioType === 'fit'}">
+      <vue-scroll ref="vs">
+        <div
+          id="grid"
+          ref="grid"
+          :style="`
+            grid-template-columns: repeat(${Level.GridSize.x - 1}, ${blockSize.x}px) minmax(0, ${blockSize.x}px);
+            grid-template-rows: repeat(${Level.GridSize.y - 1}, ${blockSize.y}px) minmax(0, ${blockSize.y}px);
+            width:${blockSize.x*Level.GridSize.x}px;height:${blockSize.y*Level.GridSize.y}px;
+            padding:${blockSize.y}px ${blockSize.x}px;
+            ${Scale}
+          `"
         >
-          <template v-if="gridItem.containedEntity && !isPlayer(gridItem.containedEntity)">
-            <entity-comp :entityparse="gridItem.containedEntity.name" />
-          </template>
-        </grid-block>
-        <div id="new-player" ref="player">
-          <div id="player-avatar" :class="{walking: throttled === true}" />
+            <grid-block
+              v-for="(gridItem, i) of gridRenderArray"
+              :gridMeta="gridItem"
+              :posInArr="i"
+              :key="i"
+              @observed="addToObserver"
+              @player-pos="AnimatePlayerPosition"
+            >
+              <template v-if="gridItem.containedEntity && !isPlayer(gridItem.containedEntity)">
+                <entity-comp :entityparse="gridItem.containedEntity.name" />
+              </template>
+            </grid-block>
+          <div id="new-player" ref="player">
+            <div id="player-avatar" :class="{walking: throttled === true}" />
+          </div>
         </div>
-      </div>
+      </vue-scroll>
     </div>
-    <dialogue-box :text="description" @on-action="onAction" :options="actions"></dialogue-box>
+    <dialogue-box x:text="description" @on-action="onAction" :options="actions"></dialogue-box>
   </div>
 </template>
 
@@ -53,6 +55,15 @@ import { increaseBy, decreaseBy } from '../utils/arithmetic'
 import DialogOption from '@/models/DialogOption'
 import { EntityType } from '../models/EntityType'
 import { Entity } from '@/models/Entity'
+import vuescroll from 'vuescroll';
+
+interface ScrollEventPar {
+  barSize: number
+  process: number
+  scrollTop?: number
+  scrollLeft?: number
+  type: string
+}
 
 @Component({
   components: {
@@ -64,19 +75,17 @@ import { Entity } from '@/models/Entity'
 })
 export default class Map extends Vue {
   @Prop() private blockSize!: GridPosition
-  @Prop() private aspectRatio?: string
+  @Prop() private aspectRatioType?: string
 
   private Scale: string = ''
   private Level = new LevelHandler()
 
-  private blockWidth = 0.0
-  private blockHeight = 0.0
   private gridRenderArray: GridBlockI[] = []
 
   private observedItems: TerrainSymbol[] = []
 
   private observer: Observer = new Observer()
-  private animater: Animate = new Animate()
+  private animater: Animate = new Animate(this.blockSize.x, this.blockSize.y)
 
   private throttled = false
 
@@ -86,10 +95,39 @@ export default class Map extends Vue {
 
   private mounted() {
     this.changeRatio()
+    this.scrollToPlayer(1, 1, false, true)
   }
 
   private get description() {
     return this.observer.getDescription()
+  }
+
+  private get gridDom() {
+    return this.$refs.grid ? this.$refs.grid : {clientWidth: 0, clientHeight: 0}
+  }
+
+  private get stageDom() {
+    return this.$refs.stage ? this.$refs.stage : {clientWidth: 0, clientHeight: 0}
+  }
+
+  private get gridWidth() {
+    return (this.gridDom as HTMLElement).clientWidth as number
+  }
+
+  private get gridHeight() {
+    return (this.gridDom as HTMLElement).clientHeight as number
+  }
+
+  private get screenWidth() {
+    return (this.stageDom as HTMLElement).clientWidth as number
+  }
+
+  private get screenHeight() {
+    return (this.stageDom as HTMLElement).clientHeight as number
+  }
+
+  private get aspectRatio() {
+    return this.gridWidth / this.gridHeight
   }
 
   private get playerCurrentPosition() {
@@ -97,30 +135,25 @@ export default class Map extends Vue {
   }
 
 
-  @Watch('aspectRatio')
+  @Watch('aspectRatioType')
   private onPositionChange(newVal: any) {
     this.changeRatio()
   }
 
   private changeRatio() {
-    if (this.$refs.grid && this.$refs.stage && this.aspectRatio === 'fit') {
-      const width: number  = (this.$refs.grid as HTMLElement).clientWidth as number
-      const height: number = (this.$refs.grid as HTMLElement).clientHeight as number
-      const screenWidth: number  = (this.$refs.stage as HTMLElement).clientWidth as number
-      const screenHeight: number  = (this.$refs.stage as HTMLElement).clientHeight as number
-      const aspect: number = width / height
+    if (this.aspectRatioType === 'fit') {
       let resizedHeight: number = 0
       let resizedWidth: number  = 0
 
-      if (screenHeight < screenWidth) {
-        resizedHeight = screenHeight
-        resizedWidth = resizedHeight * aspect
+      if (this.screenHeight < this.screenWidth) {
+        resizedHeight = this.screenHeight
+        resizedWidth = resizedHeight * this.aspectRatio
       } else {
-        resizedWidth = screenWidth
-        resizedHeight = resizedWidth / aspect
+        resizedWidth = this.screenWidth
+        resizedHeight = resizedWidth / this.aspectRatio
       }
       this.Scale = `
-        transform: scale(${resizedHeight / height});
+        transform: scale(${resizedHeight / this.gridHeight});
       `
     } else {
       this.Scale = ''
@@ -154,6 +187,16 @@ export default class Map extends Vue {
     }
 
     const endCallback = () => {
+      const absX = newPosition.x > playerEl.offsetLeft ? 1 : newPosition.x === playerEl.offsetLeft ? 0 : -1
+      const absY = newPosition.y > playerEl.offsetTop ? 1 : newPosition.y === playerEl.offsetTop ? 0 : -1
+      if (this.aspectRatioType !== 'fit') {
+        this.scrollToPlayer(
+          absX,
+          absY,
+          true,
+          false
+        )
+      }
       const curIndex = Number(
         playerEl.style.zIndex ? playerEl.style.zIndex : ''
       )
@@ -161,6 +204,7 @@ export default class Map extends Vue {
         playerEl.style.zIndex = this.playerCurrentPosition.y.toString()
       }
     }
+
 
     const speed = isInitial || this.Level.reloadingSave ? 0 : 0.5
 
@@ -209,6 +253,26 @@ export default class Map extends Vue {
   private isPlayer(entity: Entity): boolean {
     return entity.type === EntityType.PLAYER
   }
+
+  private scrollToPlayer(
+    absX: number = 1,
+    absY: number = 1,
+    animate: boolean = false,
+    initial: boolean = false
+  ) {
+    if (initial) {
+      (this.$refs.vs as vuescroll).scrollIntoView('#new-player', 0 as any);
+      (this.$refs.vs as vuescroll).scrollBy({dy: -this.screenHeight / 2, dx: -this.screenWidth / 2} as any, 0 as any);
+    } else {
+      (this.$refs.vs as vuescroll).scrollBy(
+        {
+          dx: absX * this.blockSize.x,
+          dy: absY * this.blockSize.y
+        } as any,
+        animate ? 500 : 0 as any
+      );
+    }
+  }
 }
 </script>
 
@@ -232,8 +296,11 @@ export default class Map extends Vue {
   height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   overflow: hidden;
+  &.stage-fit {
+    align-items: center;
+  }
   #new-player {
     position: absolute;
     top: 0;

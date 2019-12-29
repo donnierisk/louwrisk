@@ -1,8 +1,15 @@
 import { GridPosition } from '@/models/GridPosition'
-import VueScrollTo from 'vue-scrollto'
 import { TweenLite, Linear } from 'gsap'
 
 export class Animate {
+  private segmentWidth: number
+  private segmentHeight: number
+
+  constructor(segmentWidth: number, segmentHeight: number) {
+    this.segmentWidth = segmentWidth
+    this.segmentHeight = segmentHeight
+  }
+
   public animaterUnit(
     unitCoords: GridPosition,
     box: HTMLElement,
@@ -23,14 +30,14 @@ export class Animate {
     const scrolloptions = {
       container: '#stage',
       easing: 'ease-in-out',
-      offset: (-1 * (950 / 2)),
+      offset: -367, // (-1 * (950 / 2)),
       force: true,
       cancelable: true,
       x: true,
       y: true
     }
     if (window) {
-      const cancelScroll = VueScrollTo.scrollTo(box, speed * 1000, scrolloptions)
+      // const cancelScroll = VueScrollTo.scrollTo(box, speed * 1000, scrolloptions)
     }
   }
 }
