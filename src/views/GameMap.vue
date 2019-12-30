@@ -143,39 +143,39 @@ export default class Map extends Vue {
   }
 
   private AnimatePlayerPosition(newPosition: GridPosition, isInitial?: boolean) {
-    if (!this.throttled) {
-      this.throttled = true
-      const playerEl = this.$refs.player as HTMLElement
+    this.throttled = true
+    const playerEl = this.$refs.player as HTMLElement
 
-      const startCallback = () => {
-        this.throttled = false
-        this.level.reloadingSave = false
-        playerEl.style.zIndex = newPosition.z ? newPosition.z.toString() : ''
-      }
-
-      const endCallback = () => {
-        this.camera.PanCameraToPlayer(true)
-
-        const curIndex = Number(
-          playerEl.style.zIndex ? playerEl.style.zIndex : ''
-        )
-
-        if (curIndex < this.playerCurrentPosition.y) {
-          playerEl.style.zIndex = this.playerCurrentPosition.y.toString()
-        }
-      }
-
-      const speed = isInitial || this.level.reloadingSave ? 0 : 0.5
-
-      this.animater.animaterUnit(
-        newPosition,
-        playerEl,
-        startCallback,
-        endCallback,
-        speed,
-        this.$refs.stage as HTMLElement
-      )
+    const startCallback = () => {
+      this.throttled = false
+      this.level.reloadingSave = false
+      playerEl.style.zIndex = newPosition.z ? newPosition.z.toString() : ''
     }
+
+    const endCallback = () => {
+      this.camera.PanCameraToPlayer(isInitial || this.level.reloadingSave ? false : true)
+
+      const curIndex = Number(playerEl.style.zIndex ? playerEl.style.zIndex : '')
+
+      if (curIndex < this.playerCurrentPosition.y) {
+        playerEl.style.zIndex = this.playerCurrentPosition.y.toString()
+      }
+    }
+
+    if (this.level.reloadingSave) {
+      this.camera.PanCameraToPlayer(false)
+    }
+    
+    const speed = isInitial || this.level.reloadingSave ? 0 : 0.5
+
+    this.animater.animaterUnit(
+      newPosition,
+      playerEl,
+      startCallback,
+      endCallback,
+      speed,
+      this.$refs.stage as HTMLElement
+    )
   }
 
   private generateGrid() {

@@ -44,11 +44,12 @@ export default class Camera extends Vue {
   public PanCameraToPlayer(animate: boolean = false) {
     this.cameraPanningToPlayer = true
     const pos: GridPosition = this.playerCurrentCameraPosition
-    this.PanCameraTo(pos.x, pos.y)
+    this.PanCameraTo(pos.x, pos.y, animate)
   }
 
   public PanCameraTo(panX: number = 0, panY: number = 0, animate: boolean = false) {
-    this.camera.scrollTo({x: panX, y: panY}, 500 as any)
+    const anim = this.camera.scrollTo({x: panX, y: panY}, animate ? 500 : 0 as any)
+    console.log(anim)
   }
 
   private mounted() {
