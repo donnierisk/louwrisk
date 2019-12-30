@@ -1,11 +1,6 @@
 <template>
   <div class="home">
     <game-map :block-size="{ x: 130, y: 90, z: 0 }" :aspect-ratio-type="aspectRatio" />
-    <select v-model="aspectRatio" class="ratio-selector">     
-      <option value="" disabled selected>Ratio</option>
-      <option value="fit">Fit</option>
-      <option value="scale">Scale</option>
-    </select>
   </div>
 </template>
 
@@ -22,9 +17,7 @@ import GameMap from './GameMap.vue'
     GameMap
   }
 })
-export default class Home extends Vue {
-  private aspectRatio: string = 'scale'
-}
+export default class Home extends Vue { }
 </script>
 
 <style scoped lang="scss">
