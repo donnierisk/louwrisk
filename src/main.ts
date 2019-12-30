@@ -7,11 +7,13 @@ import vuescroll from 'vuescroll';
 Vue.use(vuescroll, {
   ops: {
     bar: {
-      opacity: 0
+      opacity: 1
     },
     scrollPanel: {
       speed: 500,
-      easing: 'easeInQuad'
+      easing: 'easeInQuad',
+      scrollingX: true,
+      scrollingY: true
     }
   }
 });

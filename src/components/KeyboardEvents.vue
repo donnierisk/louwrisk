@@ -5,7 +5,7 @@ import { LevelHandler } from '@/lib/LevelHandler';
 
 @Component
 export default class KeyboardEvents extends Vue {
-  @Prop() private Level!: LevelHandler
+  @Prop() private level!: LevelHandler
   @Prop() private throttled = false
 
   private created() {
@@ -18,7 +18,7 @@ export default class KeyboardEvents extends Vue {
   private OnEvent(key: string, amount: number = 1) {
     switch (key) {
       case 'KeyR':
-        this.Level.ReloadSave()
+        this.level.ReloadSave()
         this.$emit('reload-event')
         break
       case 'KeyW':
@@ -38,8 +38,8 @@ export default class KeyboardEvents extends Vue {
   private movePlayer(direction: string, amount: number = 1) {
     // Need to only do stuff if the key is a directional one
     if (this.throttled === false) {
-      let playerX = this.Level.GetPlayer().position.x
-      let playerY = this.Level.GetPlayer().position.y
+      let playerX = this.level.GetPlayer().position.x
+      let playerY = this.level.GetPlayer().position.y
 
       switch (direction) {
         case 'KeyW':
@@ -56,8 +56,8 @@ export default class KeyboardEvents extends Vue {
           break
       }
 
-      if (!this.Level.IsOutOfBounds(playerX, playerY) && !this.Level.IsBlocked(playerX, playerY)) {
-        this.Level.UpdatePlayerPosition(playerX, playerY)
+      if (!this.level.IsOutOfBounds(playerX, playerY) && !this.level.IsBlocked(playerX, playerY)) {
+        this.level.UpdatePlayerPosition(playerX, playerY)
       }
     }
   }
