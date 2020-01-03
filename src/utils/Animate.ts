@@ -15,8 +15,7 @@ export class Animate {
     box: HTMLElement,
     callback: () => void,
     startCallBack?: () => void,
-    speed: number = 0.5,
-    window?: HTMLElement
+    speed: number = 0.5
   ) {
 
     const options = {
@@ -27,17 +26,5 @@ export class Animate {
       onStart: startCallBack
     }
     TweenLite.to(box, speed, options)
-    const scrolloptions = {
-      container: '#stage',
-      easing: 'ease-in-out',
-      offset: -367, // (-1 * (950 / 2)),
-      force: true,
-      cancelable: true,
-      x: true,
-      y: true
-    }
-    if (window) {
-      // const cancelScroll = VueScrollTo.scrollTo(box, speed * 1000, scrolloptions)
-    }
   }
 }

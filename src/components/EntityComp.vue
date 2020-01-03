@@ -5,9 +5,9 @@
 </template>
 
 <script lang='ts'>
+// This component might become absolute the SpriteBlock.vue
 import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import { Entity } from '@/models/Entity'
-
 @Component
 export default class EntityComp extends Vue {
   @Prop() private entityparse?: string

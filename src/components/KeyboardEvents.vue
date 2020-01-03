@@ -11,7 +11,9 @@ export default class KeyboardEvents extends Vue {
   private created() {
     document.addEventListener('keydown', (e: KeyboardEvent) => {
       // this.$emit('key-event', e.code)
+      if (!this.throttled) {
         this.OnEvent(e.code)
+      }
     })
   }
 
@@ -25,10 +27,8 @@ export default class KeyboardEvents extends Vue {
         case 'KeyS':
         case 'KeyA':
         case 'KeyD':
-          if(!this.throttled) {
-            this.movePlayer(key, amount)
-            this.$emit('move-event', key)
-          }
+          this.movePlayer(key, amount)
+          this.$emit('move-event', key)
           break
         default:
           break

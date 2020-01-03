@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <game-map :block-size="{ x: 130, y: 90, z: 0 }"/>
+    <stage :block-size="{ x: 130, y: 90, z: 0 }"/>
   </div>
 </template>
 
@@ -9,12 +9,12 @@
 // import LouwRisk from "@/components/Map.vue";
 
 import { Component, Vue } from 'vue-property-decorator'
-import GameMap from './GameMap.vue'
+import Stage from './Stage.vue'
 
 
 @Component({
   components: {
-    GameMap
+    Stage
   }
 })
 export default class Home extends Vue { }

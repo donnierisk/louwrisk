@@ -1,6 +1,5 @@
 import { TerrainSymbol as MS, TerrainSymbol } from '@/models/TerrainSymbol'
 import { EntityType } from '@/models/EntityType'
-import { EntityInstance } from '@/models/EntityInstance'
 import { Entity } from '@/models/Entity';
 import { Level } from '@/models/Level'
 import { MortalState } from '@/models/MortalState';
@@ -22,22 +21,22 @@ export class LevelHandler {
     this.MomentoLevel = EmptyLevel
     this.LoadLevel({
       terrain: [
-        [MS.WATER, MS.WATER, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY],
-        [MS.WATER, MS.WATER, MS.WATER, MS.WATER, MS.EMPTY, MS.WATER, MS.WATER, MS.EMPTY, MS.EMPTY],
-        [MS.EMPTY, MS.EMPTY, MS.WATER, MS.WATER, MS.EMPTY, MS.WATER, MS.WATER, MS.WATER, MS.EMPTY],
-        [MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.ROCK, MS.EMPTY, MS.WATER, MS.WATER, MS.EMPTY],
-        [MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.ROCK, MS.EMPTY],
-        [MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY],
-        [MS.EMPTY, MS.EMPTY, MS.ROCK, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY],
-        [MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.WATER, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY],
-        [MS.WATER, MS.WATER, MS.EMPTY, MS.WATER, MS.WATER, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY],
-        [MS.WATER, MS.WATER, MS.WATER, MS.WATER, MS.WATER, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY],
-        [MS.EMPTY, MS.EMPTY, MS.WATER, MS.WATER, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.WATER, MS.EMPTY],
-        [MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY],
-        [MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY],
-        [MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY],
-        [MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY],
-        [MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY, MS.EMPTY]
+        [MS.WATER, MS.WATER, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
+        [MS.WATER, MS.WATER, MS.WATER, MS.WATER, MS.GRASS, MS.WATER, MS.WATER, MS.GRASS, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.WATER, MS.WATER, MS.GRASS, MS.WATER, MS.WATER, MS.WATER, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.ROCK, MS.GRASS, MS.WATER, MS.WATER, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.ROCK, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.ROCK, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.GRASS, MS.WATER, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
+        [MS.WATER, MS.WATER, MS.GRASS, MS.WATER, MS.WATER, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
+        [MS.WATER, MS.WATER, MS.WATER, MS.WATER, MS.WATER, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.WATER, MS.WATER, MS.GRASS, MS.GRASS, MS.GRASS, MS.WATER, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS]
       ], entities:
         [
           {
@@ -48,7 +47,8 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             name: 'Gale',
             description: 'Don\'t look at his uni-brow',
-            blocks: false
+            blocks: false,
+            id: 0
           },
           {
             type: EntityType.INTERACTIVE_PROP,
@@ -59,7 +59,8 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             name: 'crate1',
             description: 'It are a crate',
-            blocks: true
+            blocks: true,
+            id: 0
           },
           {
             type: EntityType.INTERACTIVE_PROP,
@@ -70,7 +71,8 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             name: 'crate1',
             description: 'It are a crate',
-            blocks: true
+            blocks: true,
+            id: 1
           },
           {
             type: EntityType.NPC,
@@ -80,7 +82,8 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             name: 'bandit',
             description: 'It is a bandit',
-            blocks: true
+            blocks: true,
+            id: 0
           }
         ]
     })

@@ -1,6 +1,7 @@
 export enum TerrainSymbol {
-  WATER = 'w',
-  ROCK = 'r',
-  GROUND = 'g',
-  EMPTY = 'e'
+  WATER = 'water',
+  GRASS = 'grass',
+  ROCK = 'rock',
+  GROUND = 'ground',
+  EMPTY = 'empty'
 }

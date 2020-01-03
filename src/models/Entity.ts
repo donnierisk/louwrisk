@@ -10,6 +10,7 @@ export interface Entity {
   mortalState: MortalState
   invincible?: boolean
   span?: GridPosition
+  id?: number
   name?: string
   description?: string
   blocks?: boolean

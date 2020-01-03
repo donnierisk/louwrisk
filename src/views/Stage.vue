@@ -23,15 +23,18 @@
           :posInArr="i"
           :key="i"
           @observed="addToObserver"
-          @player-pos="AnimatePlayerPosition"
+          @entity-pos="AnimateEntityPosition"
         >
-          <template v-if="gridItem.containedEntity && !isPlayer(gridItem.containedEntity)">
-            <entity-comp :entityparse="gridItem.containedEntity.name" />
-          </template>
+          <sprite-block :is-observed="gridItem.inObserveRange" :terrain="gridItem.symbol" />
         </grid-block>
-        <div id="new-player" ref="player">
-          <div id="player-avatar" :class="{walking: throttled === true}" />
-        </div>
+        <sprite-block 
+          v-for="(entity, i) of gridRenderArray.filter(ent => ent.containedEntity ? true : false)" 
+          :is-observed="entity.inObserveRange" 
+          :animating="animating" 
+          :entity="entity.containedEntity"
+          :ref="entity.containedEntity.type" 
+          :key="entity.containedEntity.type + entity.containedEntity.id" 
+        />
       </div>
     </camera>
     <!-- <dialogue-box x:text="description" @on-action="onAction" :options="actions"></dialogue-box> -->
@@ -55,6 +58,7 @@ import Camera from '@/components/Camera.vue'
 import EntityComp from '@/components/EntityComp.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
 import KeyboardEvents from '@/components/KeyboardEvents.vue'
+import SpriteBlock from '@/components/SpriteBlock.vue'
 import DialogOption from '@/models/DialogOption'
 
 @Component({
@@ -63,7 +67,8 @@ import DialogOption from '@/models/DialogOption'
     DialogueBox,
     KeyboardEvents,
     EntityComp,
-    Camera
+    Camera,
+    SpriteBlock
   }
 })
 export default class Map extends Vue {
@@ -78,6 +83,7 @@ export default class Map extends Vue {
   private observedItems: TerrainSymbol[] = []
 
   private observer: Observer = new Observer()
+  private animating: boolean = false
   private animater: Animate = new Animate(this.blockSize.x, this.blockSize.y)
 
   private throttled = false
@@ -130,6 +136,10 @@ export default class Map extends Vue {
     return this.gridWidth / this.gridHeight
   }
 
+  private getEntityRef(type: EntityType, id: number) {
+    return ((this.$refs[type] as SpriteBlock[])[id] as SpriteBlock).entityRef as HTMLElement
+  }
+
   private get actions(): DialogOption[] {
     if (this.observer.hasObservedEntity() === true) {
       return [{ id: 1, text: 'Do something', childIds: [] }]
@@ -142,45 +152,47 @@ export default class Map extends Vue {
     // console.log('TRIGGER ACTION:', JSON.stringify(option))
   }
 
-  private AnimatePlayerPosition(newPosition: GridPosition, isInitial?: boolean) {
+  private AnimateEntityPosition(newPosition: GridPosition, type: EntityType, animate?: boolean, id?: number) {
     this.throttled = true
-    const playerEl = this.$refs.player as HTMLElement
-
+    this.animating = true
+    const entity = this.getEntityRef(type, id ? id : 0)
     const startCallback = () => {
       this.throttled = false
+      this.animating = false
       this.level.reloadingSave = false
-      playerEl.style.zIndex = newPosition.z ? newPosition.z.toString() : ''
+      entity.style.zIndex = newPosition.z ? newPosition.z.toString() : ''
     }
 
-    const endCallback = () => {
-      this.camera.PanCameraToPlayer(isInitial || this.level.reloadingSave ? false : true)
+    const endCallback = type === EntityType.PLAYER ? () => {
+      const curIndex = Number(entity.style.zIndex ? entity.style.zIndex : '')
+      const entityCurrentPosition: GridPosition = this.level.GetAllEntities()
+      .filter((ent) => ent.type === type)[id ? id : 0].position
 
-      const curIndex = Number(playerEl.style.zIndex ? playerEl.style.zIndex : '')
-
-      if (curIndex < this.playerCurrentPosition.y) {
-        playerEl.style.zIndex = this.playerCurrentPosition.y.toString()
+      if (curIndex < entityCurrentPosition.y) {
+        entity.style.zIndex = entityCurrentPosition.y.toString()
       }
-    }
+      this.camera.PanCameraToPlayer(animate || this.level.reloadingSave ? false : true)
+    } : () => {return}
 
-    if (this.level.reloadingSave) {
+    if (this.level.reloadingSave && type === EntityType.PLAYER) {
       this.camera.PanCameraToPlayer(false)
     }
-    
-    const speed = isInitial || this.level.reloadingSave ? 0 : 0.5
+
+    const speed = animate || this.level.reloadingSave ? 0 : 0.5
 
     this.animater.animaterUnit(
       newPosition,
-      playerEl,
+      entity,
       startCallback,
       endCallback,
-      speed,
-      this.$refs.stage as HTMLElement
+      speed
     )
   }
 
   private generateGrid() {
     this.gridRenderArray = []
     this.observedItems = []
+    const entityIds: any = {}
     for (let gridRow = 0; gridRow < this.level.GridSize.y; gridRow++) {
       for (let gridItem = 0; gridItem < this.level.GridSize.x; gridItem++) {
         const gridObj: GridBlockI = {
@@ -192,6 +204,12 @@ export default class Map extends Vue {
         const entity = this.level.GetEntity(gridItem, gridRow)
 
         if (entity) {
+          if (entityIds[entity.type] !== undefined) {
+            entityIds[entity.type]++
+          } else {
+            entityIds[entity.type] = 0
+          }
+          entity.id = entityIds[entity.type]
           gridObj.containedEntity = entity
         }
 
@@ -206,6 +224,7 @@ export default class Map extends Vue {
     }
   }
 
+  // Only the observed blocks animate.
   private addToObserver(entity: Entity) {
     this.observer.addToObserver(entity)
   }
@@ -237,42 +256,5 @@ export default class Map extends Vue {
   position: relative;
   display: grid;
   border-radius: 20px;
-}
-
-#new-player {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 11;
-}
-
-#new-player #player-avatar {
-  width: 128px;
-  height: 128px;
-  position: absolute;
-  background-size: 100%;
-  bottom: -32px;
-  left: -64px;
-  background-position: 0 0;
-  background-image: url('../assets/character_main_walking.png');
-}
-
-.walking {
-  animation: walking 0.5s steps(1) infinite;
-}
-
-@keyframes walking {
-  0% {
-    background-position: 0 0;
-  }
-  25% {
-    background-position: 0 -128px;
-  }
-  50% {
-    background-position: 0 0;
-  }
-  75% {
-    background-position: 0 -256px;
-  }
 }
 </style>

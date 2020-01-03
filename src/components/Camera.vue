@@ -49,7 +49,6 @@ export default class Camera extends Vue {
 
   public PanCameraTo(panX: number = 0, panY: number = 0, animate: boolean = false) {
     const anim = this.camera.scrollTo({x: panX, y: panY}, animate ? 500 : 0 as any)
-    console.log(anim)
   }
 
   private mounted() {
