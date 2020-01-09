@@ -11,7 +11,7 @@ Vue.use(vuescroll, {
     },
     scrollPanel: {
       speed: 500,
-      easing: 'easeInQuad',
+      easing: 'linier',
       scrollingX: false,
       scrollingY: false
     }

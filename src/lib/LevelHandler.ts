@@ -4,6 +4,7 @@ import { Entity } from '@/models/Entity';
 import { Level } from '@/models/Level'
 import { MortalState } from '@/models/MortalState';
 import { GridPosition } from '@/models/GridPosition';
+import { EntityInterface } from '@/models/EntityInterface';
 
 const EmptyLevel: string = `{
   "terrain": [],
@@ -12,14 +13,16 @@ const EmptyLevel: string = `{
 
 export class LevelHandler {
   public reloadingSave = false
-  private MomentoLevel: string
+  private LevelMomento: string
+  private player: Entity
+  private entities: Entity[] = []
   private CurrentLevel: Level = JSON.parse(EmptyLevel) as Level
   private BlockingTerrainLib: TerrainSymbol[] = [TerrainSymbol.ROCK]
   private range: number = 2
 
   constructor() {
-    this.MomentoLevel = EmptyLevel
-    this.LoadLevel({
+    this.LevelMomento = EmptyLevel
+    this.loadLevel({
       terrain: [
         [MS.WATER, MS.WATER, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
         [MS.WATER, MS.WATER, MS.WATER, MS.WATER, MS.GRASS, MS.WATER, MS.WATER, MS.GRASS, MS.GRASS],
@@ -40,17 +43,6 @@ export class LevelHandler {
       ], entities:
         [
           {
-            type: EntityType.PLAYER,
-            position: { x: 3, y: 5, z: 1 },
-            mortalState: MortalState.ALIVE,
-            health: 10,
-            span: { x: 1, y: 1, z: 1 },
-            name: 'Gale',
-            description: 'Don\'t look at his uni-brow',
-            blocks: false,
-            id: 0
-          },
-          {
             type: EntityType.INTERACTIVE_PROP,
             mortalState: MortalState.INANIMATE,
             health: 1,
@@ -59,8 +51,7 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             name: 'crate1',
             description: 'It are a crate',
-            blocks: true,
-            id: 0
+            blocks: true
           },
           {
             type: EntityType.INTERACTIVE_PROP,
@@ -71,8 +62,7 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             name: 'crate1',
             description: 'It are a crate',
-            blocks: true,
-            id: 1
+            blocks: true
           },
           {
             type: EntityType.NPC,
@@ -82,50 +72,79 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             name: 'bandit',
             description: 'It is a bandit',
-            blocks: true,
-            id: 0
+            blocks: true
           }
         ]
     })
-    this.SaveLevel()
+
+    this.player = new Entity({
+      type: EntityType.PLAYER,
+      position: { x: 3, y: 5, z: 1 },
+      mortalState: MortalState.ALIVE,
+      health: 10,
+      span: { x: 1, y: 1, z: 1 },
+      name: 'Gale',
+      description: 'Don\'t look at his uni-brow',
+      blocks: true
+    }, 0)
+
+
+    let t: EntityType
+    const entityIds: any = {}
+
+    this.entities.push(this.player)
+    this.CurrentLevel.entities.forEach((ent) => {
+      t = ent.type
+      if (entityIds[t] !== undefined) {
+        entityIds[t]++
+      } else {
+        entityIds[t] = 0
+      }
+      this.entities.push(new Entity(ent, entityIds[t]))
+    })
+    this.saveLevel()
   }
 
-  public SaveLevel() {
-    this.MomentoLevel = JSON.stringify(this.CurrentLevel)
+  public saveLevel() {
+    const temp: any = {}
+    this.entities.forEach((ent) => temp[ent.type() + ent.getId()] = ent.getFields())
+    this.LevelMomento = JSON.stringify(temp)
   }
 
-  public SetRange(range: number) {
+  public setRange(range: number) {
     this.range = range
   }
 
-  public GetTerrain(): TerrainSymbol[][] {
+  public getTerrain(): TerrainSymbol[][] {
     return this.CurrentLevel.terrain
   }
 
-  public GetTerrainBlock(col: number, row: number): TerrainSymbol {
+  public getTerrainBlock(col: number, row: number): TerrainSymbol {
     return this.CurrentLevel.terrain[row][col]
   }
 
-  public GetAllNPC(): Entity[] {
-    return this.CurrentLevel.entities.filter((entity: Entity) => entity.type === EntityType.NPC)
+  public getAllNPC(): EntityInterface[] {
+    return this.CurrentLevel.entities.filter((entity: EntityInterface) => entity.type === EntityType.NPC)
   }
 
-  public GetPlayer(): Entity {
-    return this.CurrentLevel.entities.filter((entity: Entity) => entity.type === EntityType.PLAYER)[0]
+  public getPlayer(): Entity {
+    return this.player
   }
 
-  public GetEntity(x: number, y: number) {
-    return this.GetAllEntities().find((ent: Entity) => {
-      return ent.position.x === x && ent.position.y === y
+  public getEntity(x: number, y: number) {
+    return this.getAllEntities().find((ent: Entity) => {
+      const pos = ent.getPosition()
+      return pos.x === x && pos.y === y
     })
   }
 
-  public IsInObserveRange(gridX: number, gridY: number): boolean {
-    const minX = this.GetPlayer().position.x - this.range
-    const minY = this.GetPlayer().position.y - this.range
+  public isInObserveRange(gridX: number, gridY: number): boolean {
+    const p = this.player.getPosition()
+    const minX = p.x - this.range
+    const minY = p.y - this.range
 
-    const maxX = this.GetPlayer().position.x + this.range
-    const maxY = this.GetPlayer().position.y + this.range
+    const maxX = p.x + this.range
+    const maxY = p.y + this.range
 
     if (
       gridX >= minX &&
@@ -135,20 +154,21 @@ export class LevelHandler {
     ) {
       return true
     }
+
     return false
   }
 
-  public IsBlocked(col: number, row: number): boolean {
+  public isBlocked(col: number, row: number): boolean {
     let blockingEntity = false
-    const entity = this.GetEntity(col, row) as Entity
-    if (entity && entity.blocks) {
+    const entity = this.getEntity(col, row) as Entity
+    if (entity && entity.isBlocker()) {
       blockingEntity = true
     }
 
-    return this.BlockingTerrainLib.includes(this.GetTerrainBlock(col, row)) || blockingEntity
+    return this.BlockingTerrainLib.includes(this.getTerrainBlock(col, row)) || blockingEntity
   }
 
-  public IsOutOfBounds(col: number, row: number) {
+  public isOutOfBounds(col: number, row: number) {
     if (col >= this.GridSize.x || col < 0) {
       return true
     }
@@ -160,28 +180,29 @@ export class LevelHandler {
 
   public get GridSize(): GridPosition {
     return {
-      x: this.GetTerrain()[0].length,
-      y: this.GetTerrain().length,
+      x: this.getTerrain()[0].length,
+      y: this.getTerrain().length,
       z: 1
     }
   }
 
-  public GetAllEntities(): Entity[] {
-    return this.CurrentLevel.entities
+  public getAllEntities(): Entity[] {
+    return this.entities
   }
 
-  public UpdatePlayerPosition(x: number, y: number) {
-    const tempPlayer = this.CurrentLevel.entities.filter((entity: Entity) => entity.type === EntityType.PLAYER)[0]
-    tempPlayer.position.x = x
-    tempPlayer.position.y = y
+  public updatePlayerPosition(x: number, y: number) {
+    this.player.setPosition(x, y)
   }
 
-  public ReloadSave() {
+  public reloadSave() {
+    const entMomento = JSON.parse(this.LevelMomento) as any
+    this.entities.forEach(
+      (ent) => { ent.setFields(entMomento[ent.type() + ent.getId()] as EntityInterface) }
+    )
     this.reloadingSave = true
-    this.CurrentLevel = JSON.parse(this.MomentoLevel)
   }
 
-  public LoadLevel(level: Level) {
+  public loadLevel(level: Level) {
     this.CurrentLevel = level
   }
 }

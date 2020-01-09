@@ -1,13 +1,23 @@
 <template>
-  <div class="sprite-block" :class="[imageTerrain, {entity: hasEntity, observed: isObserved}]" :id="entName" ref="entity">
-    <div v-if="hasEntity" class="entity-avatar" :class="{walking: animating}" :style="`background-image: url(${imageEntity})`"/>
+  <div
+    class="sprite-block"
+    :class="[imageTerrain, {entity: hasEntity, observed: isObserved}]"
+    :id="entName"
+    ref="entity"
+  >
+    <div
+      v-if="hasEntity"
+      class="entity-avatar"
+      :class="{walking: animating}"
+      :style="`background-image: url(${imageEntity})`"
+    />
   </div>
 </template>
 
 <script lang='ts'>
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { TerrainSymbol } from '../models/TerrainSymbol'
-import { Entity } from '@/models/Entity';
+import { Entity } from '@/models/Entity'
 
 @Component
 export default class SpriteBlock extends Vue {
@@ -17,16 +27,17 @@ export default class SpriteBlock extends Vue {
   @Prop() private entity?: Entity
 
   private get imageEntity(): string {
-    return this.entity ? require(`../assets/${this.entity.name}.png`) : require(`../assets/blank.png`)
+    return this.entity
+      ? require(`../assets/${this.entity.name()}.png`)
+      : require(`../assets/blank.png`)
   }
 
   private get hasEntity() {
     return this.entity ? true : false
   }
 
-
   private get entName() {
-    return this.entity ? this.entity.name : ''
+    return this.entity ? this.entity.name() : ''
   }
 
   private get imageTerrain(): TerrainSymbol {

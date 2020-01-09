@@ -1,22 +1,15 @@
 <template>
   <div id="container">
-    <keyboard-events 
-    @key-event="generateGrid()" 
-    :throttled="throttled" 
-    :level="level"/>
-    <camera 
-        ref="camera"
-        :block-size="blockSize"
-        :player-position="playerCurrentPosition"
-        :camera-offset="cameraOffset"
-        camera-width="500px"
-        camera-height="500px"
-      >
-      <div
-        id="grid"
-        ref="grid"
-        :style="gridStyle"
-      >
+    <keyboard-events @key-event="generateGrid()" :throttled="throttled" :level="level" />
+    <camera
+      ref="camera"
+      :block-size="blockSize"
+      :player-position="playerCurrentPosition"
+      :camera-offset="cameraOffset"
+      camera-width="500px"
+      camera-height="500px"
+    >
+      <div id="grid" ref="grid" :style="gridStyle">
         <grid-block
           v-for="(gridItem, i) of gridRenderArray"
           :gridMeta="gridItem"
@@ -27,13 +20,13 @@
         >
           <sprite-block :is-observed="gridItem.inObserveRange" :terrain="gridItem.symbol" />
         </grid-block>
-        <sprite-block 
-          v-for="(entity, i) of gridRenderArray.filter(ent => ent.containedEntity ? true : false)" 
-          :is-observed="entity.inObserveRange" 
-          :animating="animating" 
+        <sprite-block
+          v-for="(entity) of gridRenderArray.filter(ent => ent.containedEntity ? true : false)"
+          :is-observed="entity.inObserveRange"
+          :animating="animating"
           :entity="entity.containedEntity"
-          :ref="entity.containedEntity.type" 
-          :key="entity.containedEntity.type + entity.containedEntity.id" 
+          :ref="entity.containedEntity.type()"
+          :key="entity.containedEntity.type() + entity.containedEntity.getId()"
         />
       </div>
     </camera>
@@ -98,7 +91,7 @@ export default class Map extends Vue {
   }
 
   private get camera(): Camera {
-    return (this.$refs.camera as Camera)
+    return this.$refs.camera as Camera
   }
 
   private get description() {
@@ -106,22 +99,32 @@ export default class Map extends Vue {
   }
 
   private get playerCurrentPosition() {
-    return this.level.GetPlayer().position
+    return this.level.getPlayer().getPosition()
   }
 
   private get gridStyle() {
     const _ = this
     return `
-      grid-template-columns: repeat(${_.level.GridSize.x - 1}, ${_.blockSize.x}px) minmax(0, ${_.blockSize.x}px);
-      grid-template-rows: repeat(${_.level.GridSize.y - 1}, ${_.blockSize.y}px) minmax(0, ${_.blockSize.y}px);
-      width:${_.blockSize.x * _.level.GridSize.x}px;height:${_.blockSize.y * _.level.GridSize.y}px;
-      padding:${(_.blockSize.y * _.level.GridSize.y) + 'px ' + (_.blockSize.x * _.level.GridSize.x) + 'px'}
+      grid-template-columns: repeat(${_.level.GridSize.x - 1}, ${
+      _.blockSize.x
+    }px) minmax(0, ${_.blockSize.x}px);
+      grid-template-rows: repeat(${_.level.GridSize.y - 1}, ${
+      _.blockSize.y
+    }px) minmax(0, ${_.blockSize.y}px);
+      width:${_.blockSize.x * _.level.GridSize.x}px;height:${_.blockSize.y *
+      _.level.GridSize.y}px;
+      padding:${_.blockSize.y * _.level.GridSize.y +
+        'px ' +
+        _.blockSize.x * _.level.GridSize.x +
+        'px'}
       ${_.Scale}
     `
   }
 
   private get gridDom() {
-    return this.storeActive ? this.$refs.grid : {clientWidth: 0, clientHeight: 0}
+    return this.storeActive
+      ? this.$refs.grid
+      : { clientWidth: 0, clientHeight: 0 }
   }
 
   private get gridWidth() {
@@ -137,7 +140,8 @@ export default class Map extends Vue {
   }
 
   private getEntityRef(type: EntityType, id: number) {
-    return ((this.$refs[type] as SpriteBlock[])[id] as SpriteBlock).entityRef as HTMLElement
+    return ((this.$refs[type] as SpriteBlock[])[id] as SpriteBlock)
+      .entityRef as HTMLElement
   }
 
   private get actions(): DialogOption[] {
@@ -152,7 +156,12 @@ export default class Map extends Vue {
     // console.log('TRIGGER ACTION:', JSON.stringify(option))
   }
 
-  private AnimateEntityPosition(newPosition: GridPosition, type: EntityType, animate?: boolean, id?: number) {
+  private AnimateEntityPosition(
+    newPosition: GridPosition,
+    type: EntityType,
+    animate?: boolean,
+    id?: number
+  ) {
     this.throttled = true
     this.animating = true
     const entity = this.getEntityRef(type, id ? id : 0)
@@ -163,16 +172,27 @@ export default class Map extends Vue {
       entity.style.zIndex = newPosition.z ? newPosition.z.toString() : ''
     }
 
-    const endCallback = type === EntityType.PLAYER ? () => {
-      const curIndex = Number(entity.style.zIndex ? entity.style.zIndex : '')
-      const entityCurrentPosition: GridPosition = this.level.GetAllEntities()
-      .filter((ent) => ent.type === type)[id ? id : 0].position
+    const endCallback =
+      type === EntityType.PLAYER
+        ? () => {
+            const curIndex = Number(
+              entity.style.zIndex ? entity.style.zIndex : ''
+            )
+            const entityCurrentPosition: GridPosition = this.level
+              .getAllEntities()
+              .filter(ent => ent.type() === type)
+              [id ? id : 0].getPosition()
 
-      if (curIndex < entityCurrentPosition.y) {
-        entity.style.zIndex = entityCurrentPosition.y.toString()
-      }
-      this.camera.PanCameraToPlayer(animate || this.level.reloadingSave ? false : true)
-    } : () => {return}
+            if (curIndex < entityCurrentPosition.y) {
+              entity.style.zIndex = entityCurrentPosition.y.toString()
+            }
+            this.camera.PanCameraToPlayer(
+              animate || this.level.reloadingSave ? false : true
+            )
+          }
+        : () => {
+            return
+          }
 
     if (this.level.reloadingSave && type === EntityType.PLAYER) {
       this.camera.PanCameraToPlayer(false)
@@ -192,28 +212,21 @@ export default class Map extends Vue {
   private generateGrid() {
     this.gridRenderArray = []
     this.observedItems = []
-    const entityIds: any = {}
     for (let gridRow = 0; gridRow < this.level.GridSize.y; gridRow++) {
       for (let gridItem = 0; gridItem < this.level.GridSize.x; gridItem++) {
         const gridObj: GridBlockI = {
-          symbol: this.level.GetTerrain()[gridRow][gridItem],
+          symbol: this.level.getTerrain()[gridRow][gridItem],
           id: Number(gridItem + '' + gridRow),
           zIndex: gridRow
         }
 
-        const entity = this.level.GetEntity(gridItem, gridRow)
+        const entity = this.level.getEntity(gridItem, gridRow)
 
         if (entity) {
-          if (entityIds[entity.type] !== undefined) {
-            entityIds[entity.type]++
-          } else {
-            entityIds[entity.type] = 0
-          }
-          entity.id = entityIds[entity.type]
           gridObj.containedEntity = entity
         }
 
-        if (this.level.IsInObserveRange(gridItem, gridRow)) {
+        if (this.level.isInObserveRange(gridItem, gridRow)) {
           // Check if current gridItem's pos in 2d array matches the playerCurrentPosition
           gridObj.inObserveRange = true
           this.observedItems.push(gridObj.symbol)
@@ -230,13 +243,13 @@ export default class Map extends Vue {
   }
 
   private isPlayer(entity: Entity): boolean {
-    return entity.type === EntityType.PLAYER
+    return entity.type() === EntityType.PLAYER
   }
 
   private get cameraOffset(): Position {
     return {
-      x: this.blockSize.x * this.level.GridSize.x  - (this.blockSize.x / 2),
-      y: this.blockSize.y * this.level.GridSize.y - (this.blockSize.y / 2)
+      x: this.blockSize.x * this.level.GridSize.x - this.blockSize.x / 2,
+      y: this.blockSize.y * this.level.GridSize.y - this.blockSize.y / 2
     }
   }
 }
@@ -244,7 +257,7 @@ export default class Map extends Vue {
 
 <style scoped lang="scss">
 #container {
-  background: black;  
+  background: black;
   display: flex;
   height: 100vh;
   justify-content: center;

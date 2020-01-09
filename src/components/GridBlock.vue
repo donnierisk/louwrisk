@@ -15,7 +15,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { GridBlockI } from '../models/GridBlockI'
 import { GridPosition } from '../models/GridPosition'
 import { EntityType } from '../models/EntityType'
-import { Entity } from '@/models/Entity';
+import { Entity } from '@/models/Entity'
 
 @Component
 export default class GridBlock extends Vue {
@@ -47,12 +47,18 @@ export default class GridBlock extends Vue {
     }
   }
 
-  private emitPosition(entity: any, isInitial?: boolean) {
+  private emitPosition(entity: Entity, isInitial?: boolean) {
     const elem = this.$refs.block as HTMLElement
     this.position.x = elem.offsetLeft + elem.offsetWidth / 2
     this.position.y = elem.offsetTop + elem.offsetHeight / 2
     this.position.z = this.gridMeta.zIndex
-    this.$emit('entity-pos', this.position, entity.type, isInitial, entity.id)
+    this.$emit(
+      'entity-pos',
+      this.position,
+      entity.type(),
+      isInitial,
+      entity.getId()
+    )
   }
 
   private observe(e: Event) {

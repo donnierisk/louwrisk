@@ -1,18 +1,44 @@
-import { EntityType } from './EntityType';
+import { EntityInterface } from './EntityInterface';
 import { GridPosition } from './GridPosition';
-import Buff from './Buffs';
-import { MortalState } from './MortalState';
 
-export interface Entity {
-  type: EntityType
-  position: GridPosition
-  health: number
-  mortalState: MortalState
-  invincible?: boolean
-  span?: GridPosition
-  id?: number
-  name?: string
-  description?: string
-  blocks?: boolean
-  buff?: Buff
+export class Entity {
+  private entityFields: EntityInterface
+  private id: number
+  constructor(fields: EntityInterface, id: number) {
+    this.entityFields = fields
+    this.id = id
+  }
+
+  public setFields(fields: EntityInterface) {
+    this.entityFields = fields
+  }
+
+  public getFields(): EntityInterface {
+    return this.entityFields
+  }
+
+  public name() {
+    return this.entityFields.name
+  }
+
+  public type() {
+    return this.entityFields.type
+  }
+
+  public getPosition(): GridPosition {
+    return this.entityFields.position
+  }
+
+  public setPosition(x: number, y: number) {
+    this.entityFields.position.x = x
+    this.entityFields.position.y = y
+  }
+
+  public isBlocker(): boolean {
+    return this.entityFields.blocks ? true : false
+  }
+
+  public getId(): number {
+    return this.id
+  }
 }

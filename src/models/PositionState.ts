@@ -1,0 +1,6 @@
+export enum PositionState {
+  STANDING = 'STANDING',
+  CROUCHING = 'CROUCHING',
+  CRAWLING = 'CRAWLING',
+  FLYING = 'FLYING'
+}
