@@ -30,7 +30,6 @@
         />
       </div>
     </camera>
-    <!-- <dialogue-box x:text="description" @on-action="onAction" :options="actions"></dialogue-box> -->
   </div>
 </template>
 
@@ -40,7 +39,7 @@ import { LevelHandler } from '@/lib/LevelHandler'
 import { TerrainSymbol } from '@/models/TerrainSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
-import { Observer } from '@/utils/Observer'
+import { Observer } from '@/utils/EntityObserver'
 import { Animate } from '@/utils/Animate'
 import { EntityType } from '../models/Entity/EntityType'
 import { Entity } from '@/models/Entity/Entity'
@@ -141,18 +140,6 @@ export default class Map extends Vue {
   private getEntityRef(type: EntityType, id: number) {
     return ((this.$refs[type] as SpriteBlock[])[id] as SpriteBlock)
       .entityRef as HTMLElement
-  }
-
-  private get actions(): DialogOption[] {
-    if (this.observer.hasObservedEntity() === true) {
-      return [{ id: 1, text: 'Do something', childIds: [] }]
-    } else {
-      return [{ id: 0, text: 'Nothing to do', childIds: [] }]
-    }
-  }
-
-  private onAction(option: DialogOption) {
-    // console.log('TRIGGER ACTION:', JSON.stringify(option))
   }
 
   private AnimateEntityPosition(
