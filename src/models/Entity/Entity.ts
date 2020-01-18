@@ -1,5 +1,5 @@
 import { EntityInterface } from './EntityInterface';
-import { GridPosition } from './GridPosition';
+import { GridPosition } from '@/models/GridPosition';
 
 export class Entity {
   private entityFields: EntityInterface

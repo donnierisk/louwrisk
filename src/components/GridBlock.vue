@@ -14,8 +14,8 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { GridBlockI } from '../models/GridBlockI'
 import { GridPosition } from '../models/GridPosition'
-import { EntityType } from '../models/EntityType'
-import { Entity } from '@/models/Entity'
+import { EntityType } from '@/models/Entity/EntityType'
+import { Entity } from '@/models/Entity/Entity'
 
 @Component
 export default class GridBlock extends Vue {

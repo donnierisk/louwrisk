@@ -1,8 +1,8 @@
 import { GridBlockI } from '../models/GridBlockI'
-import { EntityType } from '@/models/EntityType'
+import { EntityType } from '@/models/Entity/EntityType'
 import { TerrainSymbol } from '@/models/TerrainSymbol'
 import DialogOption from '@/models/DialogOption'
-import { Entity } from '@/models/Entity'
+import { Entity } from '@/models/Entity/Entity'
 import { MortalState } from '@/models/MortalState'
 const tempEnt: Entity = new Entity({
   type: EntityType.EMPTY,

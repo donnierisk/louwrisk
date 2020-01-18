@@ -1,10 +1,10 @@
 import { TerrainSymbol as MS, TerrainSymbol } from '@/models/TerrainSymbol'
-import { EntityType } from '@/models/EntityType'
-import { Entity } from '@/models/Entity';
+import { EntityType } from '@/models/Entity/EntityType'
+import { Entity } from '@/models/Entity/Entity';
 import { Level } from '@/models/Level'
 import { MortalState } from '@/models/MortalState';
 import { GridPosition } from '@/models/GridPosition';
-import { EntityInterface } from '@/models/EntityInterface';
+import { EntityInterface } from '@/models/Entity/EntityInterface';
 
 const EmptyLevel: string = `{
   "terrain": [],

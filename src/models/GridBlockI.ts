@@ -1,5 +1,5 @@
 import { TerrainSymbol } from './TerrainSymbol';
-import { Entity } from './Entity';
+import { Entity } from './Entity/Entity';
 
 export interface GridBlockI {
   symbol: TerrainSymbol,

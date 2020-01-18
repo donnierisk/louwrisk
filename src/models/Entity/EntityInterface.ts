@@ -1,9 +1,9 @@
 import { EntityType } from './EntityType';
-import { GridPosition } from './GridPosition';
-import Buff from './Buffs';
-import { MortalState } from './MortalState';
-import { ActionState } from './ActionState';
-import { PositionState } from './PositionState';
+import { GridPosition } from '../GridPosition';
+import Buff from '../Buffs';
+import { MortalState } from '../MortalState';
+import { ActionState } from '../Action/ActionState';
+import { PositionState } from '../PositionState';
 
 
 export interface EntityInterface {

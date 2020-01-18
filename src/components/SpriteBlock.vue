@@ -17,7 +17,7 @@
 <script lang='ts'>
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { TerrainSymbol } from '../models/TerrainSymbol'
-import { Entity } from '@/models/Entity'
+import { Entity } from '@/models/Entity/Entity'
 
 @Component
 export default class SpriteBlock extends Vue {
