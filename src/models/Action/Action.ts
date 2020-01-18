@@ -2,7 +2,7 @@ import { ActionTypes } from './ActionTypes';
 import { Entity } from '../Entity/Entity';
 import { GridPosition } from '../GridPosition';
 
-export class Action {
+export default class Action {
   private type: ActionTypes
   private actionEntity: Entity
   private interactionEntities?: Entity[]
@@ -34,6 +34,8 @@ export class Action {
         this.interactionEntities = parameters[0]
         this.dialogs = parameters[1]
         break;
+      default:
+        this.actionEvent = () => { return }
     }
   }
   public act() {
@@ -54,7 +56,7 @@ export class Action {
     }
   }
 
-  private dialog() { }
-  private observe() { }
-  private obtain() { }
+  private dialog() { return }
+  private observe() { return }
+  private obtain() { return }
 }

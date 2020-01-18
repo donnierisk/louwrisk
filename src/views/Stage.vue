@@ -1,6 +1,6 @@
 <template>
   <div id="container">
-    <keyboard-events @key-event="generateGrid()" :throttled="throttled" :level="level" />
+    <keyboard-events @key-event="nextTurn" :throttled="throttled" :level="level" />
     <camera
       ref="camera"
       :block-size="blockSize"
@@ -36,6 +36,8 @@
 <script lang='ts'>
 import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import { LevelHandler } from '@/lib/LevelHandler'
+import { ActionHandler } from '@/lib/ActionHandler'
+import { AIHandler } from '@/lib/AIHandler'
 import { TerrainSymbol } from '@/models/TerrainSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
@@ -68,6 +70,12 @@ export default class Map extends Vue {
   private Scale: string = ''
   private storeActive: boolean = false
   private level = new LevelHandler()
+  private action = new ActionHandler()
+  private aiHandler = new AIHandler(
+    this.action,
+    this.level,
+    this.level.getAllNPC()
+  )
 
   private gridRenderArray: GridBlockI[] = []
 
@@ -189,6 +197,11 @@ export default class Map extends Vue {
       endCallback,
       speed
     )
+  }
+
+  private nextTurn() {
+    this.aiHandler.nextTurn()
+    this.generateGrid()
   }
 
   private generateGrid() {

@@ -1,5 +1,5 @@
 import { ActionTypes } from '@/models/Action/ActionTypes';
-import { Action } from '@/models/Action/Action';
+import Action from '@/models/Action/Action';
 import { Entity } from '@/models/Entity/Entity';
 import { GridPosition } from '@/models/GridPosition';
 
