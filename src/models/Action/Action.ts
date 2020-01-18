@@ -6,7 +6,7 @@ export class Action {
   private type: ActionTypes
   private actionEntity: Entity
   private interactionEntities?: Entity[]
-  private dialogOption?: Entity[]
+  private dialogs?: string[]
   private position?: GridPosition
   private actionEvent: () => void
   constructor(type: ActionTypes, actionEntity: Entity, ...parameters: any[]) {
@@ -32,7 +32,7 @@ export class Action {
       case ActionTypes.DIALOGUE:
         this.actionEvent = this.dialog
         this.interactionEntities = parameters[0]
-        this.interactionEntities = parameters[1]
+        this.dialogs = parameters[1]
         break;
     }
   }
@@ -41,10 +41,20 @@ export class Action {
   }
 
   private attack() {
-
+    if (this.interactionEntities) {
+      this.interactionEntities.forEach((ent: Entity) => {
+        ent.damage(1)
+      })
+    }
   }
+
+  private move() {
+    if (this.position) {
+      this.actionEntity.setPosition(this.position.x, this.position.y)
+    }
+  }
+
   private dialog() { }
-  private move() { }
   private observe() { }
   private obtain() { }
 }
