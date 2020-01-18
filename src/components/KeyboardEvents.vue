@@ -63,7 +63,7 @@ export default class KeyboardEvents extends Vue {
         !this.level.isOutOfBounds(entityX, entityY) &&
         !this.level.isBlocked(entityX, entityY)
       ) {
-        this.level.updateEntityPosition(entity, entityX, entityY)
+        entity.setPosition(entityX, entityY)
       }
     }
   }
