@@ -41,7 +41,8 @@ export class AIHandler {
       this.actionHandler.nextAct()
       // this.actionHandler.addMove()
       let pos: GridPosition = getNewPos(getRandomIntInclusive(0, 4), ent.getPosition())
-      while (this.level.isBlocked(pos.x, pos.y) || this.level.isOutOfBounds(pos.x, pos.y)) {
+
+      while (this.level.isOutOfBounds(pos.x, pos.y) || this.level.isBlocked(pos.x, pos.y)) {
         pos = getNewPos(getRandomIntInclusive(0, 4), ent.getPosition())
       }
       this.actionHandler.addMove(ent, pos)

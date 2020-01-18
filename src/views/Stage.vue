@@ -25,7 +25,7 @@
           :is-observed="entity.inObserveRange"
           :animating="animating"
           :entity="entity.containedEntity"
-          :ref="entity.containedEntity.type()"
+          :ref="entity.containedEntity.type() + entity.containedEntity.getId()"
           :key="entity.containedEntity.type() + entity.containedEntity.getId()"
         />
       </div>
@@ -146,7 +146,7 @@ export default class Map extends Vue {
   }
 
   private getEntityRef(type: EntityType, id: number) {
-    return ((this.$refs[type] as SpriteBlock[])[id] as SpriteBlock)
+    return ((this.$refs[type + id] as SpriteBlock[])[0] as SpriteBlock)
       .entityRef as HTMLElement
   }
 
@@ -208,21 +208,21 @@ export default class Map extends Vue {
     this.gridRenderArray = []
     this.observedItems = []
     for (let gridRow = 0; gridRow < this.level.GridSize.y; gridRow++) {
-      for (let gridItem = 0; gridItem < this.level.GridSize.x; gridItem++) {
+      for (let gridCol = 0; gridCol < this.level.GridSize.x; gridCol++) {
         const gridObj: GridBlockI = {
-          symbol: this.level.getTerrain()[gridRow][gridItem],
-          id: Number(gridItem + '' + gridRow),
+          symbol: this.level.getTerrain()[gridRow][gridCol],
+          id: Number(gridCol + '' + gridRow),
           zIndex: gridRow
         }
 
-        const entity = this.level.getEntityAtPosition(gridItem, gridRow)
+        const entity = this.level.getEntityAtPosition(gridCol, gridRow)
 
         if (entity) {
           gridObj.containedEntity = entity
         }
 
-        if (this.level.isInObserveRange(gridItem, gridRow)) {
-          // Check if current gridItem's pos in 2d array matches the playerCurrentPosition
+        if (this.level.isInObserveRange(gridCol, gridRow)) {
+          // Check if current gridCol's pos in 2d array matches the playerCurrentPosition
           gridObj.inObserveRange = true
           this.observedItems.push(gridObj.symbol)
         }
