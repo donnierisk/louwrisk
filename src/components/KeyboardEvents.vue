@@ -2,6 +2,7 @@
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { LevelHandler } from '@/lib/LevelHandler'
+import { Entity } from '@/models/Entity/Entity'
 
 @Component
 export default class KeyboardEvents extends Vue {
@@ -27,7 +28,7 @@ export default class KeyboardEvents extends Vue {
       case 'KeyS':
       case 'KeyA':
       case 'KeyD':
-        this.movePlayer(key, amount)
+        this.moveEntity(this.level.getPlayer(), key, amount)
         this.$emit('move-event', key)
         break
       default:
@@ -37,32 +38,32 @@ export default class KeyboardEvents extends Vue {
     this.$emit('key-event')
   }
 
-  private movePlayer(direction: string, amount: number = 1) {
+  private moveEntity(entity: Entity, direction: string, amount: number = 1) {
     // Need to only do stuff if the key is a directional one
     if (this.throttled === false) {
-      let playerX = this.level.getPlayer().getPosition().x
-      let playerY = this.level.getPlayer().getPosition().y
+      let entityX = entity.getPosition().x
+      let entityY = entity.getPosition().y
 
       switch (direction) {
         case 'KeyW':
-          playerY -= amount
+          entityY -= amount
           break
         case 'KeyS':
-          playerY += amount
+          entityY += amount
           break
         case 'KeyA':
-          playerX -= amount
+          entityX -= amount
           break
         case 'KeyD':
-          playerX += amount
+          entityX += amount
           break
       }
 
       if (
-        !this.level.isOutOfBounds(playerX, playerY) &&
-        !this.level.isBlocked(playerX, playerY)
+        !this.level.isOutOfBounds(entityX, entityY) &&
+        !this.level.isBlocked(entityX, entityY)
       ) {
-        this.level.updatePlayerPosition(playerX, playerY)
+        this.level.updateEntityPosition(entity, entityX, entityY)
       }
     }
   }

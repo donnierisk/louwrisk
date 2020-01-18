@@ -190,8 +190,8 @@ export class LevelHandler {
     return this.entities
   }
 
-  public updatePlayerPosition(x: number, y: number) {
-    this.player.setPosition(x, y)
+  public updateEntityPosition(entity: Entity, x: number, y: number) {
+    entity.setPosition(x, y)
   }
 
   public reloadSave() {
