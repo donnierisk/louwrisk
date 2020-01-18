@@ -6,8 +6,8 @@
       :block-size="blockSize"
       :player-position="playerCurrentPosition"
       :camera-offset="cameraOffset"
-      camera-width="500px"
-      camera-height="500px"
+      camera-width="1024px"
+      camera-height="768px"
     >
       <div id="grid" ref="grid" :style="gridStyle">
         <grid-block
@@ -219,7 +219,7 @@ export default class Map extends Vue {
           zIndex: gridRow
         }
 
-        const entity = this.level.getEntity(gridItem, gridRow)
+        const entity = this.level.getEntityAtPosition(gridItem, gridRow)
 
         if (entity) {
           gridObj.containedEntity = entity
