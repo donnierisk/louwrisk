@@ -80,7 +80,7 @@ export class LevelHandler {
             health: 12,
             position: { x: 7, y: 7, z: 1 },
             span: { x: 1, y: 1, z: 1 },
-            name: 'bandit',
+            spriteName: 'bandit',
             description: 'It is a bandit',
             blocks: true
           }
