@@ -16,7 +16,7 @@ export interface EntityInterface {
   invincible?: boolean
   span?: GridPosition
   id?: number
-  name?: string
+  spriteName: string
   description?: string
   blocks?: boolean
   buff?: Buff

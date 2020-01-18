@@ -49,7 +49,7 @@ export class LevelHandler {
             invincible: true,
             position: { x: 4, y: 5, z: 1 },
             span: { x: 1, y: 1, z: 1 },
-            name: 'crate1',
+            spriteName: 'crate1',
             description: 'It are a crate',
             blocks: true
           },
@@ -60,7 +60,7 @@ export class LevelHandler {
             invincible: true,
             position: { x: 5, y: 5, z: 1 },
             span: { x: 1, y: 1, z: 1 },
-            name: 'crate1',
+            spriteName: 'crate1',
             description: 'It are a crate',
             blocks: true
           },
@@ -70,7 +70,7 @@ export class LevelHandler {
             health: 12,
             position: { x: 5, y: 6, z: 1 },
             span: { x: 1, y: 1, z: 1 },
-            name: 'bandit',
+            spriteName: 'bandit',
             description: 'It is a bandit',
             blocks: true
           }
@@ -83,7 +83,7 @@ export class LevelHandler {
       mortalState: MortalState.ALIVE,
       health: 10,
       span: { x: 1, y: 1, z: 1 },
-      name: 'Gale',
+      spriteName: 'player',
       description: 'Don\'t look at his uni-brow',
       blocks: true
     }, 0)

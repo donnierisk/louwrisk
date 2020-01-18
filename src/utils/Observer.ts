@@ -9,7 +9,8 @@ const tempEnt: Entity = new Entity({
   health: 1,
   invincible: true,
   mortalState: MortalState.INANIMATE,
-  position: { x: 0, y: 0 }
+  position: { x: 0, y: 0 },
+  spriteName: 'test'
 }, -1)
 export class Observer {
   private observedEntity: Entity = tempEnt

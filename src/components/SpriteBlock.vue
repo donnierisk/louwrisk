@@ -5,12 +5,7 @@
     :id="entName"
     ref="entity"
   >
-    <div
-      v-if="hasEntity"
-      class="entity-avatar"
-      :class="{walking: animating}"
-      :style="`background-image: url(${imageEntity})`"
-    />
+    <div v-if="hasEntity" class="entity-avatar" :class="{walking: animating}" :style="imageMeta" />
   </div>
 </template>
 
@@ -18,6 +13,7 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { TerrainSymbol } from '../models/TerrainSymbol'
 import { Entity } from '@/models/Entity/Entity'
+import { spriteConfig } from '@/lib/SpriteConfig'
 
 @Component
 export default class SpriteBlock extends Vue {
@@ -26,10 +22,17 @@ export default class SpriteBlock extends Vue {
   @Prop() private terrain?: TerrainSymbol
   @Prop() private entity?: Entity
 
-  private get imageEntity(): string {
-    return this.entity
-      ? require(`../assets/${this.entity.name()}.png`)
-      : require(`../assets/blank.png`)
+  private get imageMeta(): string {
+    if (this.entity) {
+      const sprite = spriteConfig[this.entity.getSpriteName()]
+
+      const spriteCss = `
+        background-image: url(${require('../assets/spritesheet.png')});
+        background-position: ${sprite.pos.x} ${sprite.pos.y};
+      `
+      return spriteCss
+    }
+    return ''
   }
 
   private get hasEntity() {
@@ -37,7 +40,7 @@ export default class SpriteBlock extends Vue {
   }
 
   private get entName() {
-    return this.entity ? this.entity.name() : ''
+    return this.entity ? this.entity.getSpriteName() : ''
   }
 
   private get imageTerrain(): TerrainSymbol {
@@ -128,8 +131,7 @@ export default class SpriteBlock extends Vue {
   top: -87px;
   left: -63px;
   position: absolute;
-  background-size: 100%;
-  background-position: 0 0;
+  background-size: 640px 384px;
 }
 
 .walking {

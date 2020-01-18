@@ -17,8 +17,8 @@ export class Entity {
     return this.entityFields
   }
 
-  public name() {
-    return this.entityFields.name
+  public getSpriteName() {
+    return this.entityFields.spriteName
   }
 
   public type() {
