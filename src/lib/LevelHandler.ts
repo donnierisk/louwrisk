@@ -131,11 +131,15 @@ export class LevelHandler {
     return this.player
   }
 
-  public getEntity(x: number, y: number) {
+  public getEntityAtPosition(x: number, y: number) {
     return this.getAllEntities().find((ent: Entity) => {
       const pos = ent.getPosition()
       return pos.x === x && pos.y === y
     })
+  }
+
+  public getEntityAtIndex(i: number) {
+    return this.entities[i]
   }
 
   public isInObserveRange(gridX: number, gridY: number): boolean {
@@ -160,7 +164,7 @@ export class LevelHandler {
 
   public isBlocked(col: number, row: number): boolean {
     let blockingEntity = false
-    const entity = this.getEntity(col, row) as Entity
+    const entity = this.getEntityAtPosition(col, row) as Entity
     if (entity && entity.isBlocker()) {
       blockingEntity = true
     }
@@ -190,8 +194,8 @@ export class LevelHandler {
     return this.entities
   }
 
-  public updatePlayerPosition(x: number, y: number) {
-    this.player.setPosition(x, y)
+  public updateEntityPosition(entity: Entity, x: number, y: number) {
+    entity.setPosition(x, y)
   }
 
   public reloadSave() {
