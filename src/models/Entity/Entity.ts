@@ -34,6 +34,10 @@ export class Entity {
     this.entityFields.position.y = y
   }
 
+  public damage(damageBy: number) {
+    this.entityFields.health -= damageBy
+  }
+
   public isBlocker(): boolean {
     return this.entityFields.blocks ? true : false
   }

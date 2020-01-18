@@ -1,6 +1,6 @@
 <template>
   <div id="container">
-    <keyboard-events @key-event="generateGrid()" :throttled="throttled" :level="level" />
+    <keyboard-events @key-event="nextTurn" :throttled="throttled" :level="level" />
     <camera
       ref="camera"
       :block-size="blockSize"
@@ -30,17 +30,18 @@
         />
       </div>
     </camera>
-    <!-- <dialogue-box x:text="description" @on-action="onAction" :options="actions"></dialogue-box> -->
   </div>
 </template>
 
 <script lang='ts'>
 import { Component, Vue, Watch, Prop } from 'vue-property-decorator'
 import { LevelHandler } from '@/lib/LevelHandler'
+import { ActionHandler } from '@/lib/ActionHandler'
+import { AIHandler } from '@/lib/AIHandler'
 import { TerrainSymbol } from '@/models/TerrainSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
-import { Observer } from '@/utils/Observer'
+import { Observer } from '@/utils/EntityObserver'
 import { Animate } from '@/utils/Animate'
 import { EntityType } from '../models/Entity/EntityType'
 import { Entity } from '@/models/Entity/Entity'
@@ -69,6 +70,12 @@ export default class Map extends Vue {
   private Scale: string = ''
   private storeActive: boolean = false
   private level = new LevelHandler()
+  private action = new ActionHandler()
+  private aiHandler = new AIHandler(
+    this.action,
+    this.level,
+    this.level.getAllNPC()
+  )
 
   private gridRenderArray: GridBlockI[] = []
 
@@ -143,18 +150,6 @@ export default class Map extends Vue {
       .entityRef as HTMLElement
   }
 
-  private get actions(): DialogOption[] {
-    if (this.observer.hasObservedEntity() === true) {
-      return [{ id: 1, text: 'Do something', childIds: [] }]
-    } else {
-      return [{ id: 0, text: 'Nothing to do', childIds: [] }]
-    }
-  }
-
-  private onAction(option: DialogOption) {
-    // console.log('TRIGGER ACTION:', JSON.stringify(option))
-  }
-
   private AnimateEntityPosition(
     newPosition: GridPosition,
     type: EntityType,
@@ -202,6 +197,11 @@ export default class Map extends Vue {
       endCallback,
       speed
     )
+  }
+
+  private nextTurn() {
+    this.aiHandler.nextTurn()
+    this.generateGrid()
   }
 
   private generateGrid() {

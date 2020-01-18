@@ -73,6 +73,16 @@ export class LevelHandler {
             spriteName: 'bandit',
             description: 'It is a bandit',
             blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 7, y: 7, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            name: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
           }
         ]
     })
@@ -123,8 +133,8 @@ export class LevelHandler {
     return this.CurrentLevel.terrain[row][col]
   }
 
-  public getAllNPC(): EntityInterface[] {
-    return this.CurrentLevel.entities.filter((entity: EntityInterface) => entity.type === EntityType.NPC)
+  public getAllNPC(): Entity[] {
+    return this.getAllEntities().filter((entity: Entity) => entity.getFields().type === EntityType.NPC)
   }
 
   public getPlayer(): Entity {

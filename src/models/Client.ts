@@ -1,5 +1,5 @@
 import Buffs from './Buffs'
-import Action from './Action/Action'
+import Action from '@/models/Action/Action'
 
 export default class Client {
   private action: Action[]
