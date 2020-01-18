@@ -158,27 +158,23 @@ export default class Map extends Vue {
       entity.style.zIndex = newPosition.z ? newPosition.z.toString() : ''
     }
 
-    const endCallback =
-      type === EntityType.PLAYER
-        ? () => {
-            const curIndex = Number(
-              entity.style.zIndex ? entity.style.zIndex : ''
-            )
-            const entityCurrentPosition: GridPosition = this.level
-              .getAllEntities()
-              .filter(ent => ent.type() === type)
-              [id ? id : 0].getPosition()
+    const endCallback = () => {
+      const curIndex = Number(entity.style.zIndex ? entity.style.zIndex : '')
+      const entityCurrentPosition: GridPosition = this.level
+        .getAllEntities()
+        .filter(ent => ent.type() === type)
+        [id ? id : 0].getPosition()
 
-            if (curIndex < entityCurrentPosition.y) {
-              entity.style.zIndex = entityCurrentPosition.y.toString()
-            }
-            this.camera.PanCameraToPlayer(
-              animate || this.level.reloadingSave ? false : true
-            )
-          }
-        : () => {
-            return
-          }
+      if (curIndex < entityCurrentPosition.y) {
+        entity.style.zIndex = entityCurrentPosition.y.toString()
+      }
+
+      if (type === EntityType.PLAYER) {
+        this.camera.PanCameraToPlayer(
+          animate || this.level.reloadingSave ? false : true
+        )
+      }
+    }
 
     if (this.level.reloadingSave && type === EntityType.PLAYER) {
       this.camera.PanCameraToPlayer(false)
