@@ -1,7 +1,7 @@
 <template>
   <div
     ref="block"
-    id="gridItem"
+    class="gridItem"
     @click="observe"
     :class="gridClass()"
     :style="`z-index: ${gridMeta.zIndex};`"
