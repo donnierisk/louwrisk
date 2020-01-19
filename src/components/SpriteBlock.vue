@@ -5,7 +5,7 @@
     :id="entName"
     ref="entity"
   >
-    <div v-if="hasEntity" class="entity-avatar" :class="{walking: animating}" :style="imageMeta" />
+    <div ref="entityModel" v-if="hasEntity" class="entity-avatar" :style="imageMeta" />
   </div>
 </template>
 
@@ -14,6 +14,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { TerrainSymbol } from '../models/TerrainSymbol'
 import { Entity } from '@/models/Entity/Entity'
 import { spriteConfig } from '@/lib/SpriteConfig'
+import { TimelineLite } from 'gsap'
 
 @Component
 export default class SpriteBlock extends Vue {
@@ -33,6 +34,27 @@ export default class SpriteBlock extends Vue {
       return spriteCss
     }
     return ''
+  }
+
+  @Watch('animating')
+  private animateModel() {
+    // NEED TO ALSO CHECK WHICH ANIMATION SHOULD HAPPEN, NOW ONLY WORKS FOR WALK
+    if (
+      this.entity &&
+      this.animating === true &&
+      this.entity.getSpriteName() === 'player'
+    ) {
+      const el = this.$refs.entityModel
+      const timeline = new TimelineLite()
+
+      // NEED TO FINALISE THE TIMING BELOW, NOT 100% RIGHT
+      timeline
+        .to(el, 0, { backgroundPosition: '0 0' })
+        .to(el, 0, { delay: 0.1, backgroundPosition: '0 -128px' })
+        .to(el, 0, { delay: 0.1, backgroundPosition: '0 0' })
+        .to(el, 0, { delay: 0.1, backgroundPosition: '0 -256px' })
+        .to(el, 0, { delay: 0.1, backgroundPosition: '0 0' })
+    }
   }
 
   private get hasEntity() {
@@ -132,24 +154,5 @@ export default class SpriteBlock extends Vue {
   left: -63px;
   position: absolute;
   background-size: 640px 384px;
-}
-
-.walking {
-  animation: walking 0.5s steps(1) infinite;
-}
-
-@keyframes walking {
-  0% {
-    background-position: 0 0;
-  }
-  25% {
-    background-position: 0 -128px;
-  }
-  50% {
-    background-position: 0 0;
-  }
-  75% {
-    background-position: 0 -256px;
-  }
 }
 </style>
