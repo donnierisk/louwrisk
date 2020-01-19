@@ -1,4 +1,11 @@
-<template></template>
+<template>
+  <div id="keyboard">
+    <button @click="OnEvent('KeyW')">up</button>
+    <button @click="OnEvent('KeyS')">down</button>
+    <button @click="OnEvent('KeyA')">left</button>
+    <button @click="OnEvent('KeyD')">right</button>
+  </div>
+</template>
 <script lang="ts">
 import { Vue, Component, Prop } from 'vue-property-decorator'
 import { LevelHandler } from '@/lib/LevelHandler'
@@ -69,3 +76,16 @@ export default class KeyboardEvents extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+#keyboard {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  button {
+    padding: 20px 30px;
+    font-size: 20px;
+    border: 1px solid black;
+  }
+}
+</style>

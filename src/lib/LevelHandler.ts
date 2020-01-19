@@ -18,7 +18,7 @@ export class LevelHandler {
   private entities: Entity[] = []
   private CurrentLevel: Level = JSON.parse(EmptyLevel) as Level
   private BlockingTerrainLib: TerrainSymbol[] = [TerrainSymbol.ROCK]
-  private range: number = 2
+  private range: number = 3
 
   constructor() {
     this.LevelMomento = EmptyLevel
@@ -79,6 +79,76 @@ export class LevelHandler {
             mortalState: MortalState.ALIVE,
             health: 12,
             position: { x: 7, y: 7, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 1, y: 1, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a banditoooooo',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 5, y: 1, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 4, y: 7, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 3, y: 3, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 6, y: 6, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 2, y: 8, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 5, y: 9, z: 1 },
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'bandit',
             description: 'It is a bandit',
