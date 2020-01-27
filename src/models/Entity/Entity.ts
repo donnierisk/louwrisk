@@ -4,6 +4,7 @@ import { GridPosition } from '@/models/GridPosition';
 export class Entity {
   private entityFields: EntityInterface
   private id: number
+
   constructor(fields: EntityInterface, id: number) {
     this.entityFields = fields
     this.id = id

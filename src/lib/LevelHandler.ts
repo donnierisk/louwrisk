@@ -243,6 +243,10 @@ export class LevelHandler {
   }
 
   public isBlocked(col: number, row: number): boolean {
+    if (this.isOutOfBounds(col, row)) {
+      return true
+    }
+
     let blockingEntity = false
     const entity = this.getEntityAtPosition(col, row) as Entity
     if (entity && entity.isBlocker()) {
@@ -275,7 +279,9 @@ export class LevelHandler {
   }
 
   public updateEntityPosition(entity: Entity, x: number, y: number) {
-    entity.setPosition(x, y)
+    if (!this.isBlocked(x, y)) {
+      entity.setPosition(x, y)
+    }
   }
 
   public reloadSave() {

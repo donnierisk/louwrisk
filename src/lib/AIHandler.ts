@@ -3,19 +3,25 @@ import { Entity } from '@/models/Entity/Entity';
 import { getRandomIntInclusive } from '@/utils/Arithmetic';
 import { GridPosition } from '@/models/GridPosition';
 import { LevelHandler } from './LevelHandler';
+import { ActionTypes } from '@/models/Action/ActionTypes';
+import Action from '@/models/Action/Action';
 
 export class AIHandler {
-  private actionHandler: ActionHandler
+  private actionHandlers: ActionHandler[] = []
   private entities: Entity[]
   private level: LevelHandler
-  constructor(handler: ActionHandler, level: LevelHandler, entities: Entity[]) {
-    this.actionHandler = handler
+
+  constructor(level: LevelHandler, entities: Entity[]) {
     this.level = level
     this.entities = entities
+    this.entities.forEach((ent: Entity) => {
+      this.actionHandlers.push(new ActionHandler(ent))
+    })
   }
 
   public addEntity(entity: Entity) {
     this.entities.push(entity)
+    this.actionHandlers.push(new ActionHandler(entity))
   }
 
   public nextTurn() {
@@ -37,15 +43,52 @@ export class AIHandler {
       }
       return returnPos
     }
-    this.entities.forEach(ent => {
-      this.actionHandler.nextAct()
-      // this.actionHandler.addMove()
-      let pos: GridPosition = getNewPos(getRandomIntInclusive(0, 4), ent.getPosition())
 
-      while (this.level.isOutOfBounds(pos.x, pos.y) || this.level.isBlocked(pos.x, pos.y)) {
-        pos = getNewPos(getRandomIntInclusive(0, 4), ent.getPosition())
+    this.actionHandlers.forEach((handler, index) => {
+      handler.nextAct()
+      const count = []
+      let breakCount = 0
+      count.push(getRandomIntInclusive(0, 3))
+      let pos: GridPosition = getNewPos(count[count.length - 1], this.entities[index].getPosition())
+      while ((count.length < 4)
+        && (this.peekAtPosition(pos)
+          || this.level.isBlocked(pos.x, pos.y))
+      ) {
+        let temp: number = getRandomIntInclusive(0, 3)
+        while (count.includes(temp) && count.length < 4) {
+          temp = getRandomIntInclusive(0, 3)
+          breakCount++
+        }
+        count.push(temp)
+        pos = getNewPos(count[count.length - 1], this.entities[index].getPosition())
       }
-      this.actionHandler.addMove(ent, pos)
+
+      if (count.length < 4) {
+        handler.addMove(pos, this.level)
+      }
     })
+  }
+
+  public interruptAtPosition(pos: GridPosition) {
+    this.actionHandlers.forEach((handler) => {
+      const action: Action | undefined = handler.peekQueueFront()
+      if (action) {
+        if (action.checkPosition(pos)) {
+          handler.popQueueFront()
+        }
+      }
+    })
+  }
+
+  public peekAtPosition(pos: GridPosition): boolean {
+    this.actionHandlers.forEach((handler) => {
+      const action: Action | undefined = handler.peekQueueFront()
+      if (action) {
+        if (action.checkPosition(pos)) {
+          return true
+        }
+      }
+    })
+    return false
   }
 }

@@ -2,30 +2,54 @@ import { ActionTypes } from '@/models/Action/ActionTypes';
 import Action from '@/models/Action/Action';
 import { Entity } from '@/models/Entity/Entity';
 import { GridPosition } from '@/models/GridPosition';
-
+import { LevelHandler } from './LevelHandler';
 
 export class ActionHandler {
   private actionQueue: Action[] = []
   private oldQueue: Action[] = []
-
-  public addMove(entity: Entity, position: GridPosition) {
-    this.actionQueue.push(new Action(ActionTypes.MOVE, entity, position))
+  private entity: Entity
+  constructor(ent: Entity) {
+    this.entity = ent
   }
 
-  public addObserve(entity: Entity, observedEntity: Entity[]) {
-    this.actionQueue.push(new Action(ActionTypes.OBSERVE, entity, observedEntity))
+  public addMove(position: GridPosition, level: LevelHandler) {
+    this.actionQueue.push(new Action(ActionTypes.MOVE, this.entity, position, level))
   }
 
-  public addObtain(entity: Entity, obtainedEntity: Entity[]) {
-    this.actionQueue.push(new Action(ActionTypes.MOVE, entity, obtainedEntity))
+  public addObserve(observedEntity: Entity[]) {
+    this.actionQueue.push(new Action(ActionTypes.OBSERVE, this.entity, observedEntity))
   }
 
-  public addAttack(entity: Entity, obtainedEntity: Entity[]) {
-    this.actionQueue.push(new Action(ActionTypes.MOVE, entity, obtainedEntity))
+  public addObtain(obtainedEntity: Entity[]) {
+    this.actionQueue.push(new Action(ActionTypes.MOVE, this.entity, obtainedEntity))
   }
 
-  public addDialogue(entity: Entity, obtainedEntity: Entity[], dialogs: string[]) {
-    this.actionQueue.push(new Action(ActionTypes.MOVE, entity, dialogs))
+  public addAttack(obtainedEntity: Entity[]) {
+    this.actionQueue.push(new Action(ActionTypes.MOVE, this.entity, obtainedEntity))
+  }
+
+  public addDialogue(obtainedEntity: Entity[], dialogs: string[]) {
+    this.actionQueue.push(new Action(ActionTypes.MOVE, this.entity, dialogs))
+  }
+
+  public peekQueueFront(): Action | undefined {
+    if (this.actionQueue.length) {
+      return this.actionQueue[0]
+    } else {
+      return undefined
+    }
+  }
+
+  public popQueueFront(): Action | undefined {
+    if (this.actionQueue.length) {
+      return this.actionQueue.shift()
+    } else {
+      return undefined
+    }
+  }
+
+  public getQueue(): string {
+    return JSON.stringify(this.actionQueue.map((obj: Action) => obj.getPosition()))
   }
 
   public nextAct() {

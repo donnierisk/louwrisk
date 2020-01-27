@@ -1,11 +1,13 @@
 import { ActionTypes } from './ActionTypes';
 import { Entity } from '../Entity/Entity';
 import { GridPosition } from '../GridPosition';
+import { LevelHandler } from '@/lib/LevelHandler';
 
 export default class Action {
   private type: ActionTypes
   private actionEntity: Entity
   private interactionEntities?: Entity[]
+  private level?: LevelHandler
   private dialogs?: string[]
   private position?: GridPosition
   private actionEvent: () => void
@@ -28,6 +30,7 @@ export default class Action {
       case ActionTypes.MOVE:
         this.actionEvent = this.move
         this.position = parameters[0]
+        this.level = parameters[1]
         break;
       case ActionTypes.DIALOGUE:
         this.actionEvent = this.dialog
@@ -38,8 +41,21 @@ export default class Action {
         this.actionEvent = () => { return }
     }
   }
+
+  public getPosition() {
+    return this.position
+  }
+
   public act() {
     this.actionEvent()
+  }
+
+  public getType() {
+    return this.type
+  }
+
+  public checkPosition(pos: GridPosition) {
+    return this.position ? this.position.x === pos.x && this.position.y === pos.y : false
   }
 
   private attack() {
@@ -51,8 +67,8 @@ export default class Action {
   }
 
   private move() {
-    if (this.position) {
-      this.actionEntity.setPosition(this.position.x, this.position.y)
+    if (this.position && this.level) {
+      this.level.updateEntityPosition(this.actionEntity, this.position.x, this.position.y)
     }
   }
 

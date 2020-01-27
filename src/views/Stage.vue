@@ -70,12 +70,7 @@ export default class Map extends Vue {
   private Scale: string = ''
   private storeActive: boolean = false
   private level = new LevelHandler()
-  private action = new ActionHandler()
-  private aiHandler = new AIHandler(
-    this.action,
-    this.level,
-    this.level.getAllNPC()
-  )
+  private aiHandler = new AIHandler(this.level, this.level.getAllNPC())
 
   private gridRenderArray: GridBlockI[] = []
 
@@ -200,6 +195,7 @@ export default class Map extends Vue {
   }
 
   private nextTurn() {
+    this.aiHandler.interruptAtPosition(this.playerCurrentPosition)
     this.aiHandler.nextTurn()
     this.generateGrid()
   }
