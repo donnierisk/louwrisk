@@ -118,13 +118,22 @@ export default class SpriteBlock extends Vue {
 }
 
 .rock {
-  background: greenyellow;
+  background: #4baf50;
   background-image: url(../assets/r.png);
   background-size: 100% 100%;
 }
 
+.gridItem:nth-child(11n + 1) .grass,
+.gridItem:nth-child(7n + 1) .grass {
+  background: url(../assets/terrainsheet.png);
+  background-position: 0 -83px;
+  background-size: 650px 260px;
+}
+
 .grass {
-  background: greenyellow;
+  background: url(../assets/terrainsheet.png);
+  background-size: 650px 384px;
+  background-position: 0 0;
 }
 
 .player {
