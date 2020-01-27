@@ -10,6 +10,9 @@ export const spriteConfig: any = {
     },
     rock: {
         pos: { x: '-128px', y: '-256px' }
+    },
+    tree: {
+        pos: { x: '-256px', y: '0px' }
     }
 }
 

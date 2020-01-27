@@ -1,7 +1,7 @@
 <template>
   <div
     class="sprite-block"
-    :class="[imageTerrain, {entity: hasEntity, observed: isObserved}]"
+    :class="[imageTerrain, {entity: hasEntity, observed: isObserved}, entName]"
     :id="entName"
     ref="entity"
   >
@@ -76,6 +76,24 @@ export default class SpriteBlock extends Vue {
 </script>
 
 <style>
+.entity {
+  width: 0;
+  height: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 11;
+}
+
+.entity .entity-avatar {
+  width: 128px;
+  height: 128px;
+  top: -87px;
+  left: -63px;
+  position: absolute;
+  background-size: 640px 384px;
+}
+
 .sprite-block {
   width: 100%;
   height: 100%;
@@ -92,6 +110,12 @@ export default class SpriteBlock extends Vue {
   height: 128px;
 }
 
+.tree .entity-avatar {
+  width: 384px;
+  height: 384px;
+  top: -338px;
+  left: -192px;
+}
 .water {
   background: lightskyblue;
   overflow: hidden;
@@ -134,34 +158,5 @@ export default class SpriteBlock extends Vue {
   background: url(../assets/terrainsheet.png);
   background-size: 650px 384px;
   background-position: 0 0;
-}
-
-.player {
-  color: white;
-  font-weight: bold;
-  height: 20px;
-  z-index: 1;
-  background: red;
-  padding: 5px;
-  border-radius: 30%;
-  opacity: 0;
-}
-
-.entity {
-  width: 0;
-  height: 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 11;
-}
-
-.entity .entity-avatar {
-  width: 128px;
-  height: 128px;
-  top: -87px;
-  left: -63px;
-  position: absolute;
-  background-size: 640px 384px;
 }
 </style>

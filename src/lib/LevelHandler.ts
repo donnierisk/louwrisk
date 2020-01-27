@@ -54,6 +54,28 @@ export class LevelHandler {
             blocks: true
           },
           {
+            type: EntityType.FORWARD_TERRAIN,
+            mortalState: MortalState.INANIMATE,
+            health: 1,
+            invincible: true,
+            position: { x: 5, y: 7, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'tree',
+            description: 'This is a tree',
+            blocks: true
+          },
+          {
+            type: EntityType.FORWARD_TERRAIN,
+            mortalState: MortalState.INANIMATE,
+            health: 1,
+            invincible: true,
+            position: { x: 2, y: 3, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'tree',
+            description: 'This is a tree',
+            blocks: true
+          },
+          {
             type: EntityType.INTERACTIVE_PROP,
             mortalState: MortalState.INANIMATE,
             health: 1,
