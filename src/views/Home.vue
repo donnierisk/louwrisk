@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <stage :block-size="{ x: 130, y: 90, z: 0 }"/>
+    <stage :block-size="{ x: 130, y: 90, z: 0 }" />
   </div>
 </template>
 
@@ -11,13 +11,12 @@
 import { Component, Vue } from 'vue-property-decorator'
 import Stage from './Stage.vue'
 
-
 @Component({
   components: {
     Stage
   }
 })
-export default class Home extends Vue { }
+export default class Home extends Vue {}
 </script>
 
 <style scoped lang="scss">
