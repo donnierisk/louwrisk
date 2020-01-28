@@ -47,6 +47,17 @@ export class LevelHandler {
             mortalState: MortalState.INANIMATE,
             health: 1,
             invincible: true,
+            position: { x: 0, y: 5, z: 1 },
+            span: { x: 2, y: 2, z: 1 },
+            spriteName: 'wagon',
+            description: 'Oh no my apples!',
+            blocks: true
+          },
+          {
+            type: EntityType.INTERACTIVE_PROP,
+            mortalState: MortalState.INANIMATE,
+            health: 1,
+            invincible: true,
             position: { x: 4, y: 5, z: 1 },
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'crate1',

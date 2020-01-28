@@ -13,6 +13,9 @@ export const spriteConfig: any = {
     },
     tree: {
         pos: { x: '-256px', y: '0px' }
+    },
+    wagon: {
+        pos: { x: '0px', y: '-384px' }
     }
 }
 

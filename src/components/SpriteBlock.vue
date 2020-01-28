@@ -49,7 +49,6 @@ export default class SpriteBlock extends Vue {
 
       // NEED TO FINALISE THE TIMING BELOW, NOT 100% RIGHT
       timeline
-        .to(el, 0, { backgroundPosition: '0 0' })
         .to(el, 0, { delay: 0.1, backgroundPosition: '0 -128px' })
         .to(el, 0, { delay: 0.1, backgroundPosition: '0 0' })
         .to(el, 0, { delay: 0.1, backgroundPosition: '0 -256px' })
@@ -91,7 +90,7 @@ export default class SpriteBlock extends Vue {
   top: -87px;
   left: -63px;
   position: absolute;
-  background-size: 640px 384px;
+  background-size: 896px 640px;
 }
 
 .sprite-block {
@@ -115,6 +114,13 @@ export default class SpriteBlock extends Vue {
   height: 384px;
   top: -338px;
   left: -192px;
+}
+
+.wagon .entity-avatar {
+  width: 256px;
+  height: 256px;
+  top: -198px;
+  left: -64px;
 }
 .water {
   background: lightskyblue;
