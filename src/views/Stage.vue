@@ -15,14 +15,15 @@
           :gridMeta="gridItem"
           :posInArr="i"
           :key="i"
+          :terrain="gridItem.symbol"
           @observed="addToObserver"
           @entity-pos="AnimateEntityPosition"
         >
-          <sprite-block
+          <!-- <sprite-block
             :block-size="blockSize"
             :is-observed="gridItem.inObserveRange"
             :terrain="gridItem.symbol"
-          />
+          />-->
         </grid-block>
         <sprite-block
           v-for="(entity) of gridRenderArray.filter(ent => ent.containedEntity ? true : false)"

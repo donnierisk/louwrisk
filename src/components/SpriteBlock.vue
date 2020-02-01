@@ -14,7 +14,11 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator'
 import { TerrainSymbol } from '../models/TerrainSymbol'
 import { Entity } from '@/models/Entity/Entity'
-import { spriteConfig, ISpriteConfig, ISpriteMeta } from '@/lib/SpriteConfig'
+import {
+  spriteConfig,
+  ISpriteConfig,
+  ISpriteMeta
+} from '@/lib/SpriteConfigEntity'
 import { TimelineLite } from 'gsap'
 import { GridPosition } from '@/models/GridPosition'
 
@@ -183,9 +187,9 @@ export default class SpriteBlock extends Vue {
   background-size: 650px 260px;
 }
 
-.grass {
+/* .grass {
   background: url(../assets/terrainsheet.png);
   background-size: 650px 384px;
   background-position: 0 0;
-}
+} */
 </style>

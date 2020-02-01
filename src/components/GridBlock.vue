@@ -1,11 +1,5 @@
 <template>
-  <div
-    ref="block"
-    class="gridItem"
-    @click="observe"
-    :class="gridClass()"
-    :style="`z-index: ${gridMeta.zIndex};`"
-  >
+  <div ref="block" class="gridItem" @click="observe" :class="gridClass()" :style="terrainStyles">
     <slot></slot>
   </div>
 </template> 
@@ -16,17 +10,34 @@ import { GridBlockI } from '../models/GridBlockI'
 import { GridPosition } from '../models/GridPosition'
 import { EntityType } from '@/models/Entity/EntityType'
 import { Entity } from '@/models/Entity/Entity'
+import { TerrainSymbol } from '@/models/TerrainSymbol'
+import {
+  spriteConfig,
+  ISpriteTerrainConfig,
+  ISpriteTerrainMeta
+} from '@/lib/SpriteConfigTerrain'
 
 @Component
 export default class GridBlock extends Vue {
   @Prop() private gridMeta!: GridBlockI
+  @Prop() private terrain!: TerrainSymbol
 
+  private terrainStyles = {}
   private position: GridPosition = {
     x: 0,
     y: 0,
     z: this.gridMeta.zIndex
   }
 
+  created() {
+    const terrainSprite = spriteConfig[this.terrain]
+    console.log(`${spriteConfig}px ${this.terrain}px`)
+    this.terrainStyles = {
+      backgroundImage: `url(${require('../assets/terrainsheet.png')}`,
+      backgroundPosition: `${terrainSprite.x} ${terrainSprite.y}`,
+      zIndex: this.gridMeta.zIndex
+    }
+  }
   private mounted() {
     if (this.gridMeta.containedEntity) {
       this.emitPosition(this.gridMeta.containedEntity, true)
@@ -70,6 +81,9 @@ export default class GridBlock extends Vue {
 </script>
 
 <style scoped lang="scss">
+.gridItem {
+  background-size: 640px 384px;
+}
 #gridItem {
   position: relative;
   display: flex;
