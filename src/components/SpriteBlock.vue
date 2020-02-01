@@ -91,9 +91,15 @@ export default class SpriteBlock extends Vue {
 
       // NEED TO FINALISE THE TIMING BELOW, NOT 100% RIGHT
       timeline
-        .to(el, 0, { delay: 0.1, backgroundPosition: '0 -128px' })
+        .to(el, 0, {
+          delay: 0.1,
+          backgroundPosition: `0 -${this.blockSize.y}px`
+        })
         .to(el, 0, { delay: 0.1, backgroundPosition: '0 0' })
-        .to(el, 0, { delay: 0.1, backgroundPosition: '0 -256px' })
+        .to(el, 0, {
+          delay: 0.1,
+          backgroundPosition: `0 -${this.blockSize.y * 2}px`
+        })
         .to(el, 0, { delay: 0.1, backgroundPosition: '0 0' })
     }
   }
@@ -129,7 +135,7 @@ export default class SpriteBlock extends Vue {
 
 .entity .entity-avatar {
   position: absolute;
-  background-size: 896px 640px;
+  /* background-size: 896px 640px; */
   display: block;
 }
 

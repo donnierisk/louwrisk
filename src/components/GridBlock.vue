@@ -80,9 +80,9 @@ export default class GridBlock extends Vue {
 </script>
 
 <style scoped lang="scss">
-.gridItem {
-  background-size: 640px 384px;
-}
+// .gridItem {
+//   background-size: 640px 384px;
+// }
 #gridItem {
   position: relative;
   display: flex;
