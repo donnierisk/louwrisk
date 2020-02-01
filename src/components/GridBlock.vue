@@ -29,9 +29,8 @@ export default class GridBlock extends Vue {
     z: this.gridMeta.zIndex
   }
 
-  created() {
+  private created() {
     const terrainSprite = spriteConfig[this.terrain]
-    console.log(`${spriteConfig}px ${this.terrain}px`)
     this.terrainStyles = {
       backgroundImage: `url(${require('../assets/terrainsheet.png')}`,
       backgroundPosition: `${terrainSprite.x} ${terrainSprite.y}`,

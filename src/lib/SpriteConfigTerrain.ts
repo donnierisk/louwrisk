@@ -11,6 +11,9 @@ export const spriteConfig: ISpriteTerrainConfig = {
     ground: {
         x: '0px', y: '0px'
     },
+    mud: {
+        x: '-128px', y: '0px'
+    },
     empty: {
         x: '0px', y: '0px'
     }

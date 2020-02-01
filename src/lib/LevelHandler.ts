@@ -17,7 +17,7 @@ export class LevelHandler {
   private player: Entity
   private entities: Entity[] = []
   private CurrentLevel: Level = JSON.parse(EmptyLevel) as Level
-  private BlockingTerrainLib: TerrainSymbol[] = [TerrainSymbol.MUD]
+  private BlockingTerrainLib: TerrainSymbol[] = [TerrainSymbol.WATER]
   private range: number = 3
 
   constructor() {
@@ -25,8 +25,8 @@ export class LevelHandler {
     this.loadLevel({
       terrain: [
         [MS.WATER, MS.WATER, MS.GRASS, MS.GRASS1, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
-        [MS.WATER, MS.WATER, MS.WATER, MS.WATER, MS.GRASS1, MS.WATER, MS.WATER, MS.GRASS1, MS.GRASS],
-        [MS.GRASS, MS.GRASS, MS.WATER, MS.WATER, MS.GRASS, MS.WATER, MS.WATER, MS.WATER, MS.GRASS],
+        [MS.WATER, MS.WATER, MS.WATER, MS.WATER, MS.GRASS1, MS.MUD, MS.WATER, MS.GRASS1, MS.GRASS],
+        [MS.GRASS, MS.GRASS, MS.WATER, MS.WATER, MS.GRASS, MS.MUD, MS.WATER, MS.WATER, MS.GRASS],
         [MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.WATER, MS.WATER, MS.GRASS],
         [MS.GRASS1, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS1, MS.GRASS, MS.GRASS, MS.GRASS],
         [MS.GRASS, MS.GRASS, MS.GRASS1, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS1],
@@ -58,7 +58,7 @@ export class LevelHandler {
             mortalState: MortalState.INANIMATE,
             health: 1,
             invincible: true,
-            position: { x: 4, y: 5, z: 1 },
+            position: { x: 2, y: 2, z: 1 },
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'crate1',
             description: 'It are a crate',
@@ -73,6 +73,17 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'tree',
             description: 'This is a tree',
+            blocks: true
+          },
+          {
+            type: EntityType.FORWARD_TERRAIN,
+            mortalState: MortalState.INANIMATE,
+            health: 1,
+            invincible: true,
+            position: { x: 3, y: 4, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'rock',
+            description: 'This is a rock',
             blocks: true
           },
           {

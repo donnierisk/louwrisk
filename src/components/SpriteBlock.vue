@@ -36,7 +36,7 @@ export default class SpriteBlock extends Vue {
     sourceBlock: { x: 0, y: 0 }
   }
 
-  created() {
+  private created() {
     if (this.entity) {
       this.spriteMeta = spriteConfig[this.entity.getSpriteName()]
     }
@@ -73,7 +73,9 @@ export default class SpriteBlock extends Vue {
         top: -height + 'px',
         left: width / 2 + 'px'
       }
-    } else return {}
+    } else {
+      return {}
+    }
   }
 
   @Watch('animating')
@@ -116,12 +118,7 @@ export default class SpriteBlock extends Vue {
 
 <style>
 .entity {
-  width: 0;
-  height: 0;
   position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 11;
 }
 
 .sprite-block {
@@ -140,56 +137,4 @@ export default class SpriteBlock extends Vue {
   filter: none;
   transition: filter 470ms ease-out;
 }
-
-.crate {
-}
-
-.tree .entity-avatar {
-}
-
-.wagon .entity-avatar {
-}
-.water {
-  background: lightskyblue;
-  overflow: hidden;
-}
-
-.water .player {
-  top: 60%;
-}
-
-.water .player:after {
-  content: '';
-  width: 100%;
-  left: 0;
-  height: 15px;
-  background: lightskyblue;
-  z-index: 11;
-  position: absolute;
-  bottom: 0;
-}
-
-.ground {
-  background: #a5742a;
-  border-radius: 50%;
-}
-
-.rock {
-  background: #4baf50;
-  background-image: url(../assets/r.png);
-  background-size: 100% 100%;
-}
-
-.gridItem:nth-child(11n + 1) .grass,
-.gridItem:nth-child(7n + 1) .grass {
-  background: url(../assets/terrainsheet.png);
-  background-position: 0 -83px;
-  background-size: 650px 260px;
-}
-
-/* .grass {
-  background: url(../assets/terrainsheet.png);
-  background-size: 650px 384px;
-  background-position: 0 0;
-} */
 </style>
