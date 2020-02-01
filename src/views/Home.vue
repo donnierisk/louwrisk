@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <stage :block-size="{ x: 130, y: 90, z: 0 }" />
+    <stage :block-size="{ x: 128, y: 128, z: 0 }" />
   </div>
 </template>
 

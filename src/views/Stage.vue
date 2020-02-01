@@ -23,6 +23,7 @@
         <sprite-block
           v-for="(entity) of gridRenderArray.filter(ent => ent.containedEntity ? true : false)"
           :is-observed="entity.inObserveRange"
+          :block-size="blockSize"
           :animating="animating"
           :entity="entity.containedEntity"
           :ref="entity.containedEntity.type() + entity.containedEntity.getId()"
