@@ -18,7 +18,7 @@ export class LevelHandler {
   private entities: Entity[] = []
   private CurrentLevel: Level = JSON.parse(EmptyLevel) as Level
   private BlockingTerrainLib: TerrainSymbol[] = [TerrainSymbol.WATER]
-  private range: number = 3
+  private range: number = 2
 
   constructor() {
     this.LevelMomento = EmptyLevel

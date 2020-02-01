@@ -1,5 +1,11 @@
 <template>
-  <div ref="block" class="gridItem" @click="observe" :class="gridClass()" :style="terrainStyles">
+  <div
+    ref="block"
+    class="gridItem"
+    @click="observe"
+    :class="{observed: isObserved}"
+    :style="terrainStyles"
+  >
     <slot></slot>
   </div>
 </template> 
@@ -21,6 +27,7 @@ import {
 export default class GridBlock extends Vue {
   @Prop() private gridMeta!: GridBlockI
   @Prop() private terrain!: TerrainSymbol
+  @Prop() private isObserved?: boolean
 
   private terrainStyles = {}
   private position: GridPosition = {
@@ -40,13 +47,6 @@ export default class GridBlock extends Vue {
   private mounted() {
     if (this.gridMeta.containedEntity) {
       this.emitPosition(this.gridMeta.containedEntity, true)
-    }
-  }
-
-  private gridClass() {
-    let classList = ''
-    if (this.gridMeta.inObserveRange === true) {
-      classList += 'observed '
     }
   }
 
@@ -83,15 +83,15 @@ export default class GridBlock extends Vue {
 // .gridItem {
 //   background-size: 640px 384px;
 // }
-#gridItem {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 5;
+.gridItem {
+  filter: brightness(50%);
 }
 
-#gridItem.observed:hover {
+.gridItem.observed {
+  filter: none;
+}
+
+.gridItem.observed:hover {
   box-shadow: 0 0 5px 1px purple inset;
 }
 </style>
