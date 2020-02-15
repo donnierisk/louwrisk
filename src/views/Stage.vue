@@ -55,6 +55,7 @@ import DialogueBox from '@/components/DialogueBox.vue'
 import KeyboardEvents from '@/components/KeyboardEvents.vue'
 import SpriteBlock from '@/components/SpriteBlock.vue'
 import DialogOption from '@/models/DialogOption'
+import { PathingHandler } from '../models/Pathing/PathingHandler'
 
 @Component({
   components: {
@@ -72,7 +73,10 @@ export default class Map extends Vue {
   private Scale: string = ''
   private storeActive: boolean = false
   private level = new LevelHandler()
-  private aiHandler = new AIHandler(this.level, this.level.getAllNPC())
+  private aiHandler = new AIHandler(
+    this.level.getAllNPC(),
+    new PathingHandler(this.level)
+  )
 
   private gridRenderArray: GridBlockI[] = []
 
@@ -198,7 +202,7 @@ export default class Map extends Vue {
   }
 
   private nextTurn() {
-    this.aiHandler.interruptAtPosition(this.playerCurrentPosition)
+    // this.aiHandler.interruptAtPosition(this.playerCurrentPosition)
     this.aiHandler.nextTurn()
     this.generateGrid()
   }

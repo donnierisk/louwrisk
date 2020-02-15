@@ -8,8 +8,11 @@ export class ActionHandler {
   private actionQueue: Action[] = []
   private oldQueue: Action[] = []
   private entity: Entity
-  constructor(ent: Entity) {
+  private id: number
+
+  constructor(ent: Entity, id: number) {
     this.entity = ent
+    this.id = id
   }
 
   public addMove(position: GridPosition, level: LevelHandler) {
@@ -46,6 +49,14 @@ export class ActionHandler {
     } else {
       return undefined
     }
+  }
+
+  public getEntityPosition(): GridPosition {
+    return this.entity.getPosition()
+  }
+
+  public getId(): number {
+    return this.id
   }
 
   public getQueue(): string {
