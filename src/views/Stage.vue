@@ -22,7 +22,7 @@
           :is-observed="gridItem.inObserveRange"
         ></grid-block>
         <sprite-block
-          v-for="(entity) of gridRenderArray.filter(ent => ent.containedEntity ? true : false)"
+          v-for="(entity) of gridRenderArray.filter(ent => ent.containedEntity)"
           :is-observed="entity.inObserveRange"
           :block-size="blockSize"
           :animating="animating"
@@ -155,6 +155,7 @@ export default class Map extends Vue {
   ) {
     this.throttled = true
     this.animating = true
+
     const entity = this.getEntityRef(type, id ? id : 0)
     const startCallback = () => {
       this.throttled = false
