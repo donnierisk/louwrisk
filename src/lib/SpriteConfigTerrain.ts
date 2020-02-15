@@ -1,31 +1,39 @@
 export const spriteConfig: ISpriteTerrainConfig = {
-    grass: {
-        x: '0px', y: '0px',
+    sheetSize: { x: 1280, y: 768 },
+    blockSize: {
+        x: 256, y: 256, unit: 'px'
     },
-    grass1: {
-        x: '0', y: '-128px',
+    terrains: {
+        grass: {
+            x: 0, y: 0,
+        },
+        grass1: {
+            x: 0, y: -1,
+        },
+        water: {
+            x: 0, y: -2,
+        },
+        ground: {
+            x: 0, y: 0
+        },
+        mud: {
+            x: -1, y: 0
+        },
+        empty: {
+            x: 0, y: 0
+        }
     },
-    water: {
-        x: '0', y: '-256px',
-    },
-    ground: {
-        x: '0px', y: '0px'
-    },
-    mud: {
-        x: '-128px', y: '0px'
-    },
-    empty: {
-        x: '0px', y: '0px'
-    }
 }
 
 export interface ISpriteTerrainConfig {
-    [key: string]: ISpriteTerrainMeta
+    sheetSize: { x: number, y: number },
+    blockSize: { x: number, y: number, unit: string },
+    terrains: { [key: string]: ISpriteTerrainMeta }
 }
 
 export interface ISpriteTerrainMeta {
-    x: string,
-    y: string
+    x: number,
+    y: number
 }
 
 // THESE ARE MADE NEGATIVE AND HALF OF ORIGINAL SPRITESHEET SIZE.

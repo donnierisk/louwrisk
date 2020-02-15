@@ -16,6 +16,7 @@
           :posInArr="i"
           :key="i"
           :terrain="gridItem.symbol"
+          :block-size="blockSize"
           @observed="addToObserver"
           @entity-pos="AnimateEntityPosition"
           :is-observed="gridItem.inObserveRange"
