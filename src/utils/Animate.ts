@@ -17,7 +17,6 @@ export class Animate {
     startCallBack?: () => void,
     speed: number = 0.5
   ) {
-
     const options = {
       left: unitCoords.x,
       top: unitCoords.y,

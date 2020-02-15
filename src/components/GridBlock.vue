@@ -28,6 +28,7 @@ export default class GridBlock extends Vue {
   @Prop() private gridMeta!: GridBlockI
   @Prop() private terrain!: TerrainSymbol
   @Prop() private isObserved?: boolean
+  @Prop() private blockSize!: GridPosition
 
   private terrainStyles = {}
   private position: GridPosition = {
@@ -37,10 +38,16 @@ export default class GridBlock extends Vue {
   }
 
   private created() {
-    const terrainSprite = spriteConfig[this.terrain]
+    const terrainSprite = spriteConfig.terrains[this.terrain]
+    const ratioX = this.blockSize.x / spriteConfig.blockSize.x
+    const ratioY = this.blockSize.y / spriteConfig.blockSize.y
+    const posX = terrainSprite.x * (spriteConfig.blockSize.x * ratioX)
+    const posY = terrainSprite.y * (spriteConfig.blockSize.y * ratioY)
     this.terrainStyles = {
       backgroundImage: `url(${require('../assets/terrainsheet.png')}`,
-      backgroundPosition: `${terrainSprite.x} ${terrainSprite.y}`,
+      backgroundSize: `${spriteConfig.sheetSize.x * ratioX}px ${spriteConfig
+        .sheetSize.y * ratioY}px`,
+      backgroundPosition: `${posX}px ${posY}px`,
       zIndex: this.gridMeta.zIndex
     }
   }

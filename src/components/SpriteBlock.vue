@@ -31,14 +31,14 @@ export default class SpriteBlock extends Vue {
   @Prop() private blockSize!: GridPosition
 
   private spriteMeta: ISpriteMeta = {
-    pos: { x: '0px', y: '0px' },
+    pos: { x: 0, y: 0 },
     gridSpan: { x: 1, y: 1 },
     sourceBlock: { x: 0, y: 0 }
   }
 
   private created() {
     if (this.entity) {
-      this.spriteMeta = spriteConfig[this.entity.getSpriteName()]
+      this.spriteMeta = spriteConfig.entities[this.entity.getSpriteName()]
     }
   }
   private get imageMeta(): any {
@@ -46,9 +46,19 @@ export default class SpriteBlock extends Vue {
       const width = this.spriteMeta.gridSpan.x * this.blockSize.x
       const height = this.spriteMeta.gridSpan.y * this.blockSize.y
 
+      const ratioX = this.blockSize.x / spriteConfig.blockSize.x
+      const ratioY = this.blockSize.y / spriteConfig.blockSize.y
+      const spritePosX =
+        this.spriteMeta.pos.x * (spriteConfig.blockSize.x * ratioX)
+      const spritePosY =
+        this.spriteMeta.pos.y * (spriteConfig.blockSize.y * ratioY)
+
+      // NEED TO NEXT MOVE THE RATIO CODE INTO STAGE.VUE AS WELL AS BACKGROUND SIZE CSS SO THAT IT"S NOT RECALCULATED EACH TIME;
       const spriteCss = {
         backgroundImage: `url(${require('../assets/spritesheet.png')})`,
-        backgroundPosition: `${this.spriteMeta.pos.x} ${this.spriteMeta.pos.y}`,
+        backgroundSize: `${spriteConfig.sheetSize.x * ratioX}px ${spriteConfig
+          .sheetSize.y * ratioY}px`,
+        backgroundPosition: `${spritePosX}px ${spritePosY}px`,
         width: width + 'px',
         height: height + 'px',
         top:
