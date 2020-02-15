@@ -82,9 +82,11 @@ export default class KeyboardEvents extends Vue {
   position: fixed;
   bottom: 0;
   right: 0;
+  z-index: 100;
   button {
-    padding: 20px 30px;
-    font-size: 20px;
+    width: 4rem;
+    font-size: 1rem;
+    height: 4rem;
     border: 1px solid black;
   }
 }

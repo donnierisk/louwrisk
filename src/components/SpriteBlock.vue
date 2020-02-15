@@ -42,7 +42,7 @@ export default class SpriteBlock extends Vue {
     }
   }
   private get imageMeta(): any {
-    if (this.entity) {
+    if (this.entity && this.isObserved === true) {
       const width = this.spriteMeta.gridSpan.x * this.blockSize.x
       const height = this.spriteMeta.gridSpan.y * this.blockSize.y
 
@@ -53,7 +53,8 @@ export default class SpriteBlock extends Vue {
       const spritePosY =
         this.spriteMeta.pos.y * (spriteConfig.blockSize.y * ratioY)
 
-      // NEED TO NEXT MOVE THE RATIO CODE INTO STAGE.VUE AS WELL AS BACKGROUND SIZE CSS SO THAT IT"S NOT RECALCULATED EACH TIME;
+      // NEED TO NEXT MOVE THE RATIO CODE INTO STAGE.VUE AS WELL AS
+      // BACKGROUND SIZE CSS SO THAT IT"S NOT RECALCULATED EACH TIME;
       const spriteCss = {
         backgroundImage: `url(${require('../assets/spritesheet.png')})`,
         backgroundSize: `${spriteConfig.sheetSize.x * ratioX}px ${spriteConfig
@@ -140,17 +141,18 @@ export default class SpriteBlock extends Vue {
 .sprite-block {
   width: 100%;
   height: 100%;
-  filter: brightness(50%);
 }
 
 .entity .entity-avatar {
   position: absolute;
-  /* background-size: 896px 640px; */
   display: block;
 }
 
+.sprite-block {
+  display: none;
+}
+
 .sprite-block.observed {
-  filter: none;
-  transition: filter 470ms ease-out;
+  display: block;
 }
 </style>
