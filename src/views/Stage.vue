@@ -1,11 +1,13 @@
 <template>
-  <div id="container">
+  <div id="container" :class="{perspective: perspectiveMode === true }">
     <keyboard-events @key-event="nextTurn" :throttled="throttled" :level="level" />
+    <div id="perspective-button" @click="togglePerspective">Perspective</div>
     <camera
       ref="camera"
       :block-size="blockSize"
       :player-position="playerCurrentPosition"
       :camera-offset="cameraOffset"
+      :perspectiveMode="perspectiveMode"
       camera-width="1024px"
       camera-height="768px"
     >
@@ -86,6 +88,7 @@ export default class Map extends Vue {
   private animating: boolean = false
   private animater: Animate = new Animate(this.blockSize.x, this.blockSize.y)
 
+  private perspectiveMode: boolean = false
   private throttled = false
 
   private created() {
@@ -97,6 +100,9 @@ export default class Map extends Vue {
     this.camera.PanCameraToPlayer(false)
   }
 
+  private togglePerspective() {
+    this.perspectiveMode = !this.perspectiveMode
+  }
   private get camera(): Camera {
     return this.$refs.camera as Camera
   }
@@ -111,7 +117,19 @@ export default class Map extends Vue {
 
   private get gridStyle() {
     const _ = this
+    let perspectiveCss = ''
+    if (this.perspectiveMode === true) {
+      const playerCameraPosY = _.playerCurrentPosition.y * _.blockSize.y
+      const offsetY = _.blockSize.y * 5
+
+      let cameraY = -(playerCameraPosY - offsetY)
+      if (playerCameraPosY < offsetY) {
+        cameraY = offsetY - playerCameraPosY
+      }
+      perspectiveCss = `transform: rotateX(15deg) translateY(${cameraY}px);`
+    }
     return `
+      ${perspectiveCss}
       grid-template-columns: repeat(${_.level.GridSize.x - 1}, ${
       _.blockSize.x
     }px) minmax(0, ${_.blockSize.x}px);
@@ -260,6 +278,7 @@ export default class Map extends Vue {
   height: 100vh;
   justify-content: center;
   align-items: center;
+  transition: transform 1s ease;
   /* Hide scrollbar for Chrome, Safari and Opera */
 }
 
@@ -267,5 +286,32 @@ export default class Map extends Vue {
   position: relative;
   display: grid;
   border-radius: 20px;
+  transform: rotateX(0deg);
+  transform-style: preserve-3d;
+  transition: transform 1s ease;
+}
+
+.entity {
+  transform-origin: 0px 0px;
+  transform: translateZ(0px) translateX(0px) rotateX(0deg);
+  transition: transform 1s ease;
+}
+
+.perspective {
+  &#container {
+    perspective: 100px;
+  }
+  .entity {
+    transform: translateZ(17px) translateX(0px) rotateX(-15deg);
+  }
+}
+
+#perspective-button {
+  cursor: pointer;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background: white;
 }
 </style>
