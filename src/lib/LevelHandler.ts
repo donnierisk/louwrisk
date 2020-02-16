@@ -18,7 +18,7 @@ export class LevelHandler {
   private entities: Entity[] = []
   private CurrentLevel: Level = JSON.parse(EmptyLevel) as Level
   private BlockingTerrainLib: TerrainSymbol[] = [TerrainSymbol.WATER]
-  private range: number = 2
+  private range: number = 10
 
   constructor() {
     this.LevelMomento = EmptyLevel
@@ -108,11 +108,91 @@ export class LevelHandler {
             description: 'It are a crate',
             blocks: true
           },
+          // {
+          //   type: EntityType.NPC,
+          //   mortalState: MortalState.ALIVE,
+          //   health: 12,
+          //   position: { x: 5, y: 6, z: 1 },
+          //   span: { x: 1, y: 1, z: 1 },
+          //   spriteName: 'bandit',
+          //   description: 'It is a bandit',
+          //   blocks: true
+          // },
           {
             type: EntityType.NPC,
             mortalState: MortalState.ALIVE,
             health: 12,
-            position: { x: 1, y: 10, z: 1 },
+            position: { x: 7, y: 7, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 1, y: 2, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a banditoooooo',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 5, y: 1, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 4, y: 7, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 3, y: 3, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 6, y: 6, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 2, y: 8, z: 1 },
+            span: { x: 1, y: 1, z: 1 },
+            spriteName: 'bandit',
+            description: 'It is a bandit',
+            blocks: true
+          },
+          {
+            type: EntityType.NPC,
+            mortalState: MortalState.ALIVE,
+            health: 12,
+            position: { x: 5, y: 9, z: 1 },
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'bandit',
             description: 'It is a bandit',
@@ -120,77 +200,7 @@ export class LevelHandler {
           }
         ]
     })
-    //,
-    // {
-    //   type: EntityType.NPC,
-    //   mortalState: MortalState.ALIVE,
-    //   health: 12,
-    //   position: { x: 1, y: 1, z: 1 },
-    //   span: { x: 1, y: 1, z: 1 },
-    //   spriteName: 'bandit',
-    //   description: 'It is a banditoooooo',
-    //   blocks: true
-    // },
-    // {
-    //   type: EntityType.NPC,
-    //   mortalState: MortalState.ALIVE,
-    //   health: 12,
-    //   position: { x: 5, y: 1, z: 1 },
-    //   span: { x: 1, y: 1, z: 1 },
-    //   spriteName: 'bandit',
-    //   description: 'It is a bandit',
-    //   blocks: true
-    // },
-    // {
-    //   type: EntityType.NPC,
-    //   mortalState: MortalState.ALIVE,
-    //   health: 12,
-    //   position: { x: 4, y: 7, z: 1 },
-    //   span: { x: 1, y: 1, z: 1 },
-    //   spriteName: 'bandit',
-    //   description: 'It is a bandit',
-    //   blocks: true
-    // },
-    // {
-    //   type: EntityType.NPC,
-    //   mortalState: MortalState.ALIVE,
-    //   health: 12,
-    //   position: { x: 3, y: 3, z: 1 },
-    //   span: { x: 1, y: 1, z: 1 },
-    //   spriteName: 'bandit',
-    //   description: 'It is a bandit',
-    //   blocks: true
-    // },
-    // {
-    //   type: EntityType.NPC,
-    //   mortalState: MortalState.ALIVE,
-    //   health: 12,
-    //   position: { x: 6, y: 6, z: 1 },
-    //   span: { x: 1, y: 1, z: 1 },
-    //   spriteName: 'bandit',
-    //   description: 'It is a bandit',
-    //   blocks: true
-    // },
-    // {
-    //   type: EntityType.NPC,
-    //   mortalState: MortalState.ALIVE,
-    //   health: 12,
-    //   position: { x: 2, y: 8, z: 1 },
-    //   span: { x: 1, y: 1, z: 1 },
-    //   spriteName: 'bandit',
-    //   description: 'It is a bandit',
-    //   blocks: true
-    // },
-    // {
-    //   type: EntityType.NPC,
-    //   mortalState: MortalState.ALIVE,
-    //   health: 12,
-    //   position: { x: 5, y: 9, z: 1 },
-    //   span: { x: 1, y: 1, z: 1 },
-    //   spriteName: 'bandit',
-    //   description: 'It is a bandit',
-    //   blocks: true
-    // }
+
     this.player = new Entity({
       type: EntityType.PLAYER,
       position: { x: 3, y: 5, z: 1 },
@@ -290,6 +300,21 @@ export class LevelHandler {
     return this.BlockingTerrainLib.includes(this.getTerrainBlock(col, row)) || blockingEntity
   }
 
+
+  public isBlockedTerrain(col: number, row: number): boolean {
+    if (this.isOutOfBounds(col, row)) {
+      return true
+    }
+
+    let blockingEntity = false
+    const entity = this.getEntityAtPosition(col, row) as Entity
+    if (entity && entity.isBlocker() && entity.getFields().type !== EntityType.NPC) {
+      blockingEntity = true
+    }
+
+    return this.BlockingTerrainLib.includes(this.getTerrainBlock(col, row)) || blockingEntity
+  }
+
   public isOutOfBounds(col: number, row: number) {
     if (col >= this.GridSize.x || col < 0) {
       return true
@@ -312,10 +337,12 @@ export class LevelHandler {
     return this.entities
   }
 
-  public updateEntityPosition(entity: Entity, x: number, y: number) {
+  public updateEntityPosition(entity: Entity, x: number, y: number): boolean {
     if (!this.isBlocked(x, y)) {
       entity.setPosition(x, y)
+      return true
     }
+    return false
   }
 
   public reloadSave() {

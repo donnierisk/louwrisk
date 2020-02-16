@@ -10,7 +10,7 @@ export default class Action {
   private level?: LevelHandler
   private dialogs?: string[]
   private position?: GridPosition
-  private actionEvent: () => void
+  private actionEvent: () => boolean
   constructor(type: ActionTypes, actionEntity: Entity, ...parameters: any[]) {
     this.type = type
     this.actionEntity = actionEntity
@@ -38,7 +38,7 @@ export default class Action {
         this.dialogs = parameters[1]
         break;
       default:
-        this.actionEvent = () => { return }
+        this.actionEvent = () => false
     }
   }
 
@@ -46,8 +46,8 @@ export default class Action {
     return this.position
   }
 
-  public act() {
-    this.actionEvent()
+  public act(): boolean {
+    return this.actionEvent()
   }
 
   public getType() {
@@ -58,21 +58,23 @@ export default class Action {
     return this.position ? this.position.x === pos.x && this.position.y === pos.y : false
   }
 
-  private attack() {
+  private attack(): boolean {
     if (this.interactionEntities) {
       this.interactionEntities.forEach((ent: Entity) => {
         ent.damage(1)
       })
     }
+    return true
   }
 
-  private move() {
+  private move(): boolean {
     if (this.position && this.level) {
-      this.level.updateEntityPosition(this.actionEntity, this.position.x, this.position.y)
+      return this.level.updateEntityPosition(this.actionEntity, this.position.x, this.position.y)
     }
+    return false
   }
 
-  private dialog() { return }
-  private observe() { return }
-  private obtain() { return }
+  private dialog(): boolean { return false }
+  private observe(): boolean { return false }
+  private obtain(): boolean { return false }
 }

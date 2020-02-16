@@ -66,8 +66,11 @@ export class ActionHandler {
   public nextAct() {
     const tempAction: Action | undefined = this.actionQueue.shift()
     if (tempAction) {
-      tempAction.act()
-      this.oldQueue.push(tempAction)
+      if (tempAction.act()) {
+        this.oldQueue.push(tempAction)
+      } else {
+        this.actionQueue.unshift(tempAction)
+      }
     } else {
       // TODO: LOGGER
     }

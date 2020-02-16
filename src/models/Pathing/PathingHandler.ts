@@ -2,12 +2,12 @@ import { getRandomIntInclusive } from '@/utils/Arithmetic';
 import { ActionHandler } from '@/lib/ActionHandler';
 import { LevelHandler } from '@/lib/LevelHandler';
 import { GridPosition } from '../GridPosition';
-interface PathingObject { positions: GridPosition[], curIndex: number }
+interface PathingObject { positions: GridPosition[], curIndex: number, stuckCounter: number }
 interface Node { position: GridPosition }
 export class PathingHandler {
   private level: LevelHandler
   private paths: { [k: string]: PathingObject }
-  private pastPaths: { [k: string]: { positions: GridPosition[][] } }
+  private pastPaths: { [k: string]: { positions: PathingObject[] } }
   constructor(level: LevelHandler) {
     this.level = level
     this.paths = {}
@@ -17,27 +17,46 @@ export class PathingHandler {
   public addMove(handler: ActionHandler) {
     let obj: PathingObject = this.paths[handler.getId()]
     if (!obj) {
-      this.addPath(handler)
+      this.resetPath(handler)
       obj = this.paths[handler.getId()]
-    }
-    handler.addMove(obj.positions[obj.curIndex], this.level)
-    obj.curIndex++
-
-    if (obj.positions.length === obj.curIndex) {
-      if (!this.pastPaths[handler.getId()]) {
-        this.pastPaths[handler.getId()] = {
-          positions: []
+      handler.addMove(obj.positions[obj.curIndex], this.level)
+      obj.curIndex++
+    } else
+      if (handler.peekQueueFront() !== undefined) {
+        obj.stuckCounter++
+        if (obj.stuckCounter > 2) {
+          // if (handler.getEntityPosition().x === 2 && handler.getEntityPosition().y === 6)
+          //   debugger
+          this.resetPath(handler)
+          handler.popQueueFront()
+          handler.addMove(obj.positions[obj.curIndex], this.level)
         }
+      } else
+        if (obj.positions.length === obj.curIndex) {
+          this.resetPath(handler)
+        } else {
+          handler.addMove(obj.positions[obj.curIndex], this.level)
+          obj.curIndex++
+        }
+  }
+
+  public resetPath(handler: ActionHandler) {
+    let obj: PathingObject = this.paths[handler.getId()]
+    if (!this.pastPaths[handler.getId()]) {
+      this.pastPaths[handler.getId()] = {
+        positions: []
       }
-      this.pastPaths[handler.getId()].positions.push(obj.positions)
-      delete this.paths[handler.getId()]
     }
+    this.pastPaths[handler.getId()].positions.push(obj)
+    delete this.paths[handler.getId()]
+    this.addPath(handler)
   }
 
   public addPath(handler: ActionHandler) {
     this.paths[handler.getId()] = {
       positions: this.getPathBetweenTwoPoints(handler.getEntityPosition(), { x: 3, y: 0, z: 0 }),
-      curIndex: 0
+      curIndex: 1,
+      stuckCounter: 0
     }
   }
 
@@ -63,7 +82,7 @@ export class PathingHandler {
         const key: string = xPos + '-' + yPos
         if (queue[key] !== queue[k(start)]
           && queue[key] !== queue[k(target)]
-          && !this.level.isBlocked(xPos, yPos)) {
+          && !this.level.isBlockedTerrain(xPos, yPos)) {
           const tempNode: Node = { position: { x: xPos, y: yPos, z: 0 } }
           queue[key] = tempNode
           dist[key] = Infinity
@@ -94,7 +113,6 @@ export class PathingHandler {
       returnPositions.unshift(cur.position)
       cur = prev[k(cur)]
     }
-    console.log(returnPositions)
     return returnPositions
   }
 
