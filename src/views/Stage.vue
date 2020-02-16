@@ -1,6 +1,7 @@
 <template>
-  <div id="container">
+  <div id="container" :class="{perspective: perspectiveMode === true }">
     <keyboard-events @key-event="nextTurn" :throttled="throttled" :level="level" />
+    <div id="perspective-button" @click="togglePerspective">Perspective</div>
     <camera
       ref="camera"
       :block-size="blockSize"
@@ -82,6 +83,7 @@ export default class Map extends Vue {
   private animating: boolean = false
   private animater: Animate = new Animate(this.blockSize.x, this.blockSize.y)
 
+  private perspectiveMode: boolean = false
   private throttled = false
 
   private created() {
@@ -93,6 +95,9 @@ export default class Map extends Vue {
     this.camera.PanCameraToPlayer(false)
   }
 
+  private togglePerspective() {
+    this.perspectiveMode = !this.perspectiveMode
+  }
   private get camera(): Camera {
     return this.$refs.camera as Camera
   }
@@ -256,6 +261,7 @@ export default class Map extends Vue {
   height: 100vh;
   justify-content: center;
   align-items: center;
+  transition: transform 1s ease;
   /* Hide scrollbar for Chrome, Safari and Opera */
 }
 
@@ -263,5 +269,35 @@ export default class Map extends Vue {
   position: relative;
   display: grid;
   border-radius: 20px;
+  transform: rotateX(0deg);
+  transform-style: preserve-3d;
+  transition: transform 1s ease;
+}
+
+.entity {
+  transform-origin: 0px 0px;
+  transform: translateZ(0px) translateX(0px) rotateX(0deg);
+  transition: transform 1s ease;
+}
+
+.perspective {
+  &#container {
+    perspective: 100px;
+  }
+  #grid {
+    transform: rotateX(15deg);
+  }
+  .entity {
+    transform: translateZ(17px) translateX(0px) rotateX(-15deg);
+  }
+}
+
+#perspective-button {
+  cursor: pointer;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  padding: 1rem;
+  background: white;
 }
 </style>

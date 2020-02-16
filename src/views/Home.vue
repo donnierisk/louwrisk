@@ -20,4 +20,8 @@ export default class Home extends Vue {}
 </script>
 
 <style lang="scss">
+.home {
+  // perspective-origin: top center;
+  // perspective: 360px;
+}
 </style>
