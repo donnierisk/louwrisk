@@ -7,6 +7,7 @@
       :block-size="blockSize"
       :player-position="playerCurrentPosition"
       :camera-offset="cameraOffset"
+      :perspectiveMode="perspectiveMode"
       camera-width="1024px"
       camera-height="768px"
     >
@@ -112,7 +113,19 @@ export default class Map extends Vue {
 
   private get gridStyle() {
     const _ = this
+    let perspectiveCss = ''
+    if (this.perspectiveMode === true) {
+      const playerCameraPosY = _.playerCurrentPosition.y * _.blockSize.y
+      const offsetY = _.blockSize.y * 5
+
+      let cameraY = -(playerCameraPosY - offsetY)
+      if (playerCameraPosY < offsetY) {
+        cameraY = offsetY - playerCameraPosY
+      }
+      perspectiveCss = `transform: rotateX(15deg) translateY(${cameraY}px);`
+    }
     return `
+      ${perspectiveCss}
       grid-template-columns: repeat(${_.level.GridSize.x - 1}, ${
       _.blockSize.x
     }px) minmax(0, ${_.blockSize.x}px);
@@ -283,9 +296,6 @@ export default class Map extends Vue {
 .perspective {
   &#container {
     perspective: 100px;
-  }
-  #grid {
-    transform: rotateX(15deg);
   }
   .entity {
     transform: translateZ(17px) translateX(0px) rotateX(-15deg);

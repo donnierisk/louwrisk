@@ -24,20 +24,29 @@ export default class Camera extends Vue {
   @Prop() private blockSize!: GridPosition
   @Prop() private playerPosition!: GridPosition
   @Prop() private cameraOffset!: GridPosition
+  @Prop() private perspectiveMode!: boolean
   @Prop() private cameraWidth?: number
   @Prop() private cameraHeight?: number
 
   private cameraPanningToPlayer: boolean = false
   private storeActive: boolean = false
-
+  private hasPanned = false
   public get stageDom() {
-    return this.storeActive ? this.$refs.stage : {clientWidth: 0, clientHeight: 0}
+    return this.storeActive
+      ? this.$refs.stage
+      : { clientWidth: 0, clientHeight: 0 }
   }
 
   public get playerCurrentCameraPosition(): GridPosition {
     return {
-      x: (((this.playerPosition.x + 1) * this.blockSize.x) - (this.screenWidth / 2)) + this.cameraOffset.x,
-      y: (((this.playerPosition.y + 1) * this.blockSize.y) - (this.screenHeight / 2)) + this.cameraOffset.y
+      x:
+        (this.playerPosition.x + 1) * this.blockSize.x -
+        this.screenWidth / 2 +
+        this.cameraOffset.x,
+      y:
+        (this.playerPosition.y + 1) * this.blockSize.y -
+        this.screenHeight / 2 +
+        this.cameraOffset.y
     }
   }
 
@@ -47,8 +56,20 @@ export default class Camera extends Vue {
     this.PanCameraTo(pos.x, pos.y, animate)
   }
 
-  public PanCameraTo(panX: number = 0, panY: number = 0, animate: boolean = false) {
-    const anim = this.camera.scrollTo({x: panX, y: panY}, animate ? 500 : 0 as any)
+  public PanCameraTo(
+    panX: number = 0,
+    panY: number = 0,
+    animate: boolean = false
+  ) {
+    if (this.perspectiveMode === true && this.hasPanned === true) {
+      const anim = this.camera.scrollTo({ x: panX }, animate ? 500 : (0 as any))
+    } else {
+      const anim = this.camera.scrollTo(
+        { x: panX, y: panY },
+        animate ? 500 : (0 as any)
+      )
+      this.hasPanned = true
+    }
   }
 
   private mounted() {
@@ -63,29 +84,32 @@ export default class Camera extends Vue {
   }
 
   private get screenWidth() {
-    return ((this.stageDom as HTMLElement).clientWidth as number)
+    return (this.stageDom as HTMLElement).clientWidth as number
   }
 
   private get screenHeight() {
-    return ((this.stageDom as HTMLElement).clientHeight as number)
+    return (this.stageDom as HTMLElement).clientHeight as number
   }
 
   private get camera() {
-    return (this.$refs.vs as vuescroll)
+    return this.$refs.vs as vuescroll
   }
 
-  private HandleScrollComplete(vertical: ScrollEventPar, horizontal: ScrollEventPar) {
+  private HandleScrollComplete(
+    vertical: ScrollEventPar,
+    horizontal: ScrollEventPar
+  ) {
     if (this.cameraPanningToPlayer) {
       this.cameraPanningToPlayer = false
     }
   }
 
   private CameraPosX(pos: number = 0) {
-    return pos - (this.screenWidth / 2)
+    return pos - this.screenWidth / 2
   }
 
   private CameraPosY(pos: number = 0) {
-    return pos - (this.screenHeight / 2)
+    return pos - this.screenHeight / 2
   }
 }
 </script>
