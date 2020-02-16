@@ -3,7 +3,7 @@ import { ActionHandler } from '@/lib/ActionHandler';
 import { LevelHandler } from '@/lib/LevelHandler';
 import { GridPosition } from '../GridPosition';
 interface PathingObject { positions: GridPosition[], curIndex: number }
-
+interface Node { position: GridPosition }
 export class PathingHandler {
   private level: LevelHandler
   private paths: { [k: string]: PathingObject }
@@ -36,9 +36,66 @@ export class PathingHandler {
 
   public addPath(handler: ActionHandler) {
     this.paths[handler.getId()] = {
-      positions: this.getRandomPath(handler.getEntityPosition(), 7),
+      positions: this.getPathBetweenTwoPoints(handler.getEntityPosition(), { x: 3, y: 0, z: 0 }),
       curIndex: 0
     }
+  }
+
+  private getKey(n: Node): string {
+    return n.position.x + '-' + n.position.y
+  }
+
+  private getPathBetweenTwoPoints(initialPoint: GridPosition, endPoint: GridPosition): GridPosition[] {
+    const start: Node = { position: initialPoint }
+    const target: Node = { position: endPoint }
+    let found: boolean = false
+    const k = this.getKey
+    const dist: { [k: string]: number } = {}
+    const prev: { [k: string]: Node } = {}
+    const queue: { [k: string]: Node } = {}
+
+    queue[k(start)] = start
+    dist[k(start)] = 0
+    queue[k(target)] = target
+    dist[k(target)] = Infinity
+    for (let yPos = 0; yPos < this.level.GridSize.y; yPos++) {
+      for (let xPos = 0; xPos < this.level.GridSize.x; xPos++) {
+        const key: string = xPos + '-' + yPos
+        if (queue[key] !== queue[k(start)]
+          && queue[key] !== queue[k(target)]
+          && !this.level.isBlocked(xPos, yPos)) {
+          const tempNode: Node = { position: { x: xPos, y: yPos, z: 0 } }
+          queue[key] = tempNode
+          dist[key] = Infinity
+        }
+      }
+    }
+
+    while (!this.isEmpty(queue) && !found) {
+      const currentNodeKey: string = this.popNodeWithLowestDistance(dist, queue)
+      const current: Node = queue[currentNodeKey]
+      delete queue[currentNodeKey]
+      if (currentNodeKey === k(target)) {
+        found = true
+      } else {
+        for (const neighbors of this.getSurroundingNodes(current, queue)) {
+          const weight: number = dist[k(current)] + 1
+          if (weight < dist[k(neighbors)]) {
+            dist[k(neighbors)] = weight
+            prev[k(neighbors)] = current
+          }
+        }
+      }
+    }
+
+    const returnPositions: GridPosition[] = []
+    let cur = target
+    while (cur !== undefined) {
+      returnPositions.unshift(cur.position)
+      cur = prev[k(cur)]
+    }
+    console.log(returnPositions)
+    return returnPositions
   }
 
   private getRandomPath(initialPosition: GridPosition, steps: number): GridPosition[] {
@@ -65,6 +122,49 @@ export class PathingHandler {
     }
 
     return returnPositions
+  }
+
+  private getSurroundingPositions(currentPosition: GridPosition): GridPosition[] {
+    const returnPositions: GridPosition[] = []
+    for (let index = 0; index < 4; index++) {
+      returnPositions.push(this.getNewPos(index, currentPosition))
+    }
+    return returnPositions
+  }
+
+  private getSurroundingNodes(currentNode: Node, queue: { [k: string]: Node }): Node[] {
+    const returnNode: Node[] = []
+    const temp: GridPosition[] = this.getSurroundingPositions(currentNode.position)
+    for (const pos of temp) {
+      const key: string = pos.x + '-' + pos.y
+      if (queue[key] !== undefined) {
+        returnNode.push(queue[key])
+      }
+    }
+    return returnNode
+  }
+
+  private popNodeWithLowestDistance(prev: { [k: string]: number }, queue: { [k: string]: Node }): string {
+    let temp: string = ''
+    for (const key in queue) {
+      if (!temp.length) {
+        temp = key
+      } else {
+        if (prev[key] < prev[temp]) {
+          temp = key
+        }
+      }
+    }
+    return temp
+  }
+
+  private isEmpty(obj: Object) {
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   private getNewPos = (direction: number, position: GridPosition): GridPosition => {

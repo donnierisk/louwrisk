@@ -112,17 +112,7 @@ export class LevelHandler {
             type: EntityType.NPC,
             mortalState: MortalState.ALIVE,
             health: 12,
-            position: { x: 5, y: 6, z: 1 },
-            span: { x: 1, y: 1, z: 1 },
-            spriteName: 'bandit',
-            description: 'It is a bandit',
-            blocks: true
-          },
-          {
-            type: EntityType.NPC,
-            mortalState: MortalState.ALIVE,
-            health: 12,
-            position: { x: 7, y: 7, z: 1 },
+            position: { x: 1, y: 10, z: 1 },
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'bandit',
             description: 'It is a bandit',
@@ -130,7 +120,7 @@ export class LevelHandler {
           }
         ]
     })
-    // ,
+    //,
     // {
     //   type: EntityType.NPC,
     //   mortalState: MortalState.ALIVE,
