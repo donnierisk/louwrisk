@@ -33,7 +33,8 @@ export default class SpriteBlock extends Vue {
   private spriteMeta: ISpriteMeta = {
     pos: { x: 0, y: 0 },
     gridSpan: { x: 1, y: 1 },
-    sourceBlock: { x: 0, y: 0 }
+    sourceBlock: { x: 0, y: 0 },
+    animations: {}
   }
 
   private created() {
@@ -99,7 +100,9 @@ export default class SpriteBlock extends Vue {
     ) {
       const el = this.$refs.entityModel
       const timeline = new TimelineLite()
-
+      const animation = this.entity.getAnimation()
+      console.log(animation)
+      console.log(this.spriteMeta.animations[animation])
       // NEED TO FINALISE THE TIMING BELOW, NOT 100% RIGHT
       timeline
         .to(el, 0, {

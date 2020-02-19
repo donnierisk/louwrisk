@@ -36,13 +36,12 @@ export default class KeyboardEvents extends Vue {
       case 'KeyA':
       case 'KeyD':
         this.moveEntity(this.level.getPlayer(), key, amount)
-        this.$emit('move-event', key)
         break
       default:
         break
     }
-
-    this.$emit('key-event')
+    // COMMENTED OUT FOR NOW, may serve future purpose
+    // this.$emit('key-event')
   }
 
   private moveEntity(entity: Entity, direction: string, amount: number = 1) {
@@ -50,19 +49,23 @@ export default class KeyboardEvents extends Vue {
     if (this.throttled === false) {
       let entityX = entity.getPosition().x
       let entityY = entity.getPosition().y
-
+      let animation = ''
       switch (direction) {
         case 'KeyW':
           entityY -= amount
+          animation = 'walkUp'
           break
         case 'KeyS':
           entityY += amount
+          animation = 'walkDown'
           break
         case 'KeyA':
           entityX -= amount
+          animation = 'walkLeft'
           break
         case 'KeyD':
           entityX += amount
+          animation = 'walkRight'
           break
       }
 
@@ -72,6 +75,7 @@ export default class KeyboardEvents extends Vue {
       ) {
         entity.setPosition(entityX, entityY)
       }
+      this.$emit('move-event', animation)
     }
   }
 }

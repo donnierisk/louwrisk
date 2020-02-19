@@ -1,6 +1,6 @@
 <template>
   <div id="container" :class="{perspective: perspectiveMode === true }">
-    <keyboard-events @key-event="nextTurn" :throttled="throttled" :level="level" />
+    <keyboard-events @move-event="nextTurn" :throttled="throttled" :level="level" />
     <div id="perspective-button" @click="togglePerspective">Perspective</div>
     <camera
       ref="camera"
@@ -85,6 +85,7 @@ export default class Map extends Vue {
   private observedItems: TerrainSymbol[] = []
 
   private observer: Observer = new Observer()
+  private animation = 'idle'
   private animating: boolean = false
   private animater: Animate = new Animate(this.blockSize.x, this.blockSize.y)
 
@@ -219,8 +220,9 @@ export default class Map extends Vue {
     )
   }
 
-  private nextTurn() {
+  private nextTurn(animation: string) {
     // this.aiHandler.interruptAtPosition(this.playerCurrentPosition)
+    this.animation = animation
     this.aiHandler.nextTurn()
     this.generateGrid()
   }
@@ -237,8 +239,10 @@ export default class Map extends Vue {
         }
 
         const entity = this.level.getEntityAtPosition(gridCol, gridRow)
-
         if (entity) {
+          if (entity.getSpriteName() === 'player') {
+            entity.setAnimation(this.animation)
+          }
           gridObj.containedEntity = entity
         }
 
