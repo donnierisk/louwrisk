@@ -19,7 +19,7 @@ import {
   ISpriteConfig,
   ISpriteMeta
 } from '@/lib/SpriteConfigEntity'
-import { TimelineLite } from 'gsap'
+import { TweenLite, TimelineMax } from 'gsap'
 import { GridPosition } from '@/models/GridPosition'
 
 @Component
@@ -99,15 +99,27 @@ export default class SpriteBlock extends Vue {
       this.entity.getSpriteName() === 'player'
     ) {
       const el = this.$refs.entityModel
-      const timeline = new TimelineLite()
-      const animation = this.entity.getAnimation()
-      console.log(animation)
-      console.log(this.spriteMeta.animations[animation])
+      const timeline = new TimelineMax()
+      const animationName = this.entity.getAnimation()
+      const animation = this.spriteMeta.animations[animationName]
+      const blockSize = this.blockSize.x
+      let frameNo = 0
+
+      // NEED TO FIND A WAY TO CHAIN TIMELINE.TO BRAIN NO WORK, THERE IS CALLBACKS AND onComplete maybe??
+      // if (frameNo < animation.length || frameNo === 5) {
+      //   timeline.to(el, 0, {
+      //     backgroundPosition: `-${animation[frameNo].x *
+      //       blockSize}px -${animation[frameNo].y * blockSize}px`
+      //   })
+      //   frameNo++
+      // }
       // NEED TO FINALISE THE TIMING BELOW, NOT 100% RIGHT
       timeline
         .to(el, 0, {
           delay: 0.1,
-          backgroundPosition: `0 -${this.blockSize.y}px`
+          backgroundPosition: `${animation[frameNo].x *
+            this.blockSize.x}px -${animation[frameNo + 1].y *
+            this.blockSize.y}px`
         })
         .to(el, 0, { delay: 0.1, backgroundPosition: '0 0' })
         .to(el, 0, {
@@ -117,6 +129,19 @@ export default class SpriteBlock extends Vue {
         .to(el, 0, { delay: 0.1, backgroundPosition: '0 0' })
     }
   }
+
+  // private animateBg(
+  //   timeline: TimelineLite,
+  //   el: Entity,
+  //   config: any,
+  //   condition: any
+  // ) {
+  //   timeline.to(el, 0, {
+  //     backgroundPosition: `-${animation[frameNo].x * blockSize}px -${animation[
+  //       frameNo
+  //     ].y * blockSize}px`
+  //   })
+  // }
 
   private get hasEntity() {
     return this.entity ? true : false
