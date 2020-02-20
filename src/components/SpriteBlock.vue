@@ -19,7 +19,7 @@ import {
   ISpriteConfig,
   ISpriteMeta
 } from '@/lib/SpriteConfigEntity'
-import { TimelineLite } from 'gsap'
+import { TweenLite, TimelineMax } from 'gsap'
 import { GridPosition } from '@/models/GridPosition'
 
 @Component
@@ -33,7 +33,8 @@ export default class SpriteBlock extends Vue {
   private spriteMeta: ISpriteMeta = {
     pos: { x: 0, y: 0 },
     gridSpan: { x: 1, y: 1 },
-    sourceBlock: { x: 0, y: 0 }
+    sourceBlock: { x: 0, y: 0 },
+    animations: {}
   }
 
   private created() {
@@ -98,20 +99,26 @@ export default class SpriteBlock extends Vue {
       this.entity.getSpriteName() === 'player'
     ) {
       const el = this.$refs.entityModel
-      const timeline = new TimelineLite()
+      const timeline = new TimelineMax()
+      const animationName = this.entity.getAnimation()
+      let animation = this.spriteMeta.animations[animationName]
+      const blockSize = this.blockSize.x
+      let frameNo = 0
 
-      // NEED TO FINALISE THE TIMING BELOW, NOT 100% RIGHT
-      timeline
-        .to(el, 0, {
-          delay: 0.1,
-          backgroundPosition: `0 -${this.blockSize.y}px`
-        })
-        .to(el, 0, { delay: 0.1, backgroundPosition: '0 0' })
-        .to(el, 0, {
-          delay: 0.1,
-          backgroundPosition: `0 -${this.blockSize.y * 2}px`
-        })
-        .to(el, 0, { delay: 0.1, backgroundPosition: '0 0' })
+      for (let frameNo = 0; frameNo <= animation.length; frameNo++) {
+        if (frameNo === animation.length) {
+          timeline.to(el, 0, {
+            delay: 0.1,
+            backgroundPosition: `-${this.spriteMeta.pos.x}px -${this.spriteMeta.pos.y}px`
+          })
+        } else {
+          timeline.to(el, 0, {
+            delay: 0.1,
+            backgroundPosition: `-${animation[frameNo].x *
+              blockSize}px -${animation[frameNo].y * blockSize}px`
+          })
+        }
+      }
     }
   }
 

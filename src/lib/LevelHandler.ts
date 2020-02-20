@@ -51,7 +51,8 @@ export class LevelHandler {
             span: { x: 2, y: 2, z: 1 },
             spriteName: 'wagon',
             description: 'Oh no my apples!',
-            blocks: true
+            blocks: true,
+            animation: 'idle'
           },
           {
             type: EntityType.INTERACTIVE_PROP,
@@ -62,7 +63,8 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'crate1',
             description: 'It are a crate',
-            blocks: true
+            blocks: true,
+            animation: 'idle'
           },
           {
             type: EntityType.FORWARD_TERRAIN,
@@ -73,7 +75,8 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'tree',
             description: 'This is a tree',
-            blocks: true
+            blocks: true,
+            animation: 'idle'
           },
           {
             type: EntityType.FORWARD_TERRAIN,
@@ -84,7 +87,8 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'rock',
             description: 'This is a rock',
-            blocks: true
+            blocks: true,
+            animation: 'idle'
           },
           {
             type: EntityType.FORWARD_TERRAIN,
@@ -95,7 +99,8 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'tree',
             description: 'This is a tree',
-            blocks: true
+            blocks: true,
+            animation: 'idle'
           },
           {
             type: EntityType.INTERACTIVE_PROP,
@@ -106,7 +111,8 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'crate1',
             description: 'It are a crate',
-            blocks: true
+            blocks: true,
+            animation: 'idle'
           },
           // {
           //   type: EntityType.NPC,
@@ -136,7 +142,8 @@ export class LevelHandler {
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'bandit',
             description: 'It is a banditoooooo',
-            blocks: true
+            blocks: true,
+            animation: ''
           }
           // ,
           // {
@@ -210,7 +217,8 @@ export class LevelHandler {
       span: { x: 1, y: 1, z: 1 },
       spriteName: 'player',
       description: 'Don\'t look at his uni-brow',
-      blocks: true
+      blocks: true,
+      animation: 'idle'
     }, 0)
 
 
