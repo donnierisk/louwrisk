@@ -30,9 +30,17 @@ export class Entity {
     return this.entityFields.position
   }
 
+  public getAnimation(): string {
+    return this.entityFields.animation
+  }
+
   public setPosition(x: number, y: number) {
     this.entityFields.position.x = x
     this.entityFields.position.y = y
+  }
+
+  public setAnimation(animation: string) {
+    this.entityFields.animation = animation
   }
 
   public damage(damageBy: number) {

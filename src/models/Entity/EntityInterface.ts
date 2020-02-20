@@ -20,4 +20,5 @@ export interface EntityInterface {
   description?: string
   blocks?: boolean
   buff?: Buff
+  animation: string
 }
