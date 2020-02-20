@@ -106,13 +106,7 @@ export default class SpriteBlock extends Vue {
       let frameNo = 0
 
       for (let frameNo = 0; frameNo <= animation.length; frameNo++) {
-        if (frameNo === 0) {
-          timeline.to(el, 0, {
-            delay: 0.1,
-            backgroundPosition: `-${animation[frameNo].x *
-              blockSize}px -${animation[frameNo].y * blockSize}px`
-          })
-        } else if (frameNo === animation.length) {
+        if (frameNo === animation.length) {
           timeline.to(el, 0, {
             delay: 0.1,
             backgroundPosition: `-${this.spriteMeta.pos.x}px -${this.spriteMeta.pos.y}px`
