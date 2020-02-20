@@ -8,15 +8,17 @@ export class AIHandler {
   private actionHandlers: ActionHandler[] = []
   private pathingHandler: PathingHandler
   private entities: Entity[]
+  private target: Entity
   private idCount: number = 0
 
-  constructor(entities: Entity[], pathingHandler: PathingHandler) {
+  constructor(entities: Entity[], pathingHandler: PathingHandler, target: Entity) {
     this.entities = entities
     this.entities.forEach((ent: Entity, index: number) => {
       this.idCount = index
       this.actionHandlers.push(new ActionHandler(ent, this.idCount))
     })
     this.pathingHandler = pathingHandler
+    this.target = target
   }
 
   public addEntity(entity: Entity) {
@@ -25,8 +27,9 @@ export class AIHandler {
   }
 
   public nextTurn() {
+    //{ x: 3, y: 0, z: 0 }
     this.actionHandlers.forEach((handler) => {
-      this.pathingHandler.addMove(handler)
+      this.pathingHandler.follow(handler, this.target.getPosition())
       handler.nextAct()
     })
   }

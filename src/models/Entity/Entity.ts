@@ -27,7 +27,7 @@ export class Entity {
   }
 
   public getPosition(): GridPosition {
-    return this.entityFields.position
+    return JSON.parse(JSON.stringify(this.entityFields.position))
   }
 
   public setPosition(x: number, y: number) {

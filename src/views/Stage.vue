@@ -77,7 +77,8 @@ export default class Map extends Vue {
   private level = new LevelHandler()
   private aiHandler = new AIHandler(
     this.level.getAllNPC(),
-    new PathingHandler(this.level)
+    new PathingHandler(this.level),
+    this.level.getPlayer()
   )
 
   private gridRenderArray: GridBlockI[] = []
