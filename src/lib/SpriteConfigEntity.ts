@@ -9,10 +9,10 @@ export const spriteConfig: ISpriteConfig = {
             gridSpan: { x: 1, y: 1 },
             sourceBlock: { x: 0, y: 0 },
             animations: {
-                walkDown: [{ x: 0, y: 1 }, { x: 0, y: 0 }, { x: 0, y: 2 }],
-                walkLeft: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }],
-                walkRight: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }],
-                walkUp: [{ x: 0, y: 2 }, { x: 0, y: 1 }, { x: 0, y: 0 }]
+                walkDown: [{ x: 0, y: 1 }, { x: 0, y: 0 }, { x: 0, y: 2 }, { x: 0, y: 0 }],
+                walkLeft: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 0 }],
+                walkRight: [{ x: 0, y: 0 }, { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 0 }],
+                walkUp: [{ x: 2, y: 1 }, { x: 2, y: 0 }, { x: 2, y: 2 }, { x: 2, y: 0 }]
             }
         },
         crate1: {
@@ -34,7 +34,7 @@ export const spriteConfig: ISpriteConfig = {
             animations: {}
         },
         tree: {
-            pos: { x: -2, y: 0 },
+            pos: { x: -3, y: 0 },
             gridSpan: { x: 3, y: 3 },
             sourceBlock: { x: 1, y: 2 },
             animations: {}
