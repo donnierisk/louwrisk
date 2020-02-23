@@ -124,17 +124,16 @@ export class LevelHandler {
           //   description: 'It is a bandit',
           //   blocks: true
           // },
-          {
-            type: EntityType.NPC,
-            mortalState: MortalState.ALIVE,
-            health: 12,
-            position: { x: 7, y: 7, z: 1 },
-            span: { x: 1, y: 1, z: 1 },
-            spriteName: 'bandit',
-            description: 'It is a bandit',
-            blocks: true,
-            animation: 'idle'
-          },
+          // {
+          //   type: EntityType.NPC,
+          //   mortalState: MortalState.ALIVE,
+          //   health: 12,
+          //   position: { x: 7, y: 7, z: 1 },
+          //   span: { x: 1, y: 1, z: 1 },
+          //   spriteName: 'bandit',
+          //   description: 'It is a bandit',
+          //   blocks: true
+          // },
           {
             type: EntityType.NPC,
             mortalState: MortalState.ALIVE,
@@ -144,74 +143,69 @@ export class LevelHandler {
             spriteName: 'bandit',
             description: 'It is a banditoooooo',
             blocks: true,
-            animation: 'idle'
-          },
-          {
-            type: EntityType.NPC,
-            mortalState: MortalState.ALIVE,
-            health: 12,
-            position: { x: 5, y: 1, z: 1 },
-            span: { x: 1, y: 1, z: 1 },
-            spriteName: 'bandit',
-            description: 'It is a bandit',
-            blocks: true,
-            animation: 'idle'
-          },
-          {
-            type: EntityType.NPC,
-            mortalState: MortalState.ALIVE,
-            health: 12,
-            position: { x: 4, y: 7, z: 1 },
-            span: { x: 1, y: 1, z: 1 },
-            spriteName: 'bandit',
-            description: 'It is a bandit',
-            blocks: true,
-            animation: 'idle'
-          },
-          {
-            type: EntityType.NPC,
-            mortalState: MortalState.ALIVE,
-            health: 12,
-            position: { x: 3, y: 3, z: 1 },
-            span: { x: 1, y: 1, z: 1 },
-            spriteName: 'bandit',
-            description: 'It is a bandit',
-            blocks: true,
-            animation: 'idle'
-          },
-          {
-            type: EntityType.NPC,
-            mortalState: MortalState.ALIVE,
-            health: 12,
-            position: { x: 6, y: 6, z: 1 },
-            span: { x: 1, y: 1, z: 1 },
-            spriteName: 'bandit',
-            description: 'It is a bandit',
-            blocks: true,
-            animation: 'idle'
-          },
-          {
-            type: EntityType.NPC,
-            mortalState: MortalState.ALIVE,
-            health: 12,
-            position: { x: 2, y: 8, z: 1 },
-            span: { x: 1, y: 1, z: 1 },
-            spriteName: 'bandit',
-            description: 'It is a bandit',
-            blocks: true,
-            animation: 'idle'
-          },
-          {
-            type: EntityType.NPC,
-            mortalState: MortalState.ALIVE,
-            health: 12,
-            position: { x: 5, y: 9, z: 1 },
-            span: { x: 1, y: 1, z: 1 },
-            spriteName: 'bandit',
-            description: 'It is a bandit',
-            blocks: true,
-            animation: 'idle'
+            animation: ''
           }
+          // ,
+          // {
+          //   type: EntityType.NPC,
+          //   mortalState: MortalState.ALIVE,
+          //   health: 12,
+          //   position: { x: 5, y: 1, z: 1 },
+          //   span: { x: 1, y: 1, z: 1 },
+          //   spriteName: 'bandit',
+          //   description: 'It is a bandit',
+          //   blocks: true
+          // },
+          // {
+          //   type: EntityType.NPC,
+          //   mortalState: MortalState.ALIVE,
+          //   health: 12,
+          //   position: { x: 4, y: 7, z: 1 },
+          //   span: { x: 1, y: 1, z: 1 },
+          //   spriteName: 'bandit',
+          //   description: 'It is a bandit',
+          //   blocks: true
+          // },
+          // {
+          //   type: EntityType.NPC,
+          //   mortalState: MortalState.ALIVE,
+          //   health: 12,
+          //   position: { x: 3, y: 3, z: 1 },
+          //   span: { x: 1, y: 1, z: 1 },
+          //   spriteName: 'bandit',
+          //   description: 'It is a bandit',
+          //   blocks: true
+          // },
+          // {
+          //   type: EntityType.NPC,
+          //   mortalState: MortalState.ALIVE,
+          //   health: 12,
+          //   position: { x: 6, y: 6, z: 1 },
+          //   span: { x: 1, y: 1, z: 1 },
+          //   spriteName: 'bandit',
+          //   description: 'It is a bandit',
+          //   blocks: true
+          // },
+          // {
+          //   type: EntityType.NPC,
+          //   mortalState: MortalState.ALIVE,
+          //   health: 12,
+          //   position: { x: 2, y: 8, z: 1 },
+          //   span: { x: 1, y: 1, z: 1 },
+          //   spriteName: 'bandit',
+          //   description: 'It is a bandit',
+          //   blocks: true
+          // },
+          // {
+          //   type: EntityType.NPC,
+          //   mortalState: MortalState.ALIVE,
+          //   health: 12,
+          //   position: { x: 5, y: 9, z: 1 },
+          //   span: { x: 1, y: 1, z: 1 },
+          //   spriteName: 'bandit',
+          //   description: 'It is a bandit',
+          //   blocks: true
+          // }
         ]
     })
 
@@ -311,7 +305,7 @@ export class LevelHandler {
     if (entity && entity.isBlocker()) {
       blockingEntity = true
     }
-
+    console.log(this.BlockingTerrainLib.includes(this.getTerrainBlock(col, row)) || blockingEntity)
     return this.BlockingTerrainLib.includes(this.getTerrainBlock(col, row)) || blockingEntity
   }
 
@@ -353,6 +347,7 @@ export class LevelHandler {
   }
 
   public updateEntityPosition(entity: Entity, x: number, y: number): boolean {
+    console.log(x + '-' + y)
     if (!this.isBlocked(x, y)) {
       entity.setPosition(x, y)
       return true
