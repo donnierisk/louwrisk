@@ -23,10 +23,10 @@
       "single"
     ],
     "trailing-comma": false,
-    "arrow-parens": false,
+    "arrow-parens": true,
     "semicolon": [
       false,
-      "always"
+      "never"
     ]
   }
 }

@@ -21,6 +21,7 @@ import {
 } from '@/lib/SpriteConfigEntity'
 import { TweenLite, TimelineMax } from 'gsap'
 import { GridPosition } from '@/models/GridPosition'
+import { EntityType } from '@/models/Entity/EntityType'
 
 @Component
 export default class SpriteBlock extends Vue {
@@ -105,7 +106,7 @@ export default class SpriteBlock extends Vue {
       const blockSize = this.blockSize.x
       let frameNo = 0
 
-      for (let frameNo = 0; frameNo <= animation.length; frameNo++) {
+      for (let frameNo = 0; frameNo < animation.length; frameNo++) {
         timeline.to(el, 0, {
           delay: 0.1,
           backgroundPosition: `-${animation[frameNo].x *

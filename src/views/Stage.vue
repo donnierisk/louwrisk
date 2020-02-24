@@ -90,7 +90,7 @@ export default class Map extends Vue {
   private animating: boolean = false
   private animater: Animate = new Animate(this.blockSize.x, this.blockSize.y)
 
-  private perspectiveMode: boolean = false
+  private perspectiveMode: boolean = true
   private throttled = false
 
   private created() {
