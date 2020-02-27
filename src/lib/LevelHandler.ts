@@ -305,7 +305,6 @@ export class LevelHandler {
     if (entity && entity.isBlocker()) {
       blockingEntity = true
     }
-    console.log(this.BlockingTerrainLib.includes(this.getTerrainBlock(col, row)) || blockingEntity)
     return this.BlockingTerrainLib.includes(this.getTerrainBlock(col, row)) || blockingEntity
   }
 
@@ -347,7 +346,6 @@ export class LevelHandler {
   }
 
   public updateEntityPosition(entity: Entity, x: number, y: number): boolean {
-    console.log(x + '-' + y)
     if (!this.isBlocked(x, y)) {
       entity.setPosition(x, y)
       return true

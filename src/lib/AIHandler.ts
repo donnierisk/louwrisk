@@ -27,9 +27,10 @@ export class AIHandler {
   }
 
   public nextTurn() {
-    //{ x: 3, y: 0, z: 0 }
+    // { x: 3, y: 0, z: 0 }
     this.actionHandlers.forEach((handler) => {
-      this.pathingHandler.follow(handler, this.target.getPosition())
+      // this.pathingHandler.follow(handler, this.target.getPosition())
+      this.pathingHandler.moveTo(handler, this.target.getPosition())
       handler.nextAct()
     })
   }

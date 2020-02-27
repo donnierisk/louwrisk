@@ -101,9 +101,9 @@ export default class SpriteBlock extends Vue {
       const el = this.$refs.entityModel
       const timeline = new TimelineMax()
       const animationName = this.entity.getAnimation()
-      let animation = this.spriteMeta.animations[animationName]
+      const animation = this.spriteMeta.animations[animationName]
       const blockSize = this.blockSize.x
-      let frameNo = 0
+      const frameNo = 0
 
       for (let frameNo = 0; frameNo <= animation.length; frameNo++) {
         if (frameNo === animation.length) {

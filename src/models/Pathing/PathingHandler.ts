@@ -16,50 +16,49 @@ export class PathingHandler {
   }
 
   public follow(handler: ActionHandler, target: GridPosition) {
-    let obj: PathingObject = this.paths[handler.getId()]
+    const obj: PathingObject = this.paths[handler.getId()]
     if (!obj) {
-      this.addMove(handler, target)
+      this.moveTo(handler, target)
     } else {
       handler.addMove(obj.positions[obj.curIndex], this.level)
-      console.log(obj.positions)
       obj.curIndex++
       obj.positions.push(target)
     }
   }
 
-  public addMove(handler: ActionHandler, target: GridPosition) {
-    let obj: PathingObject = this.paths[handler.getId()]
-    if (!obj) {
+  public moveTo(handler: ActionHandler, target: GridPosition) {
+    if (!this.addMove(handler)) {
       this.resetPath(handler, target)
-      obj = this.paths[handler.getId()]
+      this.addMove(handler)
+    }
+  }
+
+  public addMove(handler: ActionHandler) {
+    const obj: PathingObject = this.paths[handler.getId()]
+    if (obj && handler.peekQueueFront() === undefined && obj.positions.length > obj.curIndex) {
       handler.addMove(obj.positions[obj.curIndex], this.level)
       obj.curIndex++
-    } else
-      if (handler.peekQueueFront() !== undefined) {
-        this.resetPath(handler, target)
-        handler.popQueueFront()
-        obj = this.paths[handler.getId()]
-        handler.addMove(obj.positions[obj.curIndex], this.level)
-        obj.curIndex++
-      } else
-        if (obj.positions.length === obj.curIndex) {
-          this.resetPath(handler, target)
-        } else {
-          handler.addMove(obj.positions[obj.curIndex], this.level)
-          obj.curIndex++
-        }
+      return true
+    } else {
+      return false
+    }
   }
 
   public resetPath(handler: ActionHandler, target: GridPosition) {
+    handler.popQueueFront()
     const obj: PathingObject = this.paths[handler.getId()]
-    if (!this.pastPaths[handler.getId()]) {
-      this.pastPaths[handler.getId()] = {
+    this.getPastPath(handler.getId()).positions.push(obj)
+    delete this.paths[handler.getId()]
+    this.addPath(handler, target)
+  }
+
+  public getPastPath(Id: number): { positions: PathingObject[] } {
+    if (!this.pastPaths[Id]) {
+      this.pastPaths[Id] = {
         positions: []
       }
     }
-    this.pastPaths[handler.getId()].positions.push(obj)
-    delete this.paths[handler.getId()]
-    this.addPath(handler, target)
+    return this.pastPaths[Id]
   }
 
   public addPath(handler: ActionHandler, target: GridPosition) {
