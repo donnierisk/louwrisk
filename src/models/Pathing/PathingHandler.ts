@@ -2,7 +2,6 @@ import { getRandomIntInclusive } from '@/utils/Arithmetic';
 import { ActionHandler } from '@/lib/ActionHandler';
 import { LevelHandler } from '@/lib/LevelHandler';
 import { GridPosition } from '../GridPosition';
-import { Entity } from '../Entity/Entity';
 interface PathingObject { positions: GridPosition[], curIndex: number }
 interface Node { position: GridPosition }
 export class PathingHandler {
@@ -27,10 +26,8 @@ export class PathingHandler {
   }
 
   public moveTo(handler: ActionHandler, target: GridPosition) {
-    if (!this.addMove(handler)) {
-      this.resetPath(handler, target)
-      this.addMove(handler)
-    }
+    this.resetPath(handler, target)
+    return this.addMove(handler)
   }
 
   public addMove(handler: ActionHandler) {
@@ -66,6 +63,11 @@ export class PathingHandler {
       positions: this.getPathBetweenTwoPoints(handler.getEntityPosition(), target),
       curIndex: 1
     }
+  }
+
+  public isAtDestination(handler: ActionHandler): boolean {
+    const obj: PathingObject = this.paths[handler.getId()]
+    return obj && obj.positions.length <= obj.curIndex;
   }
 
   private getKey(n: Node): string {
