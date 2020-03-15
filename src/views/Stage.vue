@@ -45,11 +45,11 @@ import { AIHandler } from '@/lib/AIHandler'
 import { TerrainSymbol } from '@/models/TerrainSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
-import { Observer } from '@/utils/EntityObserver'
 import { Animate } from '@/utils/Animate'
 import { EntityType } from '../models/Entity/EntityType'
 import { Entity } from '@/models/Entity/Entity'
 import { Position } from 'vue-router/types/router'
+import { Observer } from '@/models/Observer/Observer'
 import GridBlock from '@/components/GridBlock.vue'
 import Camera from '@/components/Camera.vue'
 import EntityComp from '@/components/EntityComp.vue'
@@ -58,6 +58,7 @@ import KeyboardEvents from '@/components/KeyboardEvents.vue'
 import SpriteBlock from '@/components/SpriteBlock.vue'
 import DialogOption from '@/models/DialogOption'
 import { PathingHandler } from '../models/Pathing/PathingHandler'
+import { EntityObserver } from '../utils/EntityObserver'
 
 @Component({
   components: {
@@ -78,6 +79,7 @@ export default class Map extends Vue {
   private aiHandler = new AIHandler(
     this.level.getAllNPC(),
     new PathingHandler(this.level),
+    new Observer(this.level, this.level.getAllNPC()),
     this.level.getPlayer()
   )
 
@@ -85,7 +87,8 @@ export default class Map extends Vue {
 
   private observedItems: TerrainSymbol[] = []
 
-  private observer: Observer = new Observer()
+  private observer: EntityObserver = new EntityObserver()
+
   private animation = 'idle'
   private animating: boolean = false
   private animater: Animate = new Animate(this.blockSize.x, this.blockSize.y)

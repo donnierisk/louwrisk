@@ -2,6 +2,7 @@ import { getRandomIntInclusive } from '@/utils/Arithmetic';
 import { ActionHandler } from '@/lib/ActionHandler';
 import { LevelHandler } from '@/lib/LevelHandler';
 import { GridPosition } from '../GridPosition';
+import { Direction } from '../Direction';
 interface PathingObject { positions: GridPosition[], curIndex: number }
 interface Node { position: GridPosition }
 export class PathingHandler {
@@ -38,6 +39,27 @@ export class PathingHandler {
       return true
     } else {
       return false
+    }
+  }
+
+  public addTurn(handler: ActionHandler) {
+    const obj: PathingObject = this.paths[handler.getId()]
+
+    if (obj) {
+      const newPos = obj.positions[obj.curIndex]
+      const oldPos = handler.getEntityPosition()
+      if (newPos.x < oldPos.x) {
+        handler.addTurn(Direction.WEST)
+      } else
+        if (newPos.x > oldPos.x) {
+          handler.addTurn(Direction.EAST)
+        } else
+          if (newPos.y < oldPos.y) {
+            handler.addTurn(Direction.NORTH)
+          } else
+            if (newPos.y > oldPos.y) {
+              handler.addTurn(Direction.SOUTH)
+            }
     }
   }
 

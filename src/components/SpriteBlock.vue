@@ -6,7 +6,13 @@
     ref="entity"
     :style="entityStyle"
   >
-    <div ref="entityModel" v-if="hasEntity" class="entity-avatar" :style="imageMeta" />
+    <div
+      ref="entityModel"
+      v-if="hasEntity"
+      class="entity-avatar"
+      :class="direction"
+      :style="imageMeta"
+    />
   </div>
 </template>
 
@@ -22,6 +28,7 @@ import {
 import { TweenLite, TimelineMax } from 'gsap'
 import { GridPosition } from '@/models/GridPosition'
 import { EntityType } from '@/models/Entity/EntityType'
+import { Direction } from '../models/Direction'
 
 @Component
 export default class SpriteBlock extends Vue {
@@ -131,10 +138,14 @@ export default class SpriteBlock extends Vue {
   public get entityRef() {
     return this.$refs.entity
   }
+
+  public get direction(): Direction {
+    return this.entity ? this.entity.getDirection() : Direction.NORTH
+  }
 }
 </script>
 
-<style>
+<style lang="scss">
 .entity {
   position: absolute;
 }
@@ -142,6 +153,18 @@ export default class SpriteBlock extends Vue {
 .sprite-block {
   width: 100%;
   height: 100%;
+  .n {
+    border-top: 1px solid black;
+  }
+  .s {
+    border-bottom: 1px solid black;
+  }
+  .w {
+    border-left: 1px solid black;
+  }
+  .a {
+    border-right: 1px solid black;
+  }
 }
 
 .entity .entity-avatar {

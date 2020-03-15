@@ -13,7 +13,7 @@ const tempEnt: Entity = new Entity({
   spriteName: 'test',
   animation: 'ide'
 }, -1)
-export class Observer {
+export class EntityObserver {
   private observedEntity: Entity = tempEnt
   private descriptions: string[] = []
   public addToObserver(entity: Entity) {

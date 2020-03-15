@@ -5,6 +5,7 @@ import { Level } from '@/models/Level'
 import { MortalState } from '@/models/MortalState';
 import { GridPosition } from '@/models/GridPosition';
 import { EntityInterface } from '@/models/Entity/EntityInterface';
+import { Direction } from '@/models/Direction';
 
 const EmptyLevel: string = `{
   "terrain": [],

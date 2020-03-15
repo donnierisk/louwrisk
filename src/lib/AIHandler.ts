@@ -1,21 +1,21 @@
 import { ActionHandler } from './ActionHandler';
 import { Entity } from '@/models/Entity/Entity';
-
-import { LevelHandler } from './LevelHandler';
 import { PathingHandler } from '@/models/Pathing/PathingHandler';
 import { GridPosition } from '@/models/GridPosition';
+import { Observer } from '@/models/Observer/Observer';
 
 
-interface patrol { route: GridPosition[], index: number }
+interface Patrol { route: GridPosition[], index: number }
 export class AIHandler {
   private actionHandlers: ActionHandler[] = []
   private pathingHandler: PathingHandler
+  private observerHandler: Observer
   private entities: Entity[]
   private target: Entity
   private idCount: number = 0
-  private patrols: patrol[]
+  private patrols: Patrol[]
 
-  constructor(entities: Entity[], pathingHandler: PathingHandler, target: Entity) {
+  constructor(entities: Entity[], pathingHandler: PathingHandler, observerHandler: Observer, target: Entity) {
     const temp = { x: 3, y: 0, z: 0 }
     this.patrols = []
     this.entities = entities
@@ -25,6 +25,7 @@ export class AIHandler {
       this.actionHandlers.push(new ActionHandler(ent, this.idCount))
     })
     this.pathingHandler = pathingHandler
+    this.observerHandler = observerHandler
     this.target = target
   }
 
@@ -34,23 +35,24 @@ export class AIHandler {
   }
 
   public nextTurn() {
+    const that = this
     this.actionHandlers.forEach((handler, index) => {
-      if (!this.pathingHandler.addMove(handler)) {
-        if (!this.pathingHandler.isAtDestination(handler)) {
-          this.patrols[index].index--
-          if (this.patrols[index].index < 0) {
-            this.patrols[index].index = this.patrols[index].route.length
+      if (!that.pathingHandler.addMove(handler)) {
+        if (!that.pathingHandler.isAtDestination(handler)) {
+          that.patrols[index].index--
+          if (that.patrols[index].index < 0) {
+            that.patrols[index].index = that.patrols[index].route.length
           }
         }
 
-        this.pathingHandler.moveTo(handler, this.patrols[index].route[this.patrols[index].index])
-        this.patrols[index].index++
+        that.pathingHandler.moveTo(handler, that.patrols[index].route[that.patrols[index].index])
+        that.patrols[index].index++
 
-        if (this.patrols[index].index >= this.patrols[index].route.length) {
-          this.patrols[index].index = 0
+        if (that.patrols[index].index >= that.patrols[index].route.length) {
+          that.patrols[index].index = 0
         }
       }
-      handler.nextAct()
+      while (handler.hasAct()) { handler.nextAct() }
     })
   }
 }

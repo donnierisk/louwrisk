@@ -2,6 +2,8 @@ import { ActionTypes } from './ActionTypes';
 import { Entity } from '../Entity/Entity';
 import { GridPosition } from '../GridPosition';
 import { LevelHandler } from '@/lib/LevelHandler';
+import { Observer } from '../Observer/Observer';
+import { Direction } from '../Direction';
 
 export default class Action {
   private type: ActionTypes
@@ -10,6 +12,10 @@ export default class Action {
   private level?: LevelHandler
   private dialogs?: string[]
   private position?: GridPosition
+  private id?: number
+  private facing?: number
+  private direction?: Direction
+  private observer?: Observer
   private actionEvent: () => boolean
   constructor(type: ActionTypes, actionEntity: Entity, ...parameters: any[]) {
     this.type = type
@@ -21,7 +27,9 @@ export default class Action {
         break;
       case ActionTypes.OBSERVE:
         this.actionEvent = this.observe
-        this.interactionEntities = parameters[0]
+        this.observer = parameters[0]
+        this.id = parameters[1]
+        this.facing = parameters[2]
         break;
       case ActionTypes.OBTAIN:
         this.actionEvent = this.obtain
@@ -31,6 +39,10 @@ export default class Action {
         this.actionEvent = this.move
         this.position = parameters[0]
         this.level = parameters[1]
+        break;
+      case ActionTypes.TURN:
+        this.actionEvent = this.turn
+        this.direction = parameters[0]
         break;
       case ActionTypes.DIALOGUE:
         this.actionEvent = this.dialog
@@ -74,7 +86,18 @@ export default class Action {
     return false
   }
 
+  private turn(): boolean {
+    this.actionEntity.setDirection(this.direction != null ? this.direction : Direction.NORTH)
+    return true
+  }
+
+  private observe(): boolean {
+    // if (this.observer && this.id && this.facing) {
+    //   return this.observer.observe(this.actionEntity, this.id, this.facing)
+    // }
+    return false
+  }
+
   private dialog(): boolean { return false }
-  private observe(): boolean { return false }
   private obtain(): boolean { return false }
 }

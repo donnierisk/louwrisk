@@ -3,6 +3,7 @@ import Action from '@/models/Action/Action';
 import { Entity } from '@/models/Entity/Entity';
 import { GridPosition } from '@/models/GridPosition';
 import { LevelHandler } from './LevelHandler';
+import { Direction } from '@/models/Direction';
 
 export class ActionHandler {
   private actionQueue: Action[] = []
@@ -17,6 +18,10 @@ export class ActionHandler {
 
   public addMove(position: GridPosition, level: LevelHandler) {
     this.actionQueue.push(new Action(ActionTypes.MOVE, this.entity, position, level))
+  }
+
+  public addTurn(direction: Direction) {
+    this.actionQueue.push(new Action(ActionTypes.TURN, this.entity, direction))
   }
 
   public addObserve(observedEntity: Entity[]) {
@@ -63,16 +68,22 @@ export class ActionHandler {
     return JSON.stringify(this.actionQueue.map((obj: Action) => obj.getPosition()))
   }
 
-  public nextAct() {
+  public hasAct(): boolean {
+    return this.actionQueue[0] !== undefined
+  }
+
+  public nextAct(): boolean {
     const tempAction: Action | undefined = this.actionQueue.shift()
     if (tempAction) {
       if (tempAction.act()) {
         this.oldQueue.push(tempAction)
+        return true
       } else {
         this.actionQueue.unshift(tempAction)
       }
     } else {
       // TODO: LOGGER
     }
+    return false
   }
 }
