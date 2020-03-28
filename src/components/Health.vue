@@ -38,6 +38,7 @@ export default class Health extends Vue {
     z-index: 3;
   }
   #green {
+    transition: width 0.2s linear;
     height: 100%;
     position: absolute;
     top: 0;
