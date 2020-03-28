@@ -125,7 +125,9 @@ export default class SpriteBlock extends Vue {
 
       // TEMPORARY HEALTH / DAMAGE CODE
       if (this.entity.getFields().status.health.curr > 0) {
-        this.entity.damage(2)
+        if (this.terrain === 'mud') {
+          this.entity.damage(2)
+        }
         if (this.entity.getFields().status.health.curr <= 0) {
           this.entity.setMortalState(MortalState.DEAD)
         }
