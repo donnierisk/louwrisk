@@ -2,7 +2,8 @@ import { getRandomIntInclusive } from '@/utils/Arithmetic';
 import { ActionHandler } from '@/lib/ActionHandler';
 import { LevelHandler } from '@/lib/LevelHandler';
 import { GridPosition } from '../GridPosition';
-interface PathingObject { positions: GridPosition[], curIndex: number }
+import { Direction } from '../Direction';
+interface PathingObject { positions: GridPosition[], curIndex: number, isCompromised: boolean}
 interface Node { position: GridPosition }
 export class PathingHandler {
   private level: LevelHandler
@@ -30,14 +31,59 @@ export class PathingHandler {
     return this.addMove(handler)
   }
 
+  public isCompromised(handler: ActionHandler) {
+    const obj: PathingObject = this.paths[handler.getId()]
+    if (obj) {
+      return obj.isCompromised
+    }
+    return false
+  }
+
+  public compromisePath(handler: ActionHandler) {
+    const obj: PathingObject = this.paths[handler.getId()]
+    if (obj) {
+      obj.positions.splice(obj.curIndex)
+      obj.isCompromised = true
+    }
+  }
+
   public addMove(handler: ActionHandler) {
     const obj: PathingObject = this.paths[handler.getId()]
-    if (obj && handler.peekQueueFront() === undefined && obj.positions.length > obj.curIndex) {
+    if (obj &&
+      obj.positions.length > obj.curIndex &&
+      !this.level.isBlocked(
+        obj.positions[obj.curIndex].x,
+        obj.positions[obj.curIndex].y
+      )
+    ) {
       handler.addMove(obj.positions[obj.curIndex], this.level)
       obj.curIndex++
       return true
     } else {
       return false
+    }
+  }
+
+  public addTurn(handler: ActionHandler) {
+    const obj: PathingObject = this.paths[handler.getId()]
+
+    if (obj) {
+      const newPos = obj.positions[obj.curIndex]
+      const oldPos = handler.getEntityPosition()
+      if (newPos && oldPos) {
+        if (newPos.x < oldPos.x) {
+          handler.addTurn(Direction.WEST)
+        } else
+        if (newPos.x > oldPos.x) {
+          handler.addTurn(Direction.EAST)
+        } else
+        if (newPos.y < oldPos.y) {
+          handler.addTurn(Direction.NORTH)
+        } else
+        if (newPos.y > oldPos.y) {
+          handler.addTurn(Direction.SOUTH)
+        }
+      }
     }
   }
 
@@ -61,13 +107,14 @@ export class PathingHandler {
   public addPath(handler: ActionHandler, target: GridPosition) {
     this.paths[handler.getId()] = {
       positions: this.getPathBetweenTwoPoints(handler.getEntityPosition(), target),
-      curIndex: 1
+      curIndex: 1,
+      isCompromised: false
     }
   }
 
   public isAtDestination(handler: ActionHandler): boolean {
     const obj: PathingObject = this.paths[handler.getId()]
-    return obj && obj.positions.length <= obj.curIndex;
+    return obj && obj.positions.length <= obj.curIndex && !obj.isCompromised;
   }
 
   private getKey(n: Node): string {
@@ -186,7 +233,7 @@ export class PathingHandler {
     return temp
   }
 
-  private isEmpty(obj: Object) {
+  private isEmpty(obj: object) {
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
         return false;

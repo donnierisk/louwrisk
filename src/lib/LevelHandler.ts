@@ -5,6 +5,7 @@ import { Level } from '@/models/Level'
 import { MortalState } from '@/models/MortalState';
 import { GridPosition } from '@/models/GridPosition';
 import { EntityInterface } from '@/models/Entity/EntityInterface';
+import { Direction } from '@/models/Direction';
 
 const EmptyLevel: string = `{
   "terrain": [],
@@ -48,6 +49,7 @@ export class LevelHandler {
             health: 1,
             invincible: true,
             position: { x: 0, y: 5, z: 1 },
+            direction: Direction.NORTH,
             span: { x: 2, y: 2, z: 1 },
             spriteName: 'wagon',
             description: 'Oh no my apples!',
@@ -60,6 +62,7 @@ export class LevelHandler {
             health: 1,
             invincible: true,
             position: { x: 2, y: 2, z: 1 },
+            direction: Direction.NORTH,
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'crate1',
             description: 'It are a crate',
@@ -72,6 +75,7 @@ export class LevelHandler {
             health: 1,
             invincible: true,
             position: { x: 5, y: 7, z: 1 },
+            direction: Direction.NORTH,
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'tree',
             description: 'This is a tree',
@@ -84,6 +88,7 @@ export class LevelHandler {
             health: 1,
             invincible: true,
             position: { x: 3, y: 4, z: 1 },
+            direction: Direction.NORTH,
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'rock',
             description: 'This is a rock',
@@ -96,6 +101,7 @@ export class LevelHandler {
             health: 1,
             invincible: true,
             position: { x: 2, y: 3, z: 1 },
+            direction: Direction.NORTH,
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'tree',
             description: 'This is a tree',
@@ -108,6 +114,7 @@ export class LevelHandler {
             health: 1,
             invincible: true,
             position: { x: 5, y: 5, z: 1 },
+            direction: Direction.NORTH,
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'crate1',
             description: 'It are a crate',
@@ -140,6 +147,7 @@ export class LevelHandler {
             mortalState: MortalState.ALIVE,
             health: 12,
             position: { x: 1, y: 2, z: 1 },
+            direction: Direction.NORTH,
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'bandit',
             description: 'It is a banditoooooo',
@@ -213,6 +221,7 @@ export class LevelHandler {
     this.player = new Entity({
       type: EntityType.PLAYER,
       position: { x: 3, y: 5, z: 1 },
+      direction: Direction.NORTH,
       mortalState: MortalState.ALIVE,
       health: 10,
       span: { x: 1, y: 1, z: 1 },
