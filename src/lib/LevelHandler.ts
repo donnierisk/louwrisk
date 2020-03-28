@@ -130,6 +130,7 @@ export class LevelHandler {
             spriteName: 'bandit',
             description: 'It is a bandit',
             blocks: true,
+            direction: Direction.EAST,
             animation: ''
           },
           // {
