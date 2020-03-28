@@ -1,16 +1,15 @@
 <template>
   <div
     class="sprite-block"
-    :class="[imageTerrain, {entity: hasEntity, observed: isObserved}, entName]"
+    :class="[imageTerrain, {entity: hasEntity, observed: isObserved, isDead: entity.getFields().mortalState === 'd'}, entName]"
     :id="entName"
     ref="entity"
     :style="entityStyle"
   >
-    <div
-      ref="entityModel"
-      v-if="hasEntity"
-      class="entity-avatar"
-      :style="imageMeta"
+    <div ref="entityModel" v-if="hasEntity" class="entity-avatar" :style="imageMeta" />
+    <health
+      v-if="hasEntity && entity.getFields().mortalState === 'a' || entity.getFields().mortalState === 'd'"
+      :health="entityStatus.health"
     />
   </div>
 </template>
@@ -28,8 +27,14 @@ import { TweenLite, TimelineMax } from 'gsap'
 import { GridPosition } from '@/models/GridPosition'
 import { EntityType } from '@/models/Entity/EntityType'
 import { Direction } from '../models/Direction'
+import Health from '@/components/Health.vue'
+import { MortalState } from '../models/MortalState'
 
-@Component
+@Component({
+  components: {
+    Health
+  }
+})
 export default class SpriteBlock extends Vue {
   @Prop() private animating?: boolean
   @Prop() private isObserved?: boolean
@@ -76,7 +81,8 @@ export default class SpriteBlock extends Vue {
           'px',
         left:
           -(this.spriteMeta.sourceBlock.x * this.blockSize.x) -
-          this.blockSize.x / 2 + 'px'
+          this.blockSize.x / 2 +
+          'px'
       }
       return spriteCss
     }
@@ -110,11 +116,20 @@ export default class SpriteBlock extends Vue {
       const animation = this.spriteMeta.animations[animationName]
       const blockSize = this.blockSize.x
       const frameNo = 0
+
+      // TEMPORARY HEALTH / DAMAGE CODE
+      if (this.entity.getFields().status.health.curr > 0) {
+        this.entity.damage(2)
+      } else if (this.entity.getFields().mortalState === 'a') {
+        this.entity.setMortalState(MortalState.DEAD)
+      }
+      // END OF TEMPORAY HEALTH / DAMAGE CODE
+
       for (const frame of animation) {
         timeline.to(el, 0, {
           delay: 0.1,
-          backgroundPosition: `-${frame.x *
-            blockSize}px -${frame.y * blockSize}px`
+          backgroundPosition: `-${frame.x * blockSize}px -${frame.y *
+            blockSize}px`
         })
       }
     }
@@ -122,6 +137,10 @@ export default class SpriteBlock extends Vue {
 
   private get hasEntity() {
     return this.entity ? true : false
+  }
+
+  private get entityStatus() {
+    return this.entity ? this.entity.getFields().status : ''
   }
 
   private get entName() {
@@ -150,6 +169,10 @@ export default class SpriteBlock extends Vue {
 
 .sprite-block {
   display: none;
+
+  &.isDead {
+    background: red;
+  }
 }
 
 .sprite-block.observed {
