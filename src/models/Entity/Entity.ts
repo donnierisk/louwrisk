@@ -1,5 +1,6 @@
 import { EntityInterface } from './EntityInterface';
 import { GridPosition } from '@/models/GridPosition';
+import { Direction } from '../Direction';
 
 export class Entity {
   private entityFields: EntityInterface
@@ -30,6 +31,10 @@ export class Entity {
     return JSON.parse(JSON.stringify(this.entityFields.position))
   }
 
+  public getDirection(): Direction {
+    return this.entityFields.direction;
+  }
+
   public getAnimation(): string {
     return this.entityFields.animation
   }
@@ -37,6 +42,10 @@ export class Entity {
   public setPosition(x: number, y: number) {
     this.entityFields.position.x = x
     this.entityFields.position.y = y
+  }
+
+  public setDirection(direction: Direction) {
+    this.entityFields.direction = direction
   }
 
   public setAnimation(animation: string) {
