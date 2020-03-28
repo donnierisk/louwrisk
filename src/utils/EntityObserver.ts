@@ -7,7 +7,12 @@ import { MortalState } from '@/models/MortalState'
 import { Direction } from '@/models/Direction'
 const tempEnt: Entity = new Entity({
   type: EntityType.EMPTY,
-  health: 1,
+  status: {
+    health: {
+      curr: 1,
+      base: 1
+    }
+  },
   invincible: true,
   mortalState: MortalState.INANIMATE,
   position: { x: 0, y: 0 },
