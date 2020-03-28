@@ -98,8 +98,10 @@ export class LevelHandler {
           {
             type: EntityType.FORWARD_TERRAIN,
             mortalState: MortalState.INANIMATE,
-            health: 1,
-            invincible: true,
+            status: {
+              health: 12,
+              armour: 5,
+            }, invincible: true,
             position: { x: 2, y: 3, z: 1 },
             direction: Direction.NORTH,
             span: { x: 1, y: 1, z: 1 },
@@ -111,8 +113,9 @@ export class LevelHandler {
           {
             type: EntityType.INTERACTIVE_PROP,
             mortalState: MortalState.INANIMATE,
-            health: 1,
-            invincible: true,
+            status: {
+              health: 10,
+            }, invincible: true,
             position: { x: 5, y: 5, z: 1 },
             direction: Direction.NORTH,
             span: { x: 1, y: 1, z: 1 },
@@ -124,7 +127,11 @@ export class LevelHandler {
           {
             type: EntityType.NPC,
             mortalState: MortalState.ALIVE,
-            health: 12,
+            status: {
+              health: 12,
+              armour: 5,
+              speed: 11
+            },
             position: { x: 5, y: 6, z: 1 },
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'bandit',

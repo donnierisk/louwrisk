@@ -53,7 +53,7 @@ export class Entity {
   }
 
   public damage(damageBy: number) {
-    this.entityFields.health -= damageBy
+    this.entityFields.status.health -= damageBy
   }
 
   public isBlocker(): boolean {

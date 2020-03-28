@@ -9,7 +9,7 @@ import { Direction } from '../Direction';
 export interface EntityInterface {
   type: EntityType
   position: GridPosition
-  health: number
+  status: EntityStatus
   mortalState: MortalState
   direction: Direction
   actionState?: ActionState
@@ -22,4 +22,18 @@ export interface EntityInterface {
   blocks?: boolean
   buff?: Buff
   animation: string
+}
+
+export interface EntityStatus {
+  health: number,
+  armour?: number,
+  strength?: number,
+  dexterity?: number,
+  speed?: number,
+  damage?: number,
+  stamina?: number,
+  morale?: string,
+  ethos?: string,
+  favor?: number,
+  reputation?: string
 }
