@@ -25,15 +25,20 @@ export interface EntityInterface {
 }
 
 export interface EntityStatus {
-  health: number,
-  armour?: number,
-  strength?: number,
-  dexterity?: number,
-  speed?: number,
-  damage?: number,
-  stamina?: number,
+  health: SingleStatus,
+  armour?: SingleStatus,
+  strength?: SingleStatus,
+  dexterity?: SingleStatus,
+  speed?: SingleStatus,
+  damage?: SingleStatus,
+  stamina?: SingleStatus,
   morale?: string,
   ethos?: string,
-  favor?: number,
+  favor?: SingleStatus,
   reputation?: string
+}
+
+export interface SingleStatus {
+  curr: number,
+  base: number
 }
