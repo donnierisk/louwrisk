@@ -1,12 +1,18 @@
 <template>
   <div
     class="sprite-block"
-    :class="[imageTerrain, {entity: hasEntity, observed: isObserved, isDead: entity.getFields().mortalState === 'd'}, entName]"
+    :class="[imageTerrain, {entity: hasEntity, observed: isObserved}, entName]"
     :id="entName"
     ref="entity"
     :style="entityStyle"
   >
-    <div ref="entityModel" v-if="hasEntity" class="entity-avatar" :style="imageMeta" />
+    <div
+      ref="entityModel"
+      v-if="hasEntity"
+      :class="{isDead: entity.getFields().mortalState === 'd'}"
+      class="entity-avatar"
+      :style="imageMeta"
+    />
     <health
       v-if="hasEntity && entity.getFields().mortalState === 'a' || entity.getFields().mortalState === 'd'"
       :health="entityStatus.health"
@@ -120,6 +126,9 @@ export default class SpriteBlock extends Vue {
       // TEMPORARY HEALTH / DAMAGE CODE
       if (this.entity.getFields().status.health.curr > 0) {
         this.entity.damage(2)
+        if (this.entity.getFields().status.health.curr <= 0) {
+          this.entity.setMortalState(MortalState.DEAD)
+        }
       } else if (this.entity.getFields().mortalState === 'a') {
         this.entity.setMortalState(MortalState.DEAD)
       }
@@ -169,12 +178,12 @@ export default class SpriteBlock extends Vue {
 
 .sprite-block {
   display: none;
-
-  &.isDead {
-    background: red;
-  }
 }
 
+.isDead {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
 .sprite-block.observed {
   display: block;
 }

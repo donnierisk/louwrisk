@@ -1,8 +1,10 @@
 <template>
-  <div id="health">
-    <span id="text">{{ (health.curr / health.base) * 100 + '%'}}</span>
-    <div id="green" :style="{'width': (health.curr / health.base) * 100 + '%'}"></div>
-    <div id="halo"></div>
+  <div>
+    <div id="health" v-if="health.curr > 0">
+      <span id="text">{{ (health.curr / health.base) * 100 + '%'}}</span>
+      <div id="green" :style="{'width': (health.curr / health.base) * 100 + '%'}"></div>
+    </div>
+    <div id="halo" v-else></div>
   </div>
 </template>
 
@@ -43,16 +45,16 @@ export default class Health extends Vue {
     background: #00ff00;
     z-index: 2;
   }
+}
 
-  #halo {
-    border: 0.3rem solid gold;
-    position: absolute;
-    border-radius: 50%;
-    height: 1rem;
-    width: 4rem;
-
-    top: 0;
-    left: 0.8rem;
-  }
+#halo {
+  border: 0.3rem solid gold;
+  position: absolute;
+  border-radius: 50%;
+  height: 1rem;
+  width: 3rem;
+  top: -5rem;
+  left: -1.5rem;
+  filter: drop-shadow(0px 1px 4px yellow);
 }
 </style>
