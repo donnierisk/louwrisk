@@ -4,12 +4,14 @@ import { TerrainSymbol } from '@/models/TerrainSymbol'
 import DialogOption from '@/models/DialogOption'
 import { Entity } from '@/models/Entity/Entity'
 import { MortalState } from '@/models/MortalState'
+import { Direction } from '@/models/Direction'
 const tempEnt: Entity = new Entity({
   type: EntityType.EMPTY,
   health: 1,
   invincible: true,
   mortalState: MortalState.INANIMATE,
   position: { x: 0, y: 0 },
+  direction: Direction.NORTH,
   spriteName: 'test',
   animation: 'ide'
 }, -1)

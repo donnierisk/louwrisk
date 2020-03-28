@@ -32,7 +32,7 @@ export class Entity {
   }
 
   public getDirection(): Direction {
-    return this.entityFields.direction ? this.entityFields.direction : Direction.NORTH;
+    return this.entityFields.direction;
   }
 
   public getAnimation(): string {

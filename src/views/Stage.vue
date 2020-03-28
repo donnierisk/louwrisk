@@ -195,7 +195,7 @@ export default class Map extends Vue {
       const curIndex = Number(entity.style.zIndex ? entity.style.zIndex : '')
       const entityCurrentPosition: GridPosition = this.level
         .getAllEntities()
-        .filter(ent => ent.type() === type)
+        .filter((ent) => ent.type() === type)
         [id ? id : 0].getPosition()
 
       if (curIndex < entityCurrentPosition.y) {

@@ -10,7 +10,6 @@
       ref="entityModel"
       v-if="hasEntity"
       class="entity-avatar"
-      :class="direction"
       :style="imageMeta"
     />
   </div>
@@ -77,8 +76,7 @@ export default class SpriteBlock extends Vue {
           'px',
         left:
           -(this.spriteMeta.sourceBlock.x * this.blockSize.x) -
-          this.blockSize.x / 2 +
-          'px'
+          this.blockSize.x / 2 + 'px'
       }
       return spriteCss
     }
@@ -112,12 +110,11 @@ export default class SpriteBlock extends Vue {
       const animation = this.spriteMeta.animations[animationName]
       const blockSize = this.blockSize.x
       const frameNo = 0
-
-      for (let frameNo = 0; frameNo < animation.length; frameNo++) {
+      for (const frame of animation) {
         timeline.to(el, 0, {
           delay: 0.1,
-          backgroundPosition: `-${animation[frameNo].x *
-            blockSize}px -${animation[frameNo].y * blockSize}px`
+          backgroundPosition: `-${frame.x *
+            blockSize}px -${frame.y * blockSize}px`
         })
       }
     }
@@ -138,33 +135,12 @@ export default class SpriteBlock extends Vue {
   public get entityRef() {
     return this.$refs.entity
   }
-
-  public get direction(): Direction {
-    return this.entity ? this.entity.getDirection() : Direction.NORTH
-  }
 }
 </script>
 
 <style lang="scss">
 .entity {
   position: absolute;
-}
-
-.sprite-block {
-  width: 100%;
-  height: 100%;
-  .n {
-    border-top: 1px solid black;
-  }
-  .s {
-    border-bottom: 1px solid black;
-  }
-  .w {
-    border-left: 1px solid black;
-  }
-  .a {
-    border-right: 1px solid black;
-  }
 }
 
 .entity .entity-avatar {

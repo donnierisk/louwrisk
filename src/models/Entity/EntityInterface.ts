@@ -11,7 +11,7 @@ export interface EntityInterface {
   position: GridPosition
   health: number
   mortalState: MortalState
-  direction?: Direction
+  direction: Direction
   actionState?: ActionState
   positionState?: PositionState
   invincible?: boolean

@@ -72,7 +72,7 @@ export class ActionHandler {
     return this.actionQueue[0] !== undefined
   }
 
-  public nextAct(): boolean {
+  public nextActTry(): boolean {
     const tempAction: Action | undefined = this.actionQueue.shift()
     if (tempAction) {
       if (tempAction.act()) {
@@ -80,6 +80,19 @@ export class ActionHandler {
         return true
       } else {
         this.actionQueue.unshift(tempAction)
+      }
+    } else {
+      // TODO: LOGGER
+    }
+    return false
+  }
+
+  public nextAct(): boolean {
+    const tempAction: Action | undefined = this.actionQueue.shift()
+    if (tempAction) {
+      if (tempAction.act()) {
+        this.oldQueue.push(tempAction)
+        return true
       }
     } else {
       // TODO: LOGGER

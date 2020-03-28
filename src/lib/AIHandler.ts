@@ -35,24 +35,28 @@ export class AIHandler {
   }
 
   public nextTurn() {
-    const that = this
     this.actionHandlers.forEach((handler, index) => {
-      if (!that.pathingHandler.addMove(handler)) {
-        if (!that.pathingHandler.isAtDestination(handler)) {
-          that.patrols[index].index--
-          if (that.patrols[index].index < 0) {
-            that.patrols[index].index = that.patrols[index].route.length
+      this.pathingHandler.addTurn(handler)
+      if (!this.pathingHandler.addMove(handler)) {
+        // Change patrol route
+        if (!this.pathingHandler.isAtDestination(handler)) {
+          this.patrols[index].index--
+          if (this.patrols[index].index < 0) {
+            this.patrols[index].index = this.patrols[index].route.length - 1
           }
         }
+        // Add route
+        const isComp = this.pathingHandler.isCompromised(handler)
+        this.pathingHandler.moveTo(handler, this.patrols[index].route[this.patrols[index].index])
+        if (!isComp) {
+          this.patrols[index].index++
+        }
 
-        that.pathingHandler.moveTo(handler, that.patrols[index].route[that.patrols[index].index])
-        that.patrols[index].index++
-
-        if (that.patrols[index].index >= that.patrols[index].route.length) {
-          that.patrols[index].index = 0
+        if (this.patrols[index].index >= this.patrols[index].route.length) {
+          this.patrols[index].index = 0
         }
       }
-      while (handler.hasAct()) { handler.nextAct() }
+      while (handler.hasAct()) { if (!handler.nextAct()) { this.pathingHandler.compromisePath(handler) } }
     })
   }
 }
