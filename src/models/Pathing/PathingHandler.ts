@@ -88,7 +88,7 @@ export class PathingHandler {
   }
 
   public resetPath(handler: ActionHandler, target: GridPosition) {
-    handler.popQueueFront()
+    handler.popQueueFront()// MBAP!
     const obj: PathingObject = this.paths[handler.getId()]
     this.getPastPath(handler.getId()).positions.push(obj)
     delete this.paths[handler.getId()]

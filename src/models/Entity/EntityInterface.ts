@@ -15,6 +15,7 @@ export interface EntityInterface {
   actionState?: ActionState
   positionState?: PositionState
   invincible?: boolean
+  viewRange?: number
   span?: GridPosition
   id?: number
   spriteName: string

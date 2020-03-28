@@ -72,6 +72,10 @@ export class ActionHandler {
     return this.actionQueue[0] !== undefined
   }
 
+  public nextActType(): ActionTypes | undefined {
+    return this.actionQueue[0] !== undefined ? this.actionQueue[0].getType() : undefined
+  }
+
   public nextActTry(): boolean {
     const tempAction: Action | undefined = this.actionQueue.shift()
     if (tempAction) {
