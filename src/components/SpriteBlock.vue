@@ -110,38 +110,40 @@ export default class SpriteBlock extends Vue {
 
   @Watch('animating')
   private animateModel() {
-    // NEED TO ALSO CHECK WHICH ANIMATION SHOULD HAPPEN, NOW ONLY WORKS FOR WALK
-    if (
-      this.entity &&
-      this.animating === true &&
-      this.entity.getSpriteName() === 'player'
-    ) {
-      const el = this.$refs.entityModel
-      const timeline = new TimelineMax()
-      const animationName = this.entity.getAnimation()
-      const animation = this.spriteMeta.animations[animationName]
-      const blockSize = this.blockSize.x
-      const frameNo = 0
-
-      // TEMPORARY HEALTH / DAMAGE CODE
-      if (this.entity.getFields().status.health.curr > 0) {
-        if (this.terrain === 'mud') {
-          this.entity.damage(2)
-        }
-        if (this.entity.getFields().status.health.curr <= 0) {
+    if (this.entity && this.animating === true) {
+      if (
+        this.entity.type() === EntityType.PLAYER ||
+        this.entity.type() === EntityType.NPC
+      ) {
+        // TEMPORARY HEALTH / DAMAGE CODE
+        if (this.entity.getFields().status.health.curr > 0) {
+          if (this.terrain === 'mud') {
+            this.entity.damage(2)
+          }
+          if (this.entity.getFields().status.health.curr <= 0) {
+            this.entity.setMortalState(MortalState.DEAD)
+          }
+        } else if (this.entity.getFields().mortalState === 'a') {
           this.entity.setMortalState(MortalState.DEAD)
         }
-      } else if (this.entity.getFields().mortalState === 'a') {
-        this.entity.setMortalState(MortalState.DEAD)
+        // END OF TEMPORAY HEALTH / DAMAGE CODE
       }
-      // END OF TEMPORAY HEALTH / DAMAGE CODE
+      // NEED TO ALSO CHECK WHICH ANIMATION SHOULD HAPPEN, NOW ONLY WORKS FOR WALK
+      if (this.entity.type() === EntityType.PLAYER) {
+        const el = this.$refs.entityModel
+        const timeline = new TimelineMax()
+        const animationName = this.entity.getAnimation()
+        const animation = this.spriteMeta.animations[animationName]
+        const blockSize = this.blockSize.x
+        const frameNo = 0
 
-      for (const frame of animation) {
-        timeline.to(el, 0, {
-          delay: 0.1,
-          backgroundPosition: `-${frame.x * blockSize}px -${frame.y *
-            blockSize}px`
-        })
+        for (const frame of animation) {
+          timeline.to(el, 0, {
+            delay: 0.1,
+            backgroundPosition: `-${frame.x * blockSize}px -${frame.y *
+              blockSize}px`
+          })
+        }
       }
     }
   }

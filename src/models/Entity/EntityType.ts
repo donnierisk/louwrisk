@@ -3,7 +3,7 @@ export enum EntityType {
   PLAYER = 'p',
   NPC = 'n',
   FORWARD_TERRAIN = 'f',
-  PROP = 'p',
+  PROP = 'pr',
   INTERACTIVE_PROP = 'ip'
 }
 const EntityName = {

@@ -158,8 +158,8 @@ export class LevelHandler {
             mortalState: MortalState.ALIVE,
             status: {
               health: {
-                curr: 1,
-                base: 1
+                curr: 8,
+                base: 8
               },
               speed: {
                 curr: 11,
@@ -189,8 +189,8 @@ export class LevelHandler {
             mortalState: MortalState.ALIVE,
             status: {
               health: {
-                curr: 1,
-                base: 1
+                curr: 5,
+                base: 10
               },
               speed: {
                 curr: 11,
