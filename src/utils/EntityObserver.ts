@@ -13,6 +13,7 @@ const tempEnt: Entity = new Entity({
       base: 1
     }
   },
+  inventory: new Map([['Slot 1', 'empty']]),
   invincible: true,
   mortalState: MortalState.INANIMATE,
   position: { x: 0, y: 0 },

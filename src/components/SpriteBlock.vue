@@ -119,6 +119,7 @@ export default class SpriteBlock extends Vue {
         if (this.entity.getFields().status.health.curr > 0) {
           if (this.terrain === 'mud') {
             this.entity.damage(2)
+            this.entity.addItemToInventory('mud')
           }
           if (this.entity.getFields().status.health.curr <= 0) {
             this.entity.setMortalState(MortalState.DEAD)

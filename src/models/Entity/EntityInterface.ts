@@ -12,6 +12,7 @@ export interface EntityInterface {
   status: EntityStatus
   mortalState: MortalState
   direction: Direction
+  inventory: Map<string, string>
   actionState?: ActionState
   positionState?: PositionState
   invincible?: boolean

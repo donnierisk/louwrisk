@@ -23,6 +23,7 @@ export class LevelHandler {
 
   constructor() {
     this.LevelMomento = EmptyLevel
+    const inventoryObj = { 'Slot1': null }
     this.loadLevel({
       terrain: [
         [MS.WATER, MS.WATER, MS.GRASS, MS.GRASS1, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
@@ -52,6 +53,7 @@ export class LevelHandler {
                 base: 1
               }
             },
+            inventory: new Map([['slot-1', 'empty']]),
             invincible: true,
             position: { x: 0, y: 5, z: 1 },
             direction: Direction.NORTH,
@@ -70,6 +72,7 @@ export class LevelHandler {
                 base: 1
               }
             },
+            inventory: new Map([['slot-1', 'empty']]),
             invincible: true,
             position: { x: 2, y: 2, z: 1 },
             direction: Direction.NORTH,
@@ -88,6 +91,7 @@ export class LevelHandler {
                 base: 1
               }
             },
+            inventory: new Map([['slot-1', 'empty']]),
             invincible: true,
             position: { x: 5, y: 7, z: 1 },
             direction: Direction.NORTH,
@@ -106,6 +110,7 @@ export class LevelHandler {
                 base: 1
               }
             },
+            inventory: new Map([['slot-1', 'empty']]),
             invincible: true,
             position: { x: 3, y: 4, z: 1 },
             direction: Direction.NORTH,
@@ -127,7 +132,9 @@ export class LevelHandler {
                 curr: 5,
                 base: 5
               }
-            }, invincible: true,
+            },
+            inventory: new Map([['slot-1', 'empty']]),
+            invincible: true,
             position: { x: 2, y: 3, z: 1 },
             direction: Direction.NORTH,
             span: { x: 1, y: 1, z: 1 },
@@ -144,7 +151,9 @@ export class LevelHandler {
                 curr: 1,
                 base: 1
               }
-            }, invincible: true,
+            },
+            inventory: new Map([['slot-1', 'empty']]),
+            invincible: true,
             position: { x: 5, y: 5, z: 1 },
             direction: Direction.NORTH,
             span: { x: 1, y: 1, z: 1 },
@@ -166,6 +175,7 @@ export class LevelHandler {
                 base: 11
               }
             },
+            inventory: new Map([['slot-1', 'empty']]),
             position: { x: 5, y: 6, z: 1 },
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'bandit',
@@ -197,6 +207,7 @@ export class LevelHandler {
                 base: 11
               }
             },
+            inventory: new Map([['slot-1', 'empty']]),
             position: { x: 1, y: 2, z: 1 },
             direction: Direction.NORTH,
             span: { x: 1, y: 1, z: 1 },
@@ -284,6 +295,7 @@ export class LevelHandler {
           base: 11
         }
       },
+      inventory: new Map([['slot-1', 'empty'], ['slot-2', 'empty'], ['slot-3', 'empty'], ['slot-4', 'empty']]),
       span: { x: 1, y: 1, z: 1 },
       spriteName: 'player',
       description: 'Don\'t look at his uni-brow',
