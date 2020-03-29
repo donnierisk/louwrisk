@@ -65,8 +65,8 @@ export class Entity {
     return this.id
   }
 
-  public getInventory(): Map<string, string> {
-    return this.entityFields.inventory;
+  public getInventory(): string[] {
+    return Array.from(this.entityFields.inventory.values());
   }
 
   public addItemToInventory(itemName: string): boolean {

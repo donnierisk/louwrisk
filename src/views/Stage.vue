@@ -1,6 +1,7 @@
 <template>
   <div id="container" :class="{perspective: perspectiveMode === true }">
     <keyboard-events @move-event="nextTurn" :throttled="throttled" :level="level" />
+    <dashboard :inventory="level.getPlayer().getInventory()"></dashboard>
     <div id="perspective-button" @click="togglePerspective">Perspective</div>
     <camera
       ref="camera"
@@ -56,6 +57,7 @@ import Camera from '@/components/Camera.vue'
 import EntityComp from '@/components/EntityComp.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
 import KeyboardEvents from '@/components/KeyboardEvents.vue'
+import Dashboard from '@/components/Dashboard.vue'
 import SpriteBlock from '@/components/SpriteBlock.vue'
 import DialogOption from '@/models/DialogOption'
 import { PathingHandler } from '../models/Pathing/PathingHandler'
@@ -68,7 +70,8 @@ import { EntityObserver } from '../utils/EntityObserver'
     KeyboardEvents,
     EntityComp,
     Camera,
-    SpriteBlock
+    SpriteBlock,
+    Dashboard
   }
 })
 export default class Map extends Vue {
