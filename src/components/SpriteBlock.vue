@@ -9,8 +9,13 @@
     <div
       ref="entityModel"
       v-if="hasEntity"
+      :class="{isDead: entity.getFields().mortalState === 'd'}"
       class="entity-avatar"
       :style="imageMeta"
+    />
+    <health
+      v-if="hasEntity && entity.getFields().mortalState === 'a' || entity.getFields().mortalState === 'd'"
+      :health="entityStatus.health"
     />
   </div>
 </template>
@@ -28,8 +33,14 @@ import { TweenLite, TimelineMax } from 'gsap'
 import { GridPosition } from '@/models/GridPosition'
 import { EntityType } from '@/models/Entity/EntityType'
 import { Direction } from '../models/Direction'
+import Health from '@/components/Health.vue'
+import { MortalState } from '../models/MortalState'
 
-@Component
+@Component({
+  components: {
+    Health
+  }
+})
 export default class SpriteBlock extends Vue {
   @Prop() private animating?: boolean
   @Prop() private isObserved?: boolean
@@ -76,7 +87,8 @@ export default class SpriteBlock extends Vue {
           'px',
         left:
           -(this.spriteMeta.sourceBlock.x * this.blockSize.x) -
-          this.blockSize.x / 2 + 'px'
+          this.blockSize.x / 2 +
+          'px'
       }
       return spriteCss
     }
@@ -98,30 +110,51 @@ export default class SpriteBlock extends Vue {
 
   @Watch('animating')
   private animateModel() {
-    // NEED TO ALSO CHECK WHICH ANIMATION SHOULD HAPPEN, NOW ONLY WORKS FOR WALK
-    if (
-      this.entity &&
-      this.animating === true &&
-      this.entity.getSpriteName() === 'player'
-    ) {
-      const el = this.$refs.entityModel
-      const timeline = new TimelineMax()
-      const animationName = this.entity.getAnimation()
-      const animation = this.spriteMeta.animations[animationName]
-      const blockSize = this.blockSize.x
-      const frameNo = 0
-      for (const frame of animation) {
-        timeline.to(el, 0, {
-          delay: 0.1,
-          backgroundPosition: `-${frame.x *
-            blockSize}px -${frame.y * blockSize}px`
-        })
+    if (this.entity && this.animating === true) {
+      if (
+        this.entity.type() === EntityType.PLAYER ||
+        this.entity.type() === EntityType.NPC
+      ) {
+        // TEMPORARY HEALTH / DAMAGE CODE
+        if (this.entity.getFields().status.health.curr > 0) {
+          if (this.terrain === 'mud') {
+            this.entity.damage(2)
+            this.entity.addItemToInventory('mud')
+          }
+          if (this.entity.getFields().status.health.curr <= 0) {
+            this.entity.setMortalState(MortalState.DEAD)
+          }
+        } else if (this.entity.getFields().mortalState === 'a') {
+          this.entity.setMortalState(MortalState.DEAD)
+        }
+        // END OF TEMPORAY HEALTH / DAMAGE CODE
+      }
+      // NEED TO ALSO CHECK WHICH ANIMATION SHOULD HAPPEN, NOW ONLY WORKS FOR WALK
+      if (this.entity.type() === EntityType.PLAYER) {
+        const el = this.$refs.entityModel
+        const timeline = new TimelineMax()
+        const animationName = this.entity.getAnimation()
+        const animation = this.spriteMeta.animations[animationName]
+        const blockSize = this.blockSize.x
+        const frameNo = 0
+
+        for (const frame of animation) {
+          timeline.to(el, 0, {
+            delay: 0.1,
+            backgroundPosition: `-${frame.x * blockSize}px -${frame.y *
+              blockSize}px`
+          })
+        }
       }
     }
   }
 
   private get hasEntity() {
     return this.entity ? true : false
+  }
+
+  private get entityStatus() {
+    return this.entity ? this.entity.getFields().status : ''
   }
 
   private get entName() {
@@ -152,6 +185,10 @@ export default class SpriteBlock extends Vue {
   display: none;
 }
 
+.isDead {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
 .sprite-block.observed {
   display: block;
 }

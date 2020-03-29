@@ -23,6 +23,7 @@ export class LevelHandler {
 
   constructor() {
     this.LevelMomento = EmptyLevel
+    const inventoryObj = { 'Slot1': null }
     this.loadLevel({
       terrain: [
         [MS.WATER, MS.WATER, MS.GRASS, MS.GRASS1, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],
@@ -46,7 +47,13 @@ export class LevelHandler {
           {
             type: EntityType.INTERACTIVE_PROP,
             mortalState: MortalState.INANIMATE,
-            health: 1,
+            status: {
+              health: {
+                curr: 1,
+                base: 1
+              }
+            },
+            inventory: new Map([['slot-1', 'empty']]),
             invincible: true,
             position: { x: 0, y: 5, z: 1 },
             direction: Direction.NORTH,
@@ -59,7 +66,13 @@ export class LevelHandler {
           {
             type: EntityType.INTERACTIVE_PROP,
             mortalState: MortalState.INANIMATE,
-            health: 1,
+            status: {
+              health: {
+                curr: 1,
+                base: 1
+              }
+            },
+            inventory: new Map([['slot-1', 'empty']]),
             invincible: true,
             position: { x: 2, y: 2, z: 1 },
             direction: Direction.NORTH,
@@ -72,7 +85,13 @@ export class LevelHandler {
           {
             type: EntityType.FORWARD_TERRAIN,
             mortalState: MortalState.INANIMATE,
-            health: 1,
+            status: {
+              health: {
+                curr: 1,
+                base: 1
+              }
+            },
+            inventory: new Map([['slot-1', 'empty']]),
             invincible: true,
             position: { x: 5, y: 7, z: 1 },
             direction: Direction.NORTH,
@@ -85,7 +104,13 @@ export class LevelHandler {
           {
             type: EntityType.FORWARD_TERRAIN,
             mortalState: MortalState.INANIMATE,
-            health: 1,
+            status: {
+              health: {
+                curr: 1,
+                base: 1
+              }
+            },
+            inventory: new Map([['slot-1', 'empty']]),
             invincible: true,
             position: { x: 3, y: 4, z: 1 },
             direction: Direction.NORTH,
@@ -98,7 +123,17 @@ export class LevelHandler {
           {
             type: EntityType.FORWARD_TERRAIN,
             mortalState: MortalState.INANIMATE,
-            health: 1,
+            status: {
+              health: {
+                curr: 12,
+                base: 12
+              },
+              armour: {
+                curr: 5,
+                base: 5
+              }
+            },
+            inventory: new Map([['slot-1', 'empty']]),
             invincible: true,
             position: { x: 2, y: 3, z: 1 },
             direction: Direction.NORTH,
@@ -111,7 +146,13 @@ export class LevelHandler {
           {
             type: EntityType.INTERACTIVE_PROP,
             mortalState: MortalState.INANIMATE,
-            health: 1,
+            status: {
+              health: {
+                curr: 1,
+                base: 1
+              }
+            },
+            inventory: new Map([['slot-1', 'empty']]),
             invincible: true,
             position: { x: 5, y: 5, z: 1 },
             direction: Direction.NORTH,
@@ -124,13 +165,23 @@ export class LevelHandler {
           {
             type: EntityType.NPC,
             mortalState: MortalState.ALIVE,
-            direction: Direction.NORTH,
-            health: 12,
+            status: {
+              health: {
+                curr: 8,
+                base: 8
+              },
+              speed: {
+                curr: 11,
+                base: 11
+              }
+            },
+            inventory: new Map([['slot-1', 'empty']]),
             position: { x: 5, y: 6, z: 1 },
             span: { x: 1, y: 1, z: 1 },
             spriteName: 'bandit',
             description: 'It is a bandit',
             blocks: true,
+            direction: Direction.EAST,
             animation: ''
           },
           // {
@@ -146,7 +197,17 @@ export class LevelHandler {
           {
             type: EntityType.NPC,
             mortalState: MortalState.ALIVE,
-            health: 12,
+            status: {
+              health: {
+                curr: 5,
+                base: 10
+              },
+              speed: {
+                curr: 11,
+                base: 11
+              }
+            },
+            inventory: new Map([['slot-1', 'empty']]),
             position: { x: 1, y: 2, z: 1 },
             direction: Direction.NORTH,
             span: { x: 1, y: 1, z: 1 },
@@ -224,7 +285,17 @@ export class LevelHandler {
       position: { x: 6, y: 5, z: 1 },
       direction: Direction.NORTH,
       mortalState: MortalState.ALIVE,
-      health: 10,
+      status: {
+        health: {
+          curr: 10,
+          base: 10
+        },
+        speed: {
+          curr: 11,
+          base: 11
+        }
+      },
+      inventory: new Map([['slot-1', 'empty'], ['slot-2', 'empty'], ['slot-3', 'empty'], ['slot-4', 'empty']]),
       span: { x: 1, y: 1, z: 1 },
       spriteName: 'player',
       description: 'Don\'t look at his uni-brow',

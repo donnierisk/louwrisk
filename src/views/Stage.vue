@@ -1,6 +1,7 @@
 <template>
   <div id="container" :class="{perspective: perspectiveMode === true }">
     <keyboard-events @move-event="nextTurn" :throttled="throttled" :level="level" />
+    <dashboard :inventory="level.getPlayer().getInventory()"></dashboard>
     <div id="perspective-button" @click="togglePerspective">Perspective</div>
     <camera
       ref="camera"
@@ -29,6 +30,7 @@
           :block-size="blockSize"
           :animating="animating"
           :entity="entity.containedEntity"
+          :terrain="entity.symbol"
           :ref="entity.containedEntity.type() + entity.containedEntity.getId()"
           :key="entity.containedEntity.type() + entity.containedEntity.getId()"
         />
@@ -55,6 +57,7 @@ import Camera from '@/components/Camera.vue'
 import EntityComp from '@/components/EntityComp.vue'
 import DialogueBox from '@/components/DialogueBox.vue'
 import KeyboardEvents from '@/components/KeyboardEvents.vue'
+import Dashboard from '@/components/Dashboard.vue'
 import SpriteBlock from '@/components/SpriteBlock.vue'
 import DialogOption from '@/models/DialogOption'
 import { PathingHandler } from '../models/Pathing/PathingHandler'
@@ -67,7 +70,8 @@ import { EntityObserver } from '../utils/EntityObserver'
     KeyboardEvents,
     EntityComp,
     Camera,
-    SpriteBlock
+    SpriteBlock,
+    Dashboard
   }
 })
 export default class Map extends Vue {
@@ -194,7 +198,7 @@ export default class Map extends Vue {
       const curIndex = Number(entity.style.zIndex ? entity.style.zIndex : '')
       const entityCurrentPosition: GridPosition = this.level
         .getAllEntities()
-        .filter((ent) => ent.type() === type)
+        .filter(ent => ent.type() === type)
         [id ? id : 0].getPosition()
 
       if (curIndex < entityCurrentPosition.y) {

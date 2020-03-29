@@ -1,6 +1,7 @@
 import { EntityInterface } from './EntityInterface';
 import { GridPosition } from '@/models/GridPosition';
 import { Direction } from '../Direction';
+import { MortalState } from '../MortalState';
 
 export class Entity {
   private entityFields: EntityInterface
@@ -12,7 +13,7 @@ export class Entity {
   }
 
   public setFields(fields: EntityInterface) {
-    this.entityFields = fields
+    Object.assign(this.entityFields, fields);
   }
 
   public getFields(): EntityInterface {
@@ -53,7 +54,7 @@ export class Entity {
   }
 
   public damage(damageBy: number) {
-    this.entityFields.health -= damageBy
+    this.entityFields.status.health.curr -= damageBy
   }
 
   public isBlocker(): boolean {
@@ -62,5 +63,34 @@ export class Entity {
 
   public getId(): number {
     return this.id
+  }
+
+  public getInventory(): string[] {
+    return Array.from(this.entityFields.inventory.values());
+  }
+
+  public addItemToInventory(itemName: string): boolean {
+    let objectAdded = false;
+    let hasNext = true;
+    const itemSlot: IterableIterator<string> = this.entityFields.inventory.keys();
+
+    while (objectAdded === false && hasNext === true) {
+
+      const slotNo = itemSlot.next().value;
+      const itemInSlot = this.entityFields.inventory.get(slotNo);
+      hasNext = !!slotNo;
+      if (hasNext === false) {
+        break;
+      }
+      if (itemInSlot === 'empty') {
+        this.entityFields.inventory.set(slotNo, itemName);
+        objectAdded = true;
+      }
+    }
+    return objectAdded;
+  }
+
+  public setMortalState(state: MortalState) {
+    this.entityFields.mortalState = state;
   }
 }
