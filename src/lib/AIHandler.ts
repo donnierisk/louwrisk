@@ -12,7 +12,7 @@ export class AIHandler {
   private observerHandler: Observer
   private entities: Entity[]
   private patrolHandler: PatrolHandler
-  private targets: { [k: number]: {target: Entity, followTollerance: number, current: number} }
+  private targets: { [k: number]: {target: Entity, followTolerance: number, current: number} }
   private idCount: number = 0
 
   constructor(entities: Entity[], pathingHandler: PathingHandler, observerHandler: Observer) {
@@ -51,7 +51,7 @@ export class AIHandler {
     const observed: Entity[] = this.observerHandler.observe(this.entities[id])
     if (observed.length) {
       if (!this.targets[id]) {
-        this.targets[id] = { target: observed[0], followTollerance: 2, current: 0 }
+        this.targets[id] = { target: observed[0], followTolerance: 2, current: 0 }
       } else {
         this.targets[id].target = observed[0]
         this.targets[id].current = 0
@@ -79,7 +79,7 @@ export class AIHandler {
 
         this.pathingHandler.moveTo(handler, tempPos)
         if (this.targets[index]) {
-          if (this.targets[index].followTollerance <= this.targets[index].current) {
+          if (this.targets[index].followTolerance <= this.targets[index].current) {
             delete this.targets[index]
           } else {
             this.targets[index].current++
