@@ -3,30 +3,30 @@ import { Entity } from '@/models/Entity/Entity';
 import { PathingHandler } from '@/models/Pathing/PathingHandler';
 import { GridPosition } from '@/models/GridPosition';
 import { Observer } from '@/models/Observer/Observer';
+import { ActionTypes } from '@/models/Action/ActionTypes';
+import { PatrolHandler } from '@/models/Pathing/PatrolHandler';
 
-
-interface Patrol { route: GridPosition[], index: number }
 export class AIHandler {
   private actionHandlers: ActionHandler[] = []
   private pathingHandler: PathingHandler
   private observerHandler: Observer
   private entities: Entity[]
-  private target: Entity
+  private patrolHandler: PatrolHandler
+  private targets: { [k: number]: {target: Entity, followTolerance: number, current: number} }
   private idCount: number = 0
-  private patrols: Patrol[]
 
-  constructor(entities: Entity[], pathingHandler: PathingHandler, observerHandler: Observer, target: Entity) {
+  constructor(entities: Entity[], pathingHandler: PathingHandler, observerHandler: Observer) {
     const temp = { x: 3, y: 0, z: 0 }
-    this.patrols = []
+    this.patrolHandler = new PatrolHandler()
     this.entities = entities
     this.entities.forEach((ent: Entity, index: number) => {
-      this.patrols[index] = { route: [ent.getPosition(), temp], index: 0 }
       this.idCount = index
+      this.patrolHandler.addPatroller(this.idCount, ent, temp)
       this.actionHandlers.push(new ActionHandler(ent, this.idCount))
     })
     this.pathingHandler = pathingHandler
     this.observerHandler = observerHandler
-    this.target = target
+    this.targets = []
   }
 
   public addEntity(entity: Entity) {
@@ -34,29 +34,59 @@ export class AIHandler {
     this.actionHandlers.push(new ActionHandler(entity, this.idCount + 1))
   }
 
+  public actOnIt(handler: ActionHandler, id: number) {
+    while (handler.hasAct()) {
+      switch (handler.nextActType()) {
+        case ActionTypes.MOVE:
+          if (!handler.nextAct()) { this.pathingHandler.compromisePath(handler) }
+          break;
+        case ActionTypes.TURN:
+          handler.nextAct()
+          break;
+        default:
+          handler.nextAct()
+          break;
+      }
+    }
+    const observed: Entity[] = this.observerHandler.observe(this.entities[id])
+    if (observed.length) {
+      if (!this.targets[id]) {
+        this.targets[id] = { target: observed[0], followTolerance: 2, current: 0 }
+      } else {
+        this.targets[id].target = observed[0]
+        this.targets[id].current = 0
+      }
+      this.pathingHandler.compromisePath(handler)
+    }
+  }
+
   public nextTurn() {
-    this.actionHandlers.forEach((handler, index) => {
+    this.actionHandlers.forEach((handler, index: number) => {
       this.pathingHandler.addTurn(handler)
       if (!this.pathingHandler.addMove(handler)) {
-        // Change patrol route
-        if (!this.pathingHandler.isAtDestination(handler)) {
-          this.patrols[index].index--
-          if (this.patrols[index].index < 0) {
-            this.patrols[index].index = this.patrols[index].route.length - 1
+        if (this.targets[index] === undefined) {
+          const isComp = this.pathingHandler.isCompromised(handler)
+          if (this.pathingHandler.isAtDestination(handler) && !isComp) {
+            this.patrolHandler.startNextRoute(index)
           }
-        }
-        // Add route
-        const isComp = this.pathingHandler.isCompromised(handler)
-        this.pathingHandler.moveTo(handler, this.patrols[index].route[this.patrols[index].index])
-        if (!isComp) {
-          this.patrols[index].index++
+          // Add route
         }
 
-        if (this.patrols[index].index >= this.patrols[index].route.length) {
-          this.patrols[index].index = 0
+        const tempPos: GridPosition =
+          this.targets[index] !== undefined ?
+          this.targets[index].target.getPosition() :
+          this.patrolHandler.getNextPoint(index)
+
+        this.pathingHandler.moveTo(handler, tempPos)
+        if (this.targets[index]) {
+          if (this.targets[index].followTolerance <= this.targets[index].current) {
+            delete this.targets[index]
+          } else {
+            this.targets[index].current++
+          }
         }
       }
-      while (handler.hasAct()) { if (!handler.nextAct()) { this.pathingHandler.compromisePath(handler) } }
+      this.actOnIt(handler, index)
     })
   }
 }

@@ -1,35 +1,55 @@
 import { Entity } from '../Entity/Entity';
 import { LevelHandler } from '@/lib/LevelHandler';
 import { GridPosition } from '../GridPosition';
-import { EntityType } from '../Entity/EntityType';
 import { Direction } from '../Direction';
+import { EntityType } from '../Entity/EntityType';
 
 export class Observer {
   private level: LevelHandler
-  private observers: Entity[]
 
   constructor(level: LevelHandler, observers: Entity[]) {
     this.level = level
-    this.observers = observers
   }
 
-  public getObserved(id: number): Entity {
-    return this.observers[id]
-  }
+  public observe(ent: Entity): Entity[] {
+    const linePos: GridPosition = JSON.parse(JSON.stringify(ent.getPosition()))
+    const observerEntities: Entity[] = []
+    const range: number = this.getRange(ent)
+    const facing: Direction = this.getDirection(ent)
+    let cone: number = 2
 
-  public observe(ent: Entity, id: number, facing: Direction): Entity | undefined {
-    const tempPos: GridPosition = JSON.parse(JSON.stringify(ent.getPosition()))
-    this.incrementPosition(tempPos, facing)
-    let temp: Entity | undefined
-    for (let index = 0; index < 4; index++) {
-      temp = this.level.getEntityAtPosition(tempPos.x, tempPos.y)
-      this.incrementPosition(tempPos, facing)
-      if (temp && temp.getFields().type === EntityType.NPC) {
-        index = 4
-        this.observers[id] = temp
+    this.incrementPosition(linePos, facing)
+    for (let index = 0; index < range; index++) {
+      for (let coneIndex = 0; coneIndex < cone; coneIndex++) {
+        const tempPos: GridPosition = this.getCone(linePos, facing, coneIndex, cone)
+        const temp: Entity | undefined = this.level.getEntityAtPosition(tempPos.x, tempPos.y)
+        if (temp && temp.type() === EntityType.PLAYER) {
+          observerEntities.push(temp)
+        }
       }
+      cone += 2
+      this.incrementPosition(linePos, facing)
     }
-    return temp
+
+    return observerEntities
+  }
+
+  private getRange(ent: Entity): number {
+    const range = ent.getFields().viewRange
+    return range !== undefined ? range : 4
+  }
+
+  private getDirection(ent: Entity): Direction {
+    const direction = ent.getFields().direction
+    return direction !== undefined ? direction : Direction.SOUTH
+  }
+
+  private getCone(pos: GridPosition, facing: Direction, itteration: number, max: number): GridPosition {
+    if (facing === Direction.NORTH || facing === Direction.SOUTH) {
+      return { x: (pos.x + Math.ceil(max / 2)) - (max - itteration), y: pos.y }
+    } else {
+      return { x: pos.x, y: (pos.y + Math.ceil(max / 2)) - (max - itteration) }
+    }
   }
 
   private incrementPosition(pos: GridPosition, facing: Direction) {

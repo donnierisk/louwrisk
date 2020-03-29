@@ -282,7 +282,7 @@ export class LevelHandler {
 
     this.player = new Entity({
       type: EntityType.PLAYER,
-      position: { x: 3, y: 5, z: 1 },
+      position: { x: 6, y: 5, z: 1 },
       direction: Direction.NORTH,
       mortalState: MortalState.ALIVE,
       status: {
