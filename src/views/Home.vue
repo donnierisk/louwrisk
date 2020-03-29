@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <stage :block-size="{ x: 128, y: 128, z: 0 }" />
+    <stage :block-size="{ x: blockSize, y: blockSize, z: 0 }" />
   </div>
 </template>
 
@@ -16,7 +16,13 @@ import Stage from './Stage.vue'
     Stage
   }
 })
-export default class Home extends Vue {}
+export default class Home extends Vue {
+  blockSize: number = 128 // in px
+  created() {
+    var w = window.innerWidth
+    this.blockSize = Math.round(w / 12) // game is 12 grid blocks wide
+  }
+}
 </script>
 
 <style lang="scss">
