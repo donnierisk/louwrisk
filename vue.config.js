@@ -5,7 +5,6 @@ module.exports = {
         manifestOptions: {
             orientation: "landscape",
             display: "fullscreen",
-            start_url: "/index.html",
             background_color: "#F1AD2D"
         }
     }
