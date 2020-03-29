@@ -16,7 +16,7 @@ export class Observer {
     const observerEntities: Entity[] = []
     const range: number = this.getRange(ent)
     const facing: Direction = this.getDirection(ent)
-    let cone: number = 3
+    let cone: number = 2
 
     this.incrementPosition(linePos, facing)
     for (let index = 0; index < range; index++) {
