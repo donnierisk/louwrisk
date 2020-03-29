@@ -65,6 +65,31 @@ export class Entity {
     return this.id
   }
 
+  public getInventory(): Map<string, string> {
+    return this.entityFields.inventory;
+  }
+
+  public addItemToInventory(itemName: string): boolean {
+    let objectAdded = false;
+    let hasNext = true;
+    const itemSlot: IterableIterator<string> = this.entityFields.inventory.keys();
+
+    while (objectAdded === false && hasNext === true) {
+
+      const slotNo = itemSlot.next().value;
+      const itemInSlot = this.entityFields.inventory.get(slotNo);
+      hasNext = !!slotNo;
+      if (hasNext === false) {
+        break;
+      }
+      if (itemInSlot === 'empty') {
+        this.entityFields.inventory.set(slotNo, itemName);
+        objectAdded = true;
+      }
+    }
+    return objectAdded;
+  }
+
   public setMortalState(state: MortalState) {
     this.entityFields.mortalState = state;
   }
