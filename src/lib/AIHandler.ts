@@ -10,6 +10,7 @@ export class AIHandler {
   private actionHandlers: ActionHandler[] = []
   private pathingHandler: PathingHandler
   private observerHandler: Observer
+  private currentTurnIndex: number
   private entities: Entity[]
   private patrolHandler: PatrolHandler
   private targets: { [k: number]: {target: Entity, followTolerance: number, current: number} }
@@ -17,6 +18,7 @@ export class AIHandler {
 
   constructor(entities: Entity[], pathingHandler: PathingHandler, observerHandler: Observer) {
     const temp = { x: 3, y: 0, z: 0 }
+    this.currentTurnIndex = 0
     this.patrolHandler = new PatrolHandler()
     this.entities = entities
     this.entities.forEach((ent: Entity, index: number) => {
@@ -60,33 +62,46 @@ export class AIHandler {
     }
   }
 
-  public nextTurn() {
-    this.actionHandlers.forEach((handler, index: number) => {
-      this.pathingHandler.addTurn(handler)
-      if (!this.pathingHandler.addMove(handler)) {
-        if (this.targets[index] === undefined) {
-          const isComp = this.pathingHandler.isCompromised(handler)
-          if (this.pathingHandler.isAtDestination(handler) && !isComp) {
-            this.patrolHandler.startNextRoute(index)
-          }
-          // Add route
-        }
+  public nextAllTurn() {
+    while (this.nextTurn()) { }
+  }
 
-        const tempPos: GridPosition =
-          this.targets[index] !== undefined ?
+  public nextTurn(): boolean {
+    const handler: ActionHandler = this.actionHandlers[this.currentTurnIndex]
+    const index = this.currentTurnIndex
+    this.pathingHandler.addTurn(handler)
+    if (!this.pathingHandler.addMove(handler)) {
+      if (this.targets[index] === undefined) {
+        const isComp = this.pathingHandler.isCompromised(handler)
+        if (this.pathingHandler.isAtDestination(handler) && !isComp) {
+          this.patrolHandler.startNextRoute(index)
+        }
+        // Add route
+      }
+
+      const tempPos: GridPosition =
+        this.targets[index] !== undefined ?
           this.targets[index].target.getPosition() :
           this.patrolHandler.getNextPoint(index)
 
-        this.pathingHandler.moveTo(handler, tempPos)
-        if (this.targets[index]) {
-          if (this.targets[index].followTolerance <= this.targets[index].current) {
-            delete this.targets[index]
-          } else {
-            this.targets[index].current++
-          }
+      this.pathingHandler.moveTo(handler, tempPos)
+      if (this.targets[index]) {
+        if (this.targets[index].followTolerance <= this.targets[index].current) {
+          delete this.targets[index]
+        } else {
+          this.targets[index].current++
         }
       }
-      this.actOnIt(handler, index)
-    })
+    }
+    this.actOnIt(handler, index)
+    if (this.actionHandlers.length <= index)
+    {
+      this.currentTurnIndex = 0
+      return false
+    }
+    else {
+      this.currentTurnIndex++
+      return true
+    }
   }
 }

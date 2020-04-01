@@ -230,7 +230,7 @@ export default class Map extends Vue {
   private nextTurn(animation: string) {
     // this.aiHandler.interruptAtPosition(this.playerCurrentPosition)
     this.animation = animation
-    this.aiHandler.nextTurn()
+    this.aiHandler.nextAllTurn()
     this.generateGrid()
   }
 
