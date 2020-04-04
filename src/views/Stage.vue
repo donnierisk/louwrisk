@@ -2,7 +2,7 @@
   <div id="container" :class="{perspective: perspectiveMode === true }">
     <keyboard-events @move-event="nextTurn" :throttled="throttled" :level="level" />
     <dashboard :inventory="level.getPlayer().getInventory()"></dashboard>
-    <action-graph></action-graph>
+    <action-graph :position="inspectedObject"></action-graph>
     <div id="perspective-button" @click="togglePerspective">Perspective</div>
     <camera
       ref="camera"
@@ -50,10 +50,11 @@ import { TerrainSymbol } from '@/models/TerrainSymbol'
 import { GridBlockI } from '@/models/GridBlockI'
 import { GridPosition } from '@/models/GridPosition'
 import { Animate } from '@/utils/Animate'
-import { EntityType } from '../models/Entity/EntityType'
+import { EntityType } from '@/models/Entity/EntityType'
 import { Entity } from '@/models/Entity/Entity'
 import { Position } from 'vue-router/types/router'
 import { Observer } from '@/models/Observer/Observer'
+import { InspectedObjectI } from '@/models/InspectedObjectI'
 import GridBlock from '@/components/GridBlock.vue'
 import Camera from '@/components/Camera.vue'
 import EntityComp from '@/components/EntityComp.vue'
@@ -87,6 +88,10 @@ export default class Map extends Vue {
     new PathingHandler(this.level),
     new Observer(this.level, this.level.getAllNPC())
   )
+
+  private inspectedObject: InspectedObjectI = {
+    position: { x: 0, y: 0 }
+  }
 
   private gridRenderArray: GridBlockI[] = []
 
@@ -302,13 +307,15 @@ export default class Map extends Vue {
   }
 
   private inspectTerrain(gridMeta: GridBlockI, position: GridPosition) {
-    console.log(gridMeta)
-    console.log(position)
+    this.inspectedObject.position = { ...position }
+    this.inspectedObject.gridBlock = { ...gridMeta }
+    delete this.inspectedObject.entity
   }
 
-  private inspectEntity(entity: Entity, entityStyle: any) {
-    console.log(entity.getFields().description)
-    console.log(entityStyle)
+  private inspectEntity(entity: Entity, position: GridPosition) {
+    this.inspectedObject.position = { ...position }
+    this.inspectedObject.entity = entity
+    delete this.inspectedObject.gridBlock
   }
 
   private isPlayer(entity: Entity): boolean {
