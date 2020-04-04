@@ -55,6 +55,11 @@ export default class SpriteBlock extends Vue {
     animations: {}
   }
 
+  private DOMposition: GridPosition = {
+    x: 0,
+    y: 0
+  }
+
   private created() {
     if (this.entity) {
       this.spriteMeta = spriteConfig.entities[this.entity.getSpriteName()]
@@ -93,6 +98,12 @@ export default class SpriteBlock extends Vue {
       return spriteCss
     }
     return ''
+  }
+
+  setDOMPositionValues() {
+    const elem = this.entityRef as HTMLElement
+    this.DOMposition.x = elem.offsetLeft + elem.offsetWidth / 2
+    this.DOMposition.y = elem.offsetTop + elem.offsetHeight / 2
   }
 
   private get entityStyle() {
@@ -162,7 +173,8 @@ export default class SpriteBlock extends Vue {
   }
 
   private inspect(e: Event) {
-    this.$emit('inspected', this.entity)
+    this.setDOMPositionValues()
+    this.$emit('inspected', this.entity, this.DOMposition)
   }
 }
 </script>

@@ -31,7 +31,7 @@ export default class GridBlock extends Vue {
   @Prop() private blockSize!: GridPosition
 
   private terrainStyles = {}
-  private position: GridPosition = {
+  private DOMposition: GridPosition = {
     x: 0,
     y: 0,
     z: this.gridMeta.zIndex
@@ -64,14 +64,18 @@ export default class GridBlock extends Vue {
     }
   }
 
-  private emitPosition(entity: Entity, isInitial?: boolean) {
+  setDOMPositionValues() {
     const elem = this.$refs.block as HTMLElement
-    this.position.x = elem.offsetLeft + elem.offsetWidth / 2
-    this.position.y = elem.offsetTop + elem.offsetHeight / 2
-    this.position.z = this.gridMeta.zIndex
+    this.DOMposition.x = elem.offsetLeft + elem.offsetWidth / 2
+    this.DOMposition.y = elem.offsetTop + elem.offsetHeight / 2
+    this.DOMposition.z = this.gridMeta.zIndex
+  }
+
+  private emitPosition(entity: Entity, isInitial?: boolean) {
+    this.setDOMPositionValues()
     this.$emit(
       'entity-pos',
-      this.position,
+      this.DOMposition,
       entity.type(),
       isInitial,
       entity.getId()
@@ -80,7 +84,8 @@ export default class GridBlock extends Vue {
 
   private inspect(e: Event) {
     if (this.gridMeta.inObserveRange) {
-      this.$emit('inspected', this.gridMeta)
+      this.setDOMPositionValues()
+      this.$emit('inspected', this.gridMeta, this.DOMposition)
     }
   }
 }

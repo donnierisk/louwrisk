@@ -77,7 +77,7 @@ import { PathingHandler } from '../models/Pathing/PathingHandler'
 })
 export default class Map extends Vue {
   @Prop() private blockSize!: GridPosition
-  @Prop({default: false}) private fogOfWar?: boolean
+  @Prop({ default: false }) private fogOfWar?: boolean
 
   private Scale: string = ''
   private storeActive: boolean = false
@@ -196,7 +196,7 @@ export default class Map extends Vue {
       const curIndex = Number(entity.style.zIndex ? entity.style.zIndex : '')
       const entityCurrentPosition: GridPosition = this.level
         .getAllEntities()
-        .filter((ent) => ent.type() === type)
+        .filter(ent => ent.type() === type)
         [id ? id : 0].getPosition()
 
       if (curIndex < entityCurrentPosition.y) {
@@ -238,17 +238,17 @@ export default class Map extends Vue {
 
   private loopTurn() {
     if (this.aiHandler.nextTurn()) {
-     // Vue.nextTick(() => {
-        this.loopTurn()
+      // Vue.nextTick(() => {
+      this.loopTurn()
       // })
     }
   }
 
   private placeEntities() {
-    this.gridRenderArray.forEach((gridBlock) => {
+    this.gridRenderArray.forEach(gridBlock => {
       this.$set(gridBlock, 'containedEntity', undefined)
     })
-    this.level.getAllEntities().forEach((entity) => {
+    this.level.getAllEntities().forEach(entity => {
       if (entity.getSpriteName() === 'player') {
         entity.setAnimation(this.animation)
       }
@@ -272,7 +272,7 @@ export default class Map extends Vue {
   }
 
   private calculateObserveRange() {
-    this.gridRenderArray.forEach((gridBlock) => {
+    this.gridRenderArray.forEach(gridBlock => {
       if (gridBlock.x && gridBlock.y) {
         if (this.level.isInObserveRange(gridBlock.x, gridBlock.y)) {
           gridBlock.inObserveRange = true
@@ -301,12 +301,14 @@ export default class Map extends Vue {
     }
   }
 
-  private inspectTerrain(gridMeta: GridBlockI) {
+  private inspectTerrain(gridMeta: GridBlockI, position: GridPosition) {
     console.log(gridMeta)
+    console.log(position)
   }
 
-  private inspectEntity(entity: Entity) {
+  private inspectEntity(entity: Entity, entityStyle: any) {
     console.log(entity.getFields().description)
+    console.log(entityStyle)
   }
 
   private isPlayer(entity: Entity): boolean {
