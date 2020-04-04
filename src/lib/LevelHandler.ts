@@ -23,7 +23,7 @@ export class LevelHandler {
 
   constructor() {
     this.LevelMomento = EmptyLevel
-    const inventoryObj = { 'Slot1': null }
+    const inventoryObj = { Slot1: null }
     this.loadLevel({
       terrain: [
         [MS.WATER, MS.WATER, MS.GRASS, MS.GRASS1, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS, MS.GRASS],

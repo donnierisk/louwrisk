@@ -67,41 +67,44 @@ export class AIHandler {
   }
 
   public nextTurn(): boolean {
-    const handler: ActionHandler = this.actionHandlers[this.currentTurnIndex]
-    const index = this.currentTurnIndex
-    this.pathingHandler.addTurn(handler)
-    if (!this.pathingHandler.addMove(handler)) {
-      if (this.targets[index] === undefined) {
-        const isComp = this.pathingHandler.isCompromised(handler)
-        if (this.pathingHandler.isAtDestination(handler) && !isComp) {
-          this.patrolHandler.startNextRoute(index)
+    try {
+      const handler: ActionHandler = this.actionHandlers[this.currentTurnIndex]
+      const index = this.currentTurnIndex
+      this.pathingHandler.addTurn(handler)
+      if (!this.pathingHandler.addMove(handler)) {
+        if (this.targets[index] === undefined) {
+          const isComp = this.pathingHandler.isCompromised(handler)
+          if (this.pathingHandler.isAtDestination(handler) && !isComp) {
+            this.patrolHandler.startNextRoute(index)
+          }
+          // Add route
         }
-        // Add route
-      }
 
-      const tempPos: GridPosition =
-        this.targets[index] !== undefined ?
-          this.targets[index].target.getPosition() :
-          this.patrolHandler.getNextPoint(index)
+        const tempPos: GridPosition =
+          this.targets[index] !== undefined ?
+            this.targets[index].target.getPosition() :
+            this.patrolHandler.getNextPoint(index)
 
-      this.pathingHandler.moveTo(handler, tempPos)
-      if (this.targets[index]) {
-        if (this.targets[index].followTolerance <= this.targets[index].current) {
-          delete this.targets[index]
-        } else {
-          this.targets[index].current++
+        this.pathingHandler.moveTo(handler, tempPos)
+        if (this.targets[index]) {
+          if (this.targets[index].followTolerance <= this.targets[index].current) {
+            delete this.targets[index]
+          } else {
+            this.targets[index].current++
+          }
         }
       }
-    }
-    this.actOnIt(handler, index)
-    if (this.actionHandlers.length <= index)
-    {
+      this.actOnIt(handler, index)
+      if (this.actionHandlers.length - 1 === index) {
+        this.currentTurnIndex = 0
+        return false
+      } else {
+        this.currentTurnIndex++
+        return true
+      }
+    } catch (error) {
       this.currentTurnIndex = 0
       return false
-    }
-    else {
-      this.currentTurnIndex++
-      return true
     }
   }
 }
