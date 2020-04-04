@@ -5,6 +5,7 @@
     :id="entName"
     ref="entity"
     :style="entityStyle"
+    @click="inspect"
   >
     <div
       ref="entityModel"
@@ -168,12 +169,20 @@ export default class SpriteBlock extends Vue {
   public get entityRef() {
     return this.$refs.entity
   }
+
+  private inspect(e: Event) {
+    this.$emit('inspected', this.entity)
+  }
 }
 </script>
 
 <style lang="scss">
 .entity {
   position: absolute;
+}
+
+.entity:hover {
+  filter: box-shadow(0, 0, 0, black);
 }
 
 .entity .entity-avatar {

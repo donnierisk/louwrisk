@@ -2,6 +2,7 @@
   <div id="container" :class="{perspective: perspectiveMode === true }">
     <keyboard-events @move-event="nextTurn" :throttled="throttled" :level="level" />
     <dashboard :inventory="level.getPlayer().getInventory()"></dashboard>
+    <action-graph></action-graph>
     <div id="perspective-button" @click="togglePerspective">Perspective</div>
     <camera
       ref="camera"
@@ -20,7 +21,7 @@
           :key="i"
           :terrain="gridItem.symbol"
           :block-size="blockSize"
-          @observed="addToObserver"
+          @inspected="inspectTerrain"
           @entity-pos="AnimateEntityPosition"
           :is-observed="gridItem.inObserveRange"
         ></grid-block>
@@ -30,6 +31,7 @@
           :block-size="blockSize"
           :animating="animating"
           :entity="entity.containedEntity"
+          @inspected="inspectEntity"
           :terrain="entity.symbol"
           :ref="entity.containedEntity.type() + entity.containedEntity.getId()"
           :key="entity.containedEntity.type() + entity.containedEntity.getId()"
@@ -55,23 +57,22 @@ import { Observer } from '@/models/Observer/Observer'
 import GridBlock from '@/components/GridBlock.vue'
 import Camera from '@/components/Camera.vue'
 import EntityComp from '@/components/EntityComp.vue'
-import DialogueBox from '@/components/DialogueBox.vue'
 import KeyboardEvents from '@/components/KeyboardEvents.vue'
 import Dashboard from '@/components/Dashboard.vue'
 import SpriteBlock from '@/components/SpriteBlock.vue'
 import DialogOption from '@/models/DialogOption'
+import ActionGraph from '@/components/ActionGraph.vue'
 import { PathingHandler } from '../models/Pathing/PathingHandler'
-import { EntityObserver } from '../utils/EntityObserver'
 
 @Component({
   components: {
     GridBlock,
-    DialogueBox,
     KeyboardEvents,
     EntityComp,
     Camera,
     SpriteBlock,
-    Dashboard
+    Dashboard,
+    ActionGraph
   }
 })
 export default class Map extends Vue {
@@ -89,8 +90,6 @@ export default class Map extends Vue {
   private gridRenderArray: GridBlockI[] = []
 
   private observedItems: TerrainSymbol[] = []
-
-  private observer: EntityObserver = new EntityObserver()
 
   private animation = 'idle'
   private animating: boolean = false
@@ -113,10 +112,6 @@ export default class Map extends Vue {
   }
   private get camera(): Camera {
     return this.$refs.camera as Camera
-  }
-
-  private get description() {
-    return this.observer.getDescription()
   }
 
   private get playerCurrentPosition() {
@@ -264,9 +259,12 @@ export default class Map extends Vue {
     }
   }
 
-  // Only the observed blocks animate.
-  private addToObserver(entity: Entity) {
-    this.observer.addToObserver(entity)
+  private inspectTerrain(gridMeta: GridBlockI) {
+    console.log(gridMeta)
+  }
+
+  private inspectEntity(entity: Entity) {
+    console.log(entity.getFields().description)
   }
 
   private isPlayer(entity: Entity): boolean {

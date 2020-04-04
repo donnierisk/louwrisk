@@ -2,7 +2,7 @@
   <div
     ref="block"
     class="gridItem"
-    @click="observe"
+    @click="inspect"
     :class="{observed: isObserved}"
     :style="terrainStyles"
   >
@@ -78,9 +78,9 @@ export default class GridBlock extends Vue {
     )
   }
 
-  private observe(e: Event) {
+  private inspect(e: Event) {
     if (this.gridMeta.inObserveRange) {
-      this.$emit('observed', this.gridMeta.containedEntity)
+      this.$emit('inspected', this.gridMeta)
     }
   }
 }
