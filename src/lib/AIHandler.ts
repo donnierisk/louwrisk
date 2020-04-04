@@ -63,7 +63,11 @@ export class AIHandler {
   }
 
   public nextAllTurn() {
-    while (this.nextTurn()) { }
+    while (this.nextTurn() !== undefined) { }
+  }
+
+  public peekNextTurn(): Entity {
+    return this.entities[this.currentTurnIndex]
   }
 
   public nextTurn(): boolean {

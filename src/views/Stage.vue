@@ -1,6 +1,6 @@
 <template>
   <div id="container" :class="{perspective: perspectiveMode === true }">
-    <keyboard-events @move-event="nextTurn" :throttled="throttled" :level="level" />
+    <keyboard-events @pre-move-event="displaceEntity" @move-event="nextTurn" :throttled="throttled" :level="level" />
     <dashboard :inventory="level.getPlayer().getInventory()"></dashboard>
     <div id="perspective-button" @click="togglePerspective">Perspective</div>
     <camera
@@ -28,11 +28,11 @@
           v-for="(entity) of gridRenderArray.filter(ent => ent.containedEntity)"
           :is-observed="entity.inObserveRange"
           :block-size="blockSize"
-          :animating="animating"
+          :animating="animating[entity.containedEntity.getKey()]"
           :entity="entity.containedEntity"
           :terrain="entity.symbol"
-          :ref="entity.containedEntity.type() + entity.containedEntity.getId()"
-          :key="entity.containedEntity.type() + entity.containedEntity.getId()"
+          :ref="entity.containedEntity.getKey()"
+          :key="entity.containedEntity.getKey()"
         />
       </div>
     </camera>
@@ -93,8 +93,8 @@ export default class Map extends Vue {
 
   private observer: EntityObserver = new EntityObserver()
 
-  private animation = 'idle'
-  private animating: boolean = false
+  private animation: string[] = []
+  private animating: {[k: string]: boolean} = {}
   private animater: Animate = new Animate(this.blockSize.x, this.blockSize.y)
 
   private perspectiveMode: boolean = false
@@ -180,19 +180,23 @@ export default class Map extends Vue {
       .entityRef as HTMLElement
   }
 
+  private AnimateCamera(animate: boolean = true) {
+    this.camera.PanCameraToPlayer(animate)
+  }
+
   private AnimateEntityPosition(
     newPosition: GridPosition,
     type: EntityType,
-    animate?: boolean,
-    id?: number
+    id: number,
+    animate?: boolean
   ) {
     this.throttled = true
-    this.animating = true
+    this.$set(this.animating, type + id.toString(), true)
 
     const entity = this.getEntityRef(type, id ? id : 0)
     const startCallback = () => {
       this.throttled = false
-      this.animating = false
+      this.$set(this.animating, type + id.toString(), false)
       this.level.reloadingSave = false
       entity.style.zIndex = newPosition.z ? newPosition.z.toString() : ''
     }
@@ -207,16 +211,6 @@ export default class Map extends Vue {
       if (curIndex < entityCurrentPosition.y) {
         entity.style.zIndex = entityCurrentPosition.y.toString()
       }
-
-      if (type === EntityType.PLAYER) {
-        this.camera.PanCameraToPlayer(
-          animate || this.level.reloadingSave ? false : true
-        )
-      }
-    }
-
-    if (this.level.reloadingSave && type === EntityType.PLAYER) {
-      this.camera.PanCameraToPlayer(false)
     }
 
     const speed = animate || this.level.reloadingSave ? 0 : 0.5
@@ -231,60 +225,67 @@ export default class Map extends Vue {
   }
 
   private nextTurn(animation: string) {
-    this.animation = animation
-    // Vue.nextTick(() => {
-    this.loopTurn()
-    // })
-    // this.generateGrid()
-
-    this.placeEntities()
-    // this.calculateObserveRange()
+    this.animation[0] = animation
+    this.calculateObserveRange()
+    this.placeEntity(this.level.getPlayer())
+    Vue.nextTick(() => {
+      this.AnimateCamera(true)
+      setTimeout(() => {
+        this.loopTurn()
+      }, 500);
+    })
   }
 
   private loopTurn() {
+    let ent: Entity = this.aiHandler.peekNextTurn()
+    this.displaceEntity(ent)
     if (this.aiHandler.nextTurn()) {
-     // Vue.nextTick(() => {
-        this.loopTurn()
-      // })
+      Vue.nextTick(() => {
+        setTimeout(() => {
+          this.loopTurn()
+        }, 500);
+      })
     }
+    this.placeEntity(ent)
   }
 
   private placeEntities() {
-    this.gridRenderArray.forEach((gridBlock) => {
+    for (const gridBlock of this.gridRenderArray) {
       this.$set(gridBlock, 'containedEntity', undefined)
-    })
+    }
     this.level.getAllEntities().forEach((entity) => {
-      if (entity.getSpriteName() === 'player') {
-        entity.setAnimation(this.animation)
-      }
-      for (const gridBlock of this.gridRenderArray) {
-        if (this.placeEntity(entity, gridBlock)) {
-          break
-        }
-      }
+      this.placeEntity(entity)
     })
   }
-
-  private placeEntity(entity: Entity, gridBlock: GridBlockI): boolean {
+  
+  private displaceEntity(entity: Entity) {
     const pos: GridPosition = entity.getPosition()
-    if (gridBlock.x !== undefined && gridBlock.y !== undefined) {
-      if (gridBlock.x === pos.x && gridBlock.y === pos.y) {
-        this.$set(gridBlock, 'containedEntity', entity)
-        return true
-      }
+    const index = (this.level.GridSize.x * pos.y) + pos.x
+    const gridBlock = this.gridRenderArray[index]
+    this.$set(gridBlock, 'containedEntity', undefined)
+  }
+
+  private placeEntity(entity: Entity) {
+    if (entity.getSpriteName() === 'player') {
+      entity.setAnimation(this.animation[entity.getId()])
     }
-    return false
+    const pos: GridPosition = entity.getPosition()
+    const index = (this.level.GridSize.x * pos.y) + pos.x
+    const gridBlock = this.gridRenderArray[index]
+    this.$set(gridBlock, 'containedEntity', entity)
   }
 
   private calculateObserveRange() {
-    this.gridRenderArray.forEach((gridBlock) => {
-      if (gridBlock.x && gridBlock.y) {
-        if (this.level.isInObserveRange(gridBlock.x, gridBlock.y)) {
-          gridBlock.inObserveRange = true
-          this.observedItems.push(gridBlock.symbol)
+    if (this.fogOfWar) {
+      this.gridRenderArray.forEach((gridBlock) => {
+        if (gridBlock.x && gridBlock.y) {
+          if (this.level.isInObserveRange(gridBlock.x, gridBlock.y)) {
+            gridBlock.inObserveRange = true
+            this.observedItems.push(gridBlock.symbol)
+          }
         }
-      }
-    })
+      })
+    }
   }
 
   private generateGrid(fogOfWar: boolean = true) {

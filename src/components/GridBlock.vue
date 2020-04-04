@@ -73,8 +73,8 @@ export default class GridBlock extends Vue {
       'entity-pos',
       this.position,
       entity.type(),
-      isInitial,
-      entity.getId()
+      entity.getId(),
+      isInitial
     )
   }
 
