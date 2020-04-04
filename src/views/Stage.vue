@@ -77,6 +77,7 @@ import { PathingHandler } from '../models/Pathing/PathingHandler'
 })
 export default class Map extends Vue {
   @Prop() private blockSize!: GridPosition
+  @Prop({default: false}) private fogOfWar?: boolean
 
   private Scale: string = ''
   private storeActive: boolean = false
@@ -99,7 +100,9 @@ export default class Map extends Vue {
   private throttled = false
 
   private created() {
-    this.generateGrid()
+    this.generateGrid(this.fogOfWar)
+    this.placeEntities()
+    // this.calculateObserveRange()
   }
 
   private mounted() {
@@ -193,7 +196,7 @@ export default class Map extends Vue {
       const curIndex = Number(entity.style.zIndex ? entity.style.zIndex : '')
       const entityCurrentPosition: GridPosition = this.level
         .getAllEntities()
-        .filter(ent => ent.type() === type)
+        .filter((ent) => ent.type() === type)
         [id ? id : 0].getPosition()
 
       if (curIndex < entityCurrentPosition.y) {
@@ -223,13 +226,63 @@ export default class Map extends Vue {
   }
 
   private nextTurn(animation: string) {
-    // this.aiHandler.interruptAtPosition(this.playerCurrentPosition)
     this.animation = animation
-    this.aiHandler.nextTurn()
-    this.generateGrid()
+    // Vue.nextTick(() => {
+    this.loopTurn()
+    // })
+    // this.generateGrid()
+
+    this.placeEntities()
+    // this.calculateObserveRange()
   }
 
-  private generateGrid() {
+  private loopTurn() {
+    if (this.aiHandler.nextTurn()) {
+     // Vue.nextTick(() => {
+        this.loopTurn()
+      // })
+    }
+  }
+
+  private placeEntities() {
+    this.gridRenderArray.forEach((gridBlock) => {
+      this.$set(gridBlock, 'containedEntity', undefined)
+    })
+    this.level.getAllEntities().forEach((entity) => {
+      if (entity.getSpriteName() === 'player') {
+        entity.setAnimation(this.animation)
+      }
+      for (const gridBlock of this.gridRenderArray) {
+        if (this.placeEntity(entity, gridBlock)) {
+          break
+        }
+      }
+    })
+  }
+
+  private placeEntity(entity: Entity, gridBlock: GridBlockI): boolean {
+    const pos: GridPosition = entity.getPosition()
+    if (gridBlock.x !== undefined && gridBlock.y !== undefined) {
+      if (gridBlock.x === pos.x && gridBlock.y === pos.y) {
+        this.$set(gridBlock, 'containedEntity', entity)
+        return true
+      }
+    }
+    return false
+  }
+
+  private calculateObserveRange() {
+    this.gridRenderArray.forEach((gridBlock) => {
+      if (gridBlock.x && gridBlock.y) {
+        if (this.level.isInObserveRange(gridBlock.x, gridBlock.y)) {
+          gridBlock.inObserveRange = true
+          this.observedItems.push(gridBlock.symbol)
+        }
+      }
+    })
+  }
+
+  private generateGrid(fogOfWar: boolean = true) {
     this.gridRenderArray = []
     this.observedItems = []
     for (let gridRow = 0; gridRow < this.level.GridSize.y; gridRow++) {
@@ -237,21 +290,10 @@ export default class Map extends Vue {
         const gridObj: GridBlockI = {
           symbol: this.level.getTerrain()[gridRow][gridCol],
           id: Number(gridCol + '' + gridRow),
-          zIndex: gridRow
-        }
-
-        const entity = this.level.getEntityAtPosition(gridCol, gridRow)
-        if (entity) {
-          if (entity.getSpriteName() === 'player') {
-            entity.setAnimation(this.animation)
-          }
-          gridObj.containedEntity = entity
-        }
-
-        if (this.level.isInObserveRange(gridCol, gridRow)) {
-          // Check if current gridCol's pos in 2d array matches the playerCurrentPosition
-          gridObj.inObserveRange = true
-          this.observedItems.push(gridObj.symbol)
+          zIndex: gridRow,
+          x: gridCol,
+          y: gridRow,
+          inObserveRange: !fogOfWar
         }
 
         this.gridRenderArray.push(gridObj)

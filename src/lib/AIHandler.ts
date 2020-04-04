@@ -10,6 +10,7 @@ export class AIHandler {
   private actionHandlers: ActionHandler[] = []
   private pathingHandler: PathingHandler
   private observerHandler: Observer
+  private currentTurnIndex: number
   private entities: Entity[]
   private patrolHandler: PatrolHandler
   private targets: { [k: number]: {target: Entity, followTolerance: number, current: number} }
@@ -17,6 +18,7 @@ export class AIHandler {
 
   constructor(entities: Entity[], pathingHandler: PathingHandler, observerHandler: Observer) {
     const temp = { x: 3, y: 0, z: 0 }
+    this.currentTurnIndex = 0
     this.patrolHandler = new PatrolHandler()
     this.entities = entities
     this.entities.forEach((ent: Entity, index: number) => {
@@ -60,8 +62,14 @@ export class AIHandler {
     }
   }
 
-  public nextTurn() {
-    this.actionHandlers.forEach((handler, index: number) => {
+  public nextAllTurn() {
+    while (this.nextTurn()) { }
+  }
+
+  public nextTurn(): boolean {
+    try {
+      const handler: ActionHandler = this.actionHandlers[this.currentTurnIndex]
+      const index = this.currentTurnIndex
       this.pathingHandler.addTurn(handler)
       if (!this.pathingHandler.addMove(handler)) {
         if (this.targets[index] === undefined) {
@@ -74,8 +82,8 @@ export class AIHandler {
 
         const tempPos: GridPosition =
           this.targets[index] !== undefined ?
-          this.targets[index].target.getPosition() :
-          this.patrolHandler.getNextPoint(index)
+            this.targets[index].target.getPosition() :
+            this.patrolHandler.getNextPoint(index)
 
         this.pathingHandler.moveTo(handler, tempPos)
         if (this.targets[index]) {
@@ -87,6 +95,16 @@ export class AIHandler {
         }
       }
       this.actOnIt(handler, index)
-    })
+      if (this.actionHandlers.length - 1 === index) {
+        this.currentTurnIndex = 0
+        return false
+      } else {
+        this.currentTurnIndex++
+        return true
+      }
+    } catch (error) {
+      this.currentTurnIndex = 0
+      return false
+    }
   }
 }

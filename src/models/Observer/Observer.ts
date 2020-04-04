@@ -36,7 +36,7 @@ export class Observer {
 
   private getRange(ent: Entity): number {
     const range = ent.getFields().viewRange
-    return range !== undefined ? range : 4
+    return range !== undefined ? range : 3
   }
 
   private getDirection(ent: Entity): Direction {
