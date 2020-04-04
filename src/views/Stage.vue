@@ -2,7 +2,6 @@
   <div id="container" :class="{perspective: perspectiveMode === true }">
     <keyboard-events @move-event="nextTurn" :throttled="throttled" :level="level" />
     <dashboard :inventory="level.getPlayer().getInventory()"></dashboard>
-    <action-graph :position="inspectedObject"></action-graph>
     <div id="perspective-button" @click="togglePerspective">Perspective</div>
     <camera
       ref="camera"
@@ -14,6 +13,7 @@
       camera-height="768px"
     >
       <div id="grid" ref="grid" :style="gridStyle">
+        <action-graph :inspectedObject="inspectedObject"></action-graph>
         <grid-block
           v-for="(gridItem, i) of gridRenderArray"
           :gridMeta="gridItem"

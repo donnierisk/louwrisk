@@ -1,5 +1,9 @@
 <template>
-  <div id="action-graph" ref="graph"></div>
+  <div
+    id="action-graph"
+    ref="graph"
+    :style="{left: positionDom.x + 'px', top: positionDom.y + 'px'}"
+  ></div>
 </template> 
 
 <script lang='ts'>
@@ -9,25 +13,22 @@ import { GridPosition } from '../models/GridPosition'
 
 @Component
 export default class ActionGraph extends Vue {
-  @Prop() private position!: GridPosition
+  @Prop() private inspectedObject!: GridPosition
 
-  updated() {
-    console.log(this.position)
-  }
-  @Watch('position')
+  private positionDom = { x: 0, y: 0 }
+  @Watch('inspectedObject', { deep: true, immediate: true })
   private onPositionChange(newVal: any) {
-    console.log('test')
-  }
-
-  mounted() {
-    console.log(this.position)
+    this.positionDom = { ...newVal.position }
+    console.log(JSON.stringify(this.positionDom))
   }
 }
 </script>
 <style lang="scss">
 #action-graph {
-  width: 5px;
-  height: 5px;
+  width: 25px;
+  height: 25px;
+  position: absolute;
   background: red;
+  z-index: 11;
 }
 </style>
