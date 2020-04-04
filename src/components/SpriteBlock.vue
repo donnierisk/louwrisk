@@ -1,7 +1,7 @@
 <template>
   <div
-    class="sprite-block"
-    :class="[imageTerrain, {entity: hasEntity, observed: isObserved}, entName]"
+    class="sprite-block entity"
+    :class="[imageTerrain, {observed: isObserved}, entName]"
     :id="entName"
     ref="entity"
     :style="entityStyle"
@@ -9,13 +9,12 @@
   >
     <div
       ref="entityModel"
-      v-if="hasEntity"
       :class="{isDead: entity.getFields().mortalState === 'd'}"
       class="entity-avatar"
       :style="imageMeta"
     />
     <health
-      v-if="hasEntity && entity.getFields().mortalState === 'a' || entity.getFields().mortalState === 'd'"
+      v-if="entity.getFields().mortalState === 'a' || entity.getFields().mortalState === 'd'"
       :health="entityStatus.health"
     />
   </div>
@@ -46,7 +45,7 @@ export default class SpriteBlock extends Vue {
   @Prop() private animating?: boolean
   @Prop() private isObserved?: boolean
   @Prop() private terrain?: TerrainSymbol
-  @Prop() private entity?: Entity
+  @Prop() private entity!: Entity
   @Prop() private blockSize!: GridPosition
 
   private spriteMeta: ISpriteMeta = {
@@ -99,13 +98,9 @@ export default class SpriteBlock extends Vue {
   private get entityStyle() {
     const width = this.spriteMeta.gridSpan.x * this.blockSize.x
     const height = this.spriteMeta.gridSpan.y * this.blockSize.y
-    if (this.hasEntity) {
-      return {
-        top: -height + 'px',
-        left: width / 2 + 'px'
-      }
-    } else {
-      return {}
+    return {
+      top: -height + 'px',
+      left: width / 2 + 'px'
     }
   }
 
@@ -148,10 +143,6 @@ export default class SpriteBlock extends Vue {
         }
       }
     }
-  }
-
-  private get hasEntity() {
-    return this.entity ? true : false
   }
 
   private get entityStatus() {
