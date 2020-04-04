@@ -99,6 +99,7 @@ export default class GridBlock extends Vue {
 }
 
 .gridItem.observed:hover {
-  box-shadow: 0 0 5px 1px purple inset;
+  cursor: pointer;
+  filter: brightness(1.3);
 }
 </style>

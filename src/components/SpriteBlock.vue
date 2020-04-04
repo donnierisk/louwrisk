@@ -182,7 +182,8 @@ export default class SpriteBlock extends Vue {
 }
 
 .entity:hover {
-  filter: box-shadow(0, 0, 0, black);
+  cursor: pointer;
+  filter: brightness(1.3);
 }
 
 .entity .entity-avatar {
