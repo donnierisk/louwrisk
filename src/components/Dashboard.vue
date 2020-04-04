@@ -15,7 +15,7 @@ import { Entity } from '@/models/Entity/Entity'
 
 @Component
 export default class Dashboard extends Vue {
-  @Prop() inventory!: string[]
+  @Prop() public inventory!: string[]
 }
 </script>
 

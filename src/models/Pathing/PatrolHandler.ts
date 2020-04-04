@@ -18,7 +18,7 @@ export class PatrolHandler {
     this.entities[id] = {
       patrols: {
         route: [ent.getPosition(), target],
-        index: 0
+        index: 1
       },
       entity: ent
     }

@@ -17,9 +17,9 @@ import Stage from './Stage.vue'
   }
 })
 export default class Home extends Vue {
-  blockSize: number = 128 // in px
-  created() {
-    var w = window.innerWidth
+  public blockSize: number = 128 // in px
+  public created() {
+    const w = window.innerWidth
     this.blockSize = Math.round(w / 12) // game is 12 grid blocks wide
   }
 }
