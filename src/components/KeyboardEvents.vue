@@ -73,7 +73,7 @@ export default class KeyboardEvents extends Vue {
         !this.level.isOutOfBounds(entityX, entityY) &&
         !this.level.isBlocked(entityX, entityY)
       ) {
-        this.$emit('pre-move-event', animation)
+        this.$emit('pre-move-event', entity)
         entity.setPosition(entityX, entityY)
       }
       this.$emit('move-event', animation)

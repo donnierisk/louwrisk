@@ -80,6 +80,7 @@ export default class Map extends Vue {
 
   private Scale: string = ''
   private storeActive: boolean = false
+  private inAction: boolean = false
   private level = new LevelHandler()
   private aiHandler = new AIHandler(
     this.level.getAllNPC(),
@@ -188,20 +189,21 @@ export default class Map extends Vue {
     newPosition: GridPosition,
     type: EntityType,
     id: number,
-    animate?: boolean
+    isInitial?: boolean
   ) {
     this.throttled = true
     this.$set(this.animating, type + id.toString(), true)
 
     const entity = this.getEntityRef(type, id ? id : 0)
-    const startCallback = () => {
+    const endCallback = () => {
       this.throttled = false
       this.$set(this.animating, type + id.toString(), false)
       this.level.reloadingSave = false
       entity.style.zIndex = newPosition.z ? newPosition.z.toString() : ''
+      if (!isInitial) { this.loopTurn() }
     }
 
-    const endCallback = () => {
+    const startCallback = () => {
       const curIndex = Number(entity.style.zIndex ? entity.style.zIndex : '')
       const entityCurrentPosition: GridPosition = this.level
         .getAllEntities()
@@ -213,40 +215,36 @@ export default class Map extends Vue {
       }
     }
 
-    const speed = animate || this.level.reloadingSave ? 0 : 0.5
+    const speed = isInitial || this.level.reloadingSave ? 0 : 0.5
 
     this.animater.animaterUnit(
       newPosition,
       entity,
-      startCallback,
       endCallback,
+      startCallback,
       speed
     )
   }
 
   private nextTurn(animation: string) {
+    this.inAction = true
     this.animation[0] = animation
     this.calculateObserveRange()
     this.placeEntity(this.level.getPlayer())
     Vue.nextTick(() => {
       this.AnimateCamera(true)
-      setTimeout(() => {
-        this.loopTurn()
-      }, 500);
     })
   }
 
   private loopTurn() {
-    let ent: Entity = this.aiHandler.peekNextTurn()
-    this.displaceEntity(ent)
-    if (this.aiHandler.nextTurn()) {
-      Vue.nextTick(() => {
-        setTimeout(() => {
-          this.loopTurn()
-        }, 500);
-      })
+    const ent: Entity = this.aiHandler.peekNextTurn()
+    if (ent !== undefined) {
+      this.displaceEntity(ent)
+      this.aiHandler.nextTurn()
+      this.placeEntity(ent)
+    } else {
+      this.aiHandler.resetTurns()
     }
-    this.placeEntity(ent)
   }
 
   private placeEntities() {
@@ -257,7 +255,7 @@ export default class Map extends Vue {
       this.placeEntity(entity)
     })
   }
-  
+
   private displaceEntity(entity: Entity) {
     const pos: GridPosition = entity.getPosition()
     const index = (this.level.GridSize.x * pos.y) + pos.x

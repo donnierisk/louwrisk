@@ -70,10 +70,19 @@ export class AIHandler {
     return this.entities[this.currentTurnIndex]
   }
 
+  public resetTurns() {
+    this.currentTurnIndex = 0
+  }
+
   public nextTurn(): boolean {
     try {
-      const handler: ActionHandler = this.actionHandlers[this.currentTurnIndex]
       const index = this.currentTurnIndex
+
+      if (this.actionHandlers.length <= index) {
+        return false
+      }
+
+      const handler: ActionHandler = this.actionHandlers[this.currentTurnIndex]
       this.pathingHandler.addTurn(handler)
       if (!this.pathingHandler.addMove(handler)) {
         if (this.targets[index] === undefined) {
@@ -99,16 +108,11 @@ export class AIHandler {
         }
       }
       this.actOnIt(handler, index)
-      if (this.actionHandlers.length - 1 === index) {
-        this.currentTurnIndex = 0
-        return false
-      } else {
-        this.currentTurnIndex++
-        return true
-      }
+      this.currentTurnIndex++
     } catch (error) {
       this.currentTurnIndex = 0
       return false
     }
+    return true
   }
 }
