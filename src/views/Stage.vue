@@ -1,6 +1,6 @@
 <template>
   <div id="container" :class="{perspective: perspectiveMode === true }">
-    <keyboard-events @move-event="nextTurn" :throttled="throttled" :level="level" />
+    <keyboard-events @pre-move-event="displaceEntity" @move-event="nextTurn" :throttled="throttled" :level="level" />
     <dashboard :inventory="level.getPlayer().getInventory()"></dashboard>
     <div id="perspective-button" @click="togglePerspective">Perspective</div>
     <camera
@@ -28,11 +28,11 @@
           v-for="(entity) of gridRenderArray.filter(ent => ent.containedEntity)"
           :is-observed="entity.inObserveRange"
           :block-size="blockSize"
-          :animating="animating"
+          :animating="animating[entity.containedEntity.getKey()]"
           :entity="entity.containedEntity"
           :terrain="entity.symbol"
-          :ref="entity.containedEntity.type() + entity.containedEntity.getId()"
-          :key="entity.containedEntity.type() + entity.containedEntity.getId()"
+          :ref="entity.containedEntity.getKey()"
+          :key="entity.containedEntity.getKey()"
         />
       </div>
     </camera>
@@ -80,6 +80,7 @@ export default class Map extends Vue {
 
   private Scale: string = ''
   private storeActive: boolean = false
+  private inAction: boolean = false
   private level = new LevelHandler()
   private aiHandler = new AIHandler(
     this.level.getAllNPC(),
@@ -93,8 +94,8 @@ export default class Map extends Vue {
 
   private observer: EntityObserver = new EntityObserver()
 
-  private animation = 'idle'
-  private animating: boolean = false
+  private animation: string[] = []
+  private animating: {[k: string]: boolean} = {}
   private animater: Animate = new Animate(this.blockSize.x, this.blockSize.y)
 
   private perspectiveMode: boolean = false
@@ -180,24 +181,29 @@ export default class Map extends Vue {
       .entityRef as HTMLElement
   }
 
+  private AnimateCamera(animate: boolean = true) {
+    this.camera.PanCameraToPlayer(animate)
+  }
+
   private AnimateEntityPosition(
     newPosition: GridPosition,
     type: EntityType,
-    animate?: boolean,
-    id?: number
+    id: number,
+    isInitial?: boolean
   ) {
     this.throttled = true
-    this.animating = true
+    this.$set(this.animating, type + id.toString(), true)
 
     const entity = this.getEntityRef(type, id ? id : 0)
-    const startCallback = () => {
+    const endCallback = () => {
       this.throttled = false
-      this.animating = false
+      this.$set(this.animating, type + id.toString(), false)
       this.level.reloadingSave = false
       entity.style.zIndex = newPosition.z ? newPosition.z.toString() : ''
+      if (!isInitial) { this.loopTurn() }
     }
 
-    const endCallback = () => {
+    const startCallback = () => {
       const curIndex = Number(entity.style.zIndex ? entity.style.zIndex : '')
       const entityCurrentPosition: GridPosition = this.level
         .getAllEntities()
@@ -207,84 +213,77 @@ export default class Map extends Vue {
       if (curIndex < entityCurrentPosition.y) {
         entity.style.zIndex = entityCurrentPosition.y.toString()
       }
-
-      if (type === EntityType.PLAYER) {
-        this.camera.PanCameraToPlayer(
-          animate || this.level.reloadingSave ? false : true
-        )
-      }
     }
 
-    if (this.level.reloadingSave && type === EntityType.PLAYER) {
-      this.camera.PanCameraToPlayer(false)
-    }
-
-    const speed = animate || this.level.reloadingSave ? 0 : 0.5
+    const speed = isInitial || this.level.reloadingSave ? 0 : 0.5
 
     this.animater.animaterUnit(
       newPosition,
       entity,
-      startCallback,
       endCallback,
+      startCallback,
       speed
     )
   }
 
   private nextTurn(animation: string) {
-    this.animation = animation
-    // Vue.nextTick(() => {
-    this.loopTurn()
-    // })
-    // this.generateGrid()
-
-    this.placeEntities()
-    // this.calculateObserveRange()
+    this.inAction = true
+    this.animation[0] = animation
+    this.calculateObserveRange()
+    this.placeEntity(this.level.getPlayer())
+    Vue.nextTick(() => {
+      this.AnimateCamera(true)
+    })
   }
 
   private loopTurn() {
-    if (this.aiHandler.nextTurn()) {
-     // Vue.nextTick(() => {
-        this.loopTurn()
-      // })
+    const ent: Entity = this.aiHandler.peekNextTurn()
+    if (ent !== undefined) {
+      this.displaceEntity(ent)
+      this.aiHandler.nextTurn()
+      this.placeEntity(ent)
+    } else {
+      this.aiHandler.resetTurns()
     }
   }
 
   private placeEntities() {
-    this.gridRenderArray.forEach((gridBlock) => {
+    for (const gridBlock of this.gridRenderArray) {
       this.$set(gridBlock, 'containedEntity', undefined)
-    })
+    }
     this.level.getAllEntities().forEach((entity) => {
-      if (entity.getSpriteName() === 'player') {
-        entity.setAnimation(this.animation)
-      }
-      for (const gridBlock of this.gridRenderArray) {
-        if (this.placeEntity(entity, gridBlock)) {
-          break
-        }
-      }
+      this.placeEntity(entity)
     })
   }
 
-  private placeEntity(entity: Entity, gridBlock: GridBlockI): boolean {
+  private displaceEntity(entity: Entity) {
     const pos: GridPosition = entity.getPosition()
-    if (gridBlock.x !== undefined && gridBlock.y !== undefined) {
-      if (gridBlock.x === pos.x && gridBlock.y === pos.y) {
-        this.$set(gridBlock, 'containedEntity', entity)
-        return true
-      }
+    const index = (this.level.GridSize.x * pos.y) + pos.x
+    const gridBlock = this.gridRenderArray[index]
+    this.$set(gridBlock, 'containedEntity', undefined)
+  }
+
+  private placeEntity(entity: Entity) {
+    if (entity.getSpriteName() === 'player') {
+      entity.setAnimation(this.animation[entity.getId()])
     }
-    return false
+    const pos: GridPosition = entity.getPosition()
+    const index = (this.level.GridSize.x * pos.y) + pos.x
+    const gridBlock = this.gridRenderArray[index]
+    this.$set(gridBlock, 'containedEntity', entity)
   }
 
   private calculateObserveRange() {
-    this.gridRenderArray.forEach((gridBlock) => {
-      if (gridBlock.x && gridBlock.y) {
-        if (this.level.isInObserveRange(gridBlock.x, gridBlock.y)) {
-          gridBlock.inObserveRange = true
-          this.observedItems.push(gridBlock.symbol)
+    if (this.fogOfWar) {
+      this.gridRenderArray.forEach((gridBlock) => {
+        if (gridBlock.x && gridBlock.y) {
+          if (this.level.isInObserveRange(gridBlock.x, gridBlock.y)) {
+            gridBlock.inObserveRange = true
+            this.observedItems.push(gridBlock.symbol)
+          }
         }
-      }
-    })
+      })
+    }
   }
 
   private generateGrid(fogOfWar: boolean = true) {

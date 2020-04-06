@@ -65,6 +65,10 @@ export class Entity {
     return this.id
   }
 
+  public getKey(): string {
+    return this.type() + this.id.toString()
+  }
+
   public getInventory(): string[] {
     return Array.from(this.entityFields.inventory.values());
   }
